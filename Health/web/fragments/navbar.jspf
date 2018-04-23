@@ -1,0 +1,23 @@
+<%-- any content can be specified here e.g.: --%>
+<%@page import="java.net.URL"%>
+<%@page import="java.io.PrintWriter"%>
+<%@ page pageEncoding="UTF-8" %>
+
+<nav class="navbar navbar-toggleable-md navbar-dark bg-dark">
+    <a href="home.jsp" class="navbar-brand" >
+        
+   
+    <%
+        //String Uri = request.getRequestURI();
+        //out.print("<h1>" + Uri + "</h1>");
+        if(session.getAttribute("user") == null){
+            out.print("<a class=' navbar-brand ' href='register.jsp'>Register</a>");            
+        } else {
+            out.print("<button class='navbar-toggler' type='button'> <i  class='home fas fa-home'></i></button>");
+            out.print("<a class=' navbar-brand ' href='Logout'>Logout</a>");
+        }
+
+    %>
+    </a>
+   
+</nav>

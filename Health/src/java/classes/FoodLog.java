@@ -1,0 +1,105 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package classes;
+
+import com.mysql.jdbc.Statement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+
+/**
+ *
+ * @author Daniel
+ */
+public class FoodLog {
+
+    private int id;
+    private Food food;
+    private int userID;
+    private String meal;
+    private Date date;
+
+    public FoodLog(int id, Food food, int userID, String meal, Date date) {
+        this.id = id;
+        this.food = food;
+        this.userID = userID;
+        this.meal = meal;
+        this.date = date;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the foodID
+     */
+    public Food getFood() {
+        return food;
+    }
+
+    /**
+     * @param foodID the foodID to set
+     */
+    public void setFoodID(Food food) {
+        this.food = food;
+    }
+
+    /**
+     * @return the userID
+     */
+    public int getUserID() {
+        return userID;
+    }
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    /**
+     * @return the meal
+     */
+    public String getMeal() {
+        return meal;
+    }
+
+    /**
+     * @param meal the meal to set
+     */
+    public void setMeal(String meal) {
+        this.meal = meal;
+    }
+
+    /**
+     * @return the date
+     */
+    public Date getDate() {
+        return date;
+    }
+
+    /**
+     * @param date the date to set
+     */
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+}
