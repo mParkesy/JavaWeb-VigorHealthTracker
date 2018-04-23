@@ -1,12 +1,5 @@
 package classes;
 
-import java.io.PrintWriter;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -14,10 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
-
-
 
 /**
  *
@@ -36,8 +26,6 @@ public class User {
     private double height;
     private Date dob;   
     private double exerciseLevel;
-
-    //private final Connection con;
 
     public User(int id, String username, String firstname, String lastname, String gender, String postcode, String nationality, String email, double height, Date dob, double exerciseLevel) {
         this.id = id;

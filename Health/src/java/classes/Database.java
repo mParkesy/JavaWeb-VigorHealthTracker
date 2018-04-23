@@ -1,6 +1,5 @@
 package classes;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,13 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.activation.DataSource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 public class Database {
 

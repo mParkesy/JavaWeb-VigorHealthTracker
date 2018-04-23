@@ -5,13 +5,6 @@
  */
 package classes;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-
 /**
  *
  * @author 100116544
@@ -22,13 +15,10 @@ public class Activity {
     private String activity;
     private double MET;
 
-    private final Connection con;
-
     public Activity(int activityID, String activity, double MET) {
         this.activityID = activityID;
         this.activity = activity;
         this.MET = MET;
-        this.con = null;
     }
 
     public int getActivityID() {

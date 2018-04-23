@@ -5,11 +5,6 @@
  */
 package classes;
 
-import com.mysql.jdbc.Statement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -23,8 +18,6 @@ public class Exercise {
     private Activity activity;
     private int userID;
     private double distance;  
-
-    private final Connection con;
     
     public Exercise(int exerciseID, int userID, Activity activity, Date date, int minutes, double distance) {
         this.exerciseID = exerciseID;
@@ -33,7 +26,6 @@ public class Exercise {
         this.activity = activity;
         this.userID = userID;
         this.distance = distance;
-        this.con = null;
     }
     
    

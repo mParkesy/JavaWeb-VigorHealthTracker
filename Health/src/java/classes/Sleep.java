@@ -5,14 +5,8 @@
  */
 package classes;
 
-import com.mysql.jdbc.Statement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -25,8 +19,6 @@ public class Sleep {
     private Date bedTime;
     private Date wakeTime;
     private int sleepGrade;
-    
-    private final Connection con;
 
     /**
      * Construct a standard sleep instance
@@ -42,7 +34,6 @@ public class Sleep {
         this.bedTime = bedTime;
         this.wakeTime = wakeTime;
         this.sleepGrade = sleepGrade;
-        this.con = null;
     }
     
    
