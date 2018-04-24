@@ -56,7 +56,7 @@ public class GroupController extends HttpServlet {
             new Database().insertGroup(userID, name);
             request.getRequestDispatcher("group.jsp").include(request, response);
         } catch (Exception ex) {
-           ex.printStackTrace();
+            System.out.println("Failed to add group");
         }
         
     }

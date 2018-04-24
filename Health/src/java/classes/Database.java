@@ -324,20 +324,21 @@ public class Database {
         }
         return weight;
     }
-    
+
     /**
      * Construct a weight instance and add it to the database
+     *
      * @param userID
      * @param bedTime
      * @param wakeTime
      * @param sleepGrade
-     * @throws Exception 
-     */    
+     * @throws Exception
+     */
     public Weight insertWeight(int userID, double weight, Date date) throws Exception {
         Weight log = null;
-        try{
-             String sql = "INSERT INTO `weight` (userID, weight, date)"
-                + "VALUES (?,?,?)";
+        try {
+            String sql = "INSERT INTO `weight` (userID, weight, date)"
+                    + "VALUES (?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
@@ -347,62 +348,133 @@ public class Database {
 
             st.executeUpdate();
 
-            try(ResultSet key = st.getGeneratedKeys()){
-                if(key.next()){
-                    log = new Weight(key.getInt(1),userID,weight,date);
-                }else {
+            try (ResultSet key = st.getGeneratedKeys()) {
+                if (key.next()) {
+                    log = new Weight(key.getInt(1), userID, weight, date);
+                } else {
                     throw new SQLException("No ID found, Weight data not saved");
                 }
             }
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Failed to insert weight log");
         }
-       return log;
+        return log;
     }
-    
+
     // ---------------------------------------------Group----------------------------------------------------------
-    
-     public Group insertGroup(int userID, String name) throws SQLException, Exception{
-         Group group = null;
-         int groupID = 0;
-        try{
-            String sql = "INSERT INTO group (userID, name)"
-                + "VALUES (?,?)";
+    public Group insertGroup(int userID, String name) throws SQLException, Exception {
+        Group group = null;
+        int groupID = 0;
+        try {
+            String sql = "INSERT INTO ugroup (userID, name)"
+                    + "VALUES (?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
             st.setString(2, name);
             st.executeUpdate();
 
-            try(ResultSet key = st.getGeneratedKeys()){
-                if(key.next()){
-                    group = new Group(key.getInt(1),name,userID);
+            try (ResultSet key = st.getGeneratedKeys()) {
+                if (key.next()) {
+                    group = new Group(key.getInt(1), name, userID);
                     sql = "INSERT INTO groupmembers (userID, groupID, invited, joined)"
-                    + "VALUES (?,?,?,?)";
+                            + "VALUES (?,?,?,?)";
                     st = CON.prepareStatement(sql);
                     st.setInt(1, userID);
                     st.setInt(2, key.getInt(1));
                     st.setBoolean(3, true);
                     st.setBoolean(4, true);
                     st.executeUpdate();
-                }
-                else{
+                } else {
                     throw new SQLException("No ID found, group data not saved");
                 }
             }
-            
-        }
-        catch(Exception ex){
+
+        } catch (Exception ex) {
             System.out.println("Failed to insert group");
         }
         return group;
-     }
-      
-     // ---------------------------------------------Group----------------------------------------------------------
-     
-     public Activity getActivity(int activityID) throws Exception{
-         Activity activity = null;
+    }
+
+    int getGroupAdmin(int groupID) {
+        int adminID = 0;
+        try {
+            String sql = "SELECT * FROM ugroup WHERE groupID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, groupID);
+            ResultSet result = st.executeQuery();
+            while (result.next()) {
+                adminID = result.getInt("userID");
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get group admin");
+        }
+        return adminID;
+    }
+
+//    ArrayList<Group> groupAdmin(int userID){
+//        ArrayList<Group> adminList = new ArrayList<>();
+//        try {
+//            String sql = "SELECT * FROM ugroup WHERE userID = ?";
+//            PreparedStatement st = CON.prepareStatement(sql);
+//            st.setInt(1, userID);
+//            ResultSet result = st.executeQuery();
+//            Group group = null;
+//            while(result.next()){
+//                group = new Group(result.getInt("groupID"), result.getString("name"), userID);
+//                adminList.add(group);
+//            }
+//        } catch (Exception ex) {
+//            System.out.println("Failed to check admin priveleges");
+//        }
+//        return adminList;
+//    }
+    /**
+     * A method that returns a list of groups that a specific user is either a
+     * member of or has been invited to
+     *
+     * @param userID The user
+     * @param joined 0 if not joined, 1 if joined
+     * @param invited 0 if no invite, 1 if has been invited
+     * @return A list of groups
+     */
+    ArrayList<Group> getGroupList(int userID, int joined, int invited) {
+        ArrayList<Group> memberOf = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM groupmembers WHERE userID = ? AND invited =? AND joined =?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, invited);
+            st.setInt(3, joined);
+            ResultSet result = st.executeQuery(sql);
+            Group group = null;
+            while (result.next()) {
+                group = new Group(result.getInt("groupID"), result.getString("name"), 0);
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get groups that the user is a part of");
+        }
+
+        return memberOf;
+    }
+    
+    void acceptInvite(int groupID, int userID){
+        try {
+            String sql = "UPDATE groupmembers SET joined = 1 WHERE userID = ? AND groupID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, groupID);
+            st.executeUpdate(sql);
+        } catch (Exception ex){
+            System.out.println("Failed to accept invite to group");
+        }
+    }
+
+    // void sendInvite(int groupID, int userID)
+    
+    // ---------------------------------------------Activity----------------------------------------------------------
+    public Activity getActivity(int activityID) throws Exception {
+        Activity activity = null;
         try {
             String sql = "SELECT * FROM activity WHERE activityID = ?";
 
@@ -410,18 +482,18 @@ public class Database {
             st.setInt(1, activityID);
             ResultSet result = st.executeQuery();
 
-            while(result.next()){
-                activity = new Activity(activityID,result.getString("activity"),result.getDouble("MET"));
-            }    
+            while (result.next()) {
+                activity = new Activity(activityID, result.getString("activity"), result.getDouble("MET"));
+            }
         } catch (Exception ex) {
             System.out.println("Failed to get activity");
-        }   
+        }
         return activity;
-    }  
-     
-    public ArrayList<Activity> allActivity() throws Exception{
+    }
+
+    public ArrayList<Activity> allActivity() throws Exception {
         ArrayList<Activity> activityList = new ArrayList<>();
-        
+
         try {
             String sql = "SELECT * FROM activity";
             PreparedStatement st = CON.prepareStatement(sql);
@@ -429,7 +501,7 @@ public class Database {
             ResultSet result = st.executeQuery();
             Activity activity;
 
-            while(result.next()){
+            while (result.next()) {
                 int activityID = result.getInt("activityID");
                 String name = result.getString("activity");
                 double MET = result.getDouble("MET");
@@ -437,22 +509,20 @@ public class Database {
 
                 activityList.add(activity);
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println("Failed to get activity list");
         }
         return activityList;
     }
 
     // ---------------------------------------------Exercise----------------------------------------------------------
-
-     
     public Exercise insertExercise(int userID, int activityID, Date date, int minutes, double distance) throws Exception {
         Exercise exercise = null;
-        try{
+        try {
             String sql = "INSERT INTO `exercise` (activityID, userID, date, minutes, distance)"
-            + "VALUES (?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
-                   Statement.RETURN_GENERATED_KEYS);
+                    Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, activityID);
             st.setInt(2, userID);
             java.sql.Date newDate = new java.sql.Date(date.getTime());
@@ -462,23 +532,21 @@ public class Database {
 
             st.executeUpdate();
 
-            try(ResultSet key = st.getGeneratedKeys()){
-                if(key.next()){
-                    exercise = new Exercise(key.getInt(1),userID,getActivity(activityID),date,minutes,distance);
+            try (ResultSet key = st.getGeneratedKeys()) {
+                if (key.next()) {
+                    exercise = new Exercise(key.getInt(1), userID, getActivity(activityID), date, minutes, distance);
 
-                }else {
+                } else {
                     throw new SQLException("No ID found, Exercise data not saved");
                 }
             }
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Failed to insert exercise");
         }
         return exercise;
     }
-    
-     // ---------------------------------------------Food----------------------------------------------------------
-    
+
+    // ---------------------------------------------Food----------------------------------------------------------
     public ArrayList<Food> allFood() throws Exception {
         ArrayList<Food> foodList = new ArrayList<>();
         try {
@@ -488,7 +556,7 @@ public class Database {
             ResultSet result = st.executeQuery();
             Food food;
 
-            while(result.next()){
+            while (result.next()) {
                 int id = result.getInt("id");
                 String name = result.getString("Name");
                 double protein = result.getDouble("Protein");
@@ -496,19 +564,19 @@ public class Database {
                 double carbs = result.getDouble("Carbs");
                 double energy = result.getDouble("Energy");
                 double sugar = result.getDouble("Sugar");
-                
-                food = new Food(id,name,protein,fat,carbs,energy,sugar);
+
+                food = new Food(id, name, protein, fat, carbs, energy, sugar);
 
                 foodList.add(food);
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println(ex.toString());
         }
-        
+
         return foodList;
     }
-    
-     public Food getFood(int id) throws Exception {
+
+    public Food getFood(int id) throws Exception {
         Food food = null;
         try {
             String sql = "SELECT * FROM food WHERE id =?";
@@ -516,36 +584,34 @@ public class Database {
             st.setInt(1, id);
             ResultSet result = st.executeQuery();
 
-            while(result.next()){
-                food = new Food(id,result.getString("name"),result.getDouble("protein"),
-                result.getDouble("fat"),result.getDouble("carbs"),result.getDouble("energy"),
-                result.getDouble("sugar"));
+            while (result.next()) {
+                food = new Food(id, result.getString("name"), result.getDouble("protein"),
+                        result.getDouble("fat"), result.getDouble("carbs"), result.getDouble("energy"),
+                        result.getDouble("sugar"));
             }
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Failed to get food data");
         }
         return food;
     }
-     
-     
-     // ---------------------------------------------FoodLog----------------------------------------------------------
-     
-      /**
+
+    // ---------------------------------------------FoodLog----------------------------------------------------------
+    /**
      * Construct a FoodLog instance and add it to the database
+     *
      * @param foodID
      * @param userID
      * @param meal
      * @param date
-     * @throws Exception 
+     * @throws Exception
      */
-    public FoodLog insertFoodLog(int foodID, int userID, String meal, Date date) 
-            throws Exception{
+    public FoodLog insertFoodLog(int foodID, int userID, String meal, Date date)
+            throws Exception {
         FoodLog log = null;
-        try{
+        try {
             String sql = "INSERT INTO `foodLog` "
-                + "(foodID, userID, meal, date) "
-                + "VALUES (?,?,?,?)";
+                    + "(foodID, userID, meal, date) "
+                    + "VALUES (?,?,?,?)";
             PreparedStatement st = Database.getConnection().prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, foodID);
@@ -554,18 +620,16 @@ public class Database {
             java.sql.Date newDate = new java.sql.Date(date.getTime());
             st.setDate(4, newDate);
 
-
             st.executeUpdate();
 
-            try(ResultSet key = st.getGeneratedKeys()){
-                if(key.next()){
-                    log = new FoodLog(key.getInt(1),getFood(foodID),userID,meal,date);
-                }else{
+            try (ResultSet key = st.getGeneratedKeys()) {
+                if (key.next()) {
+                    log = new FoodLog(key.getInt(1), getFood(foodID), userID, meal, date);
+                } else {
                     throw new SQLException("No ID found, Food Log data not saved");
                 }
             }
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Failed to insert food log");
         }
         return log;

@@ -10,18 +10,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@ include file="fragments/header.jspf" %>
-        
+
     </head>
     <body>
         <%@ include file="fragments/navbar.jspf" %>
-        <form method ="post" action="SleepController">
+        <form method ="post" action="GroupController">
             <input type="hidden" name="userID" value="${user.getID()}">
             <div class="form-group">
                 <label for="groupname">Group Name:</label>
-                <input type="datetime-local" class="form-control"  name="name">
+                <input type="text" class="form-control"  name="name">
             </div>
             <button type="submit" class="btn btn-default">Create new group</button>
         </form>
-        
+
     </body>
 </html>
