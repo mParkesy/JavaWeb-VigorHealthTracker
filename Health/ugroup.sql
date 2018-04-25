@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2018 at 01:38 PM
+-- Generation Time: Apr 25, 2018 at 11:48 PM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.3
 
@@ -25,22 +25,35 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `club`
+-- Table structure for table `ugroup`
 --
 
-CREATE TABLE `club` (
+CREATE TABLE `ugroup` (
   `groupID` int(255) NOT NULL,
-  `name` varchar(50) NOT NULL
+  `name` varchar(50) NOT NULL,
+  `userID` int(255) NOT NULL,
+  `description` varchar(535) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `ugroup`
+--
+
+INSERT INTO `ugroup` (`groupID`, `name`, `userID`, `description`) VALUES
+(2, 'BSCC', 1, ''),
+(4, 'Parkrun', 1, 'The parkrun group is for parkrunners!'),
+(5, 'NCC', 1, 'Norwich canoe club!                                '),
+(6, 'Test', 1, 'this is a test                                '),
+(7, 'aids', 1, 'khgfjfdjgfjgjhg                    ');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `club`
+-- Indexes for table `ugroup`
 --
-ALTER TABLE `club`
+ALTER TABLE `ugroup`
   ADD PRIMARY KEY (`groupID`);
 
 --
@@ -48,10 +61,10 @@ ALTER TABLE `club`
 --
 
 --
--- AUTO_INCREMENT for table `club`
+-- AUTO_INCREMENT for table `ugroup`
 --
-ALTER TABLE `club`
-  MODIFY `groupID` int(255) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `ugroup`
+  MODIFY `groupID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

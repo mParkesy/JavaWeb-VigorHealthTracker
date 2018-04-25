@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2018 at 01:38 PM
+-- Generation Time: Apr 25, 2018 at 11:48 PM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.3
 
@@ -31,9 +31,29 @@ SET time_zone = "+00:00";
 CREATE TABLE `groupmembers` (
   `userID` int(255) NOT NULL,
   `groupID` int(255) NOT NULL,
-  `invited` tinyint(1) NOT NULL,
   `joined` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `groupmembers`
+--
+
+INSERT INTO `groupmembers` (`userID`, `groupID`, `joined`) VALUES
+(1, 2, 1),
+(1, 4, 1),
+(1, 5, 1),
+(1, 6, 1),
+(1, 7, 1);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `groupmembers`
+--
+ALTER TABLE `groupmembers`
+  ADD PRIMARY KEY (`userID`,`groupID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
