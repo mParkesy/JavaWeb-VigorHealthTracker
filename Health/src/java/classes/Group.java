@@ -5,16 +5,15 @@ public class Group {
     private int groupID;
     private String groupName;
     private int userID;
+    private String description;
+    private String imagePath;
     //private Goal groupGoal
 
-    public Group(int groupID, String groupName, int userID) {
+    public Group(int groupID, String groupName, int userID, String description) {
         this.groupID = groupID;
         this.groupName = groupName;
-        if(userID == 0){
-            this.userID = new Database().getGroupAdmin(groupID);
-        } else {
-            this.userID = userID;
-        }
+        this.userID = userID;
+        this.description = description;
     }
 
     public int getGroupID() {
@@ -41,4 +40,21 @@ public class Group {
         this.userID = userID;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    
 }

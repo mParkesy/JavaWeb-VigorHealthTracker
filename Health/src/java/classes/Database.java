@@ -329,9 +329,6 @@ public class Database {
      * Construct a weight instance and add it to the database
      *
      * @param userID
-     * @param bedTime
-     * @param wakeTime
-     * @param sleepGrade
      * @throws Exception
      */
     public Weight insertWeight(int userID, double weight, Date date) throws Exception {
@@ -361,29 +358,29 @@ public class Database {
         return log;
     }
 
-    // ---------------------------------------------Group----------------------------------------------------------
-    public Group insertGroup(int userID, String name) throws SQLException, Exception {
+    // ---------------------------------------------GROUP----------------------------------------------------------
+    public Group insertGroup(int userID, String name, String description) throws SQLException, Exception {
         Group group = null;
-        int groupID = 0;
         try {
-            String sql = "INSERT INTO ugroup (userID, name)"
-                    + "VALUES (?,?)";
+            String sql = "INSERT INTO ugroup (userID, name, description)"
+                    + "VALUES (?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
             st.setString(2, name);
+            st.setString(3, description);
             st.executeUpdate();
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    group = new Group(key.getInt(1), name, userID);
-                    sql = "INSERT INTO groupmembers (userID, groupID, invited, joined)"
-                            + "VALUES (?,?,?,?)";
+                    int groupID = key.getInt(1);
+                    group = getGroup(groupID);
+                    sql = "INSERT INTO groupmembers (userID, groupID, joined)"
+                            + "VALUES (?,?,?)";
                     st = CON.prepareStatement(sql);
                     st.setInt(1, userID);
-                    st.setInt(2, key.getInt(1));
-                    st.setBoolean(3, true);
-                    st.setBoolean(4, true);
+                    st.setInt(2, groupID);
+                    st.setInt(3, 1);
                     st.executeUpdate();
                 } else {
                     throw new SQLException("No ID found, group data not saved");
@@ -396,60 +393,60 @@ public class Database {
         return group;
     }
 
-    int getGroupAdmin(int groupID) {
-        int adminID = 0;
+    public Group getGroup(int groupID) {
+        Group group = null;
         try {
             String sql = "SELECT * FROM ugroup WHERE groupID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, groupID);
             ResultSet result = st.executeQuery();
+
             while (result.next()) {
-                adminID = result.getInt("userID");
+                group = new Group(result.getInt("groupID"), result.getString("name"), result.getInt("userID"), result.getString("description"));
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get group admin");
+            System.out.println("Failed to get current weight");
         }
-        return adminID;
+        return group;
     }
 
-//    ArrayList<Group> groupAdmin(int userID){
-//        ArrayList<Group> adminList = new ArrayList<>();
-//        try {
-//            String sql = "SELECT * FROM ugroup WHERE userID = ?";
-//            PreparedStatement st = CON.prepareStatement(sql);
-//            st.setInt(1, userID);
-//            ResultSet result = st.executeQuery();
-//            Group group = null;
-//            while(result.next()){
-//                group = new Group(result.getInt("groupID"), result.getString("name"), userID);
-//                adminList.add(group);
-//            }
-//        } catch (Exception ex) {
-//            System.out.println("Failed to check admin priveleges");
-//        }
-//        return adminList;
-//    }
+    public boolean isAdmin(int userID, int groupID) {
+        try {
+            String sql = "SELECT * FROM ugroup WHERE userID = ? AND groupID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, groupID);
+            ResultSet result = st.executeQuery();
+            while (result.next()) {
+                return true;
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to check if admin");
+        }
+        return false;
+    }
+
     /**
      * A method that returns a list of groups that a specific user is either a
      * member of or has been invited to
      *
      * @param userID The user
      * @param joined 0 if not joined, 1 if joined
-     * @param invited 0 if no invite, 1 if has been invited
      * @return A list of groups
      */
-    ArrayList<Group> getGroupList(int userID, int joined, int invited) {
+    public ArrayList<Group> getGroupList(int userID, int joined) {
         ArrayList<Group> memberOf = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM groupmembers WHERE userID = ? AND invited =? AND joined =?";
+
+            String sql = "SELECT * FROM groupmembers WHERE userID = ? AND joined =?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
-            st.setInt(2, invited);
-            st.setInt(3, joined);
-            ResultSet result = st.executeQuery(sql);
-            Group group = null;
+            st.setInt(2, joined);
+            ResultSet result = st.executeQuery();
+
             while (result.next()) {
-                group = new Group(result.getInt("groupID"), result.getString("name"), 0);
+                Group group = getGroup(result.getInt("groupID"));
+                memberOf.add(group);
             }
         } catch (Exception ex) {
             System.out.println("Failed to get groups that the user is a part of");
@@ -457,21 +454,33 @@ public class Database {
 
         return memberOf;
     }
-    
-    void acceptInvite(int groupID, int userID){
+
+    public void acceptInvite(int groupID, int userID) {
         try {
             String sql = "UPDATE groupmembers SET joined = 1 WHERE userID = ? AND groupID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             st.setInt(2, groupID);
-            st.executeUpdate(sql);
-        } catch (Exception ex){
+            st.executeUpdate();
+        } catch (Exception ex) {
             System.out.println("Failed to accept invite to group");
         }
     }
 
-    // void sendInvite(int groupID, int userID)
-    
+    public boolean sendInvite(int groupID, int userID) {
+        try {
+            String sql = "INSERT INTO groupmembers (userID, groupID, joined) VALUES(?,?,0)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, groupID);
+            st.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Failed to send invite to user");
+            return false;
+        }
+    }
+
     // ---------------------------------------------Activity----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;

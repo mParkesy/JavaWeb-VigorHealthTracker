@@ -35,6 +35,17 @@ public class GroupController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String function = request.getParameter("function");
+        Database db = new Database();
+        if(function.equals("AcceptInvite")){
+            int groupID = Integer.parseInt(request.getParameter("groupID"));
+            int userID = Integer.parseInt(request.getParameter("userID"));
+
+            db.acceptInvite(groupID, userID);
+        } else if (function.equals("GroupInfo")){
+            
+        }
+        
         
     }
 
@@ -51,10 +62,11 @@ public class GroupController extends HttpServlet {
             throws ServletException, IOException {
         int userID = Integer.parseInt(request.getParameter("userID"));
         String name = request.getParameter("name");
+        String description = request.getParameter("description");
         
         try {
-            new Database().insertGroup(userID, name);
-            request.getRequestDispatcher("group.jsp").include(request, response);
+            new Database().insertGroup(userID, name, description);
+            response.sendRedirect("group.jsp");
         } catch (Exception ex) {
             System.out.println("Failed to add group");
         }
