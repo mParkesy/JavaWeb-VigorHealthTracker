@@ -36,7 +36,7 @@
             <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
             </div>
-
+            <h1>${message}</h1>
             <div class="row">
                 <div class=" col-lg-3 col-md-2 col-sm-0"></div>
                 <div class="jumbotron border col-lg-6 col-md-8 col-sm-12">

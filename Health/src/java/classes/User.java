@@ -40,33 +40,8 @@ public class User {
         this.dob = dob;
         this.exerciseLevel = exerciseLevel;
     }
-
     
-   
-    /**
-     *
-     * @param username
-     * @param password
-     * @param firstname
-     * @param lastname
-     * @param gender
-     * @param dob
-     * @param postcode
-     * @param nationality
-     * @param email
-     * @param height
-     * @param weight
-     * @param exercise
-     * @throws java.lang.Exception
-     */
-    public User(String username, String password, String firstname,
-            String lastname, String gender, Date dob, String postcode, 
-            String nationality, String email, double height, double weight,
-            double exercise)
-            throws Exception {
-        
-        
-    }
+    
     
     public int getAge(){ 
         LocalDate date = Instant.ofEpochMilli(this.dob.getTime())
