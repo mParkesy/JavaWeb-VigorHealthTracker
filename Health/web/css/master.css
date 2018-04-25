@@ -102,3 +102,16 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
     margin-right: auto;
     display: block;
 }
+#notif{
+    font-size:14px;
+    position:absolute;
+    background:red;
+    border-radius:20px;
+    top:9px;
+    margin-left:15px;
+    height:18px;
+    width:18px;
+    line-height:15px;
+    text-align: center;
+    
+}

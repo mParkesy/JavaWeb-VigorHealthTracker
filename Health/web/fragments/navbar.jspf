@@ -14,6 +14,7 @@
             out.print("<a class=' navbar-brand ' href='register.jsp'>Register</a>");            
         } else {
             out.print("<button class='navbar-toggler' type='button'> <i  class='home fas fa-home'></i></button>");
+            out.print("<a class=' navbar-brand ' href='Logout'><i class='fas fa-bell'></i><div id='notif'>3</div></a>");
             out.print("<a class=' navbar-brand ' href='Logout'>Logout</a>");
         }
 

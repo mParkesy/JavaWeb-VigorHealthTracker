@@ -74,13 +74,13 @@
                 <img src="img/logo.png">
                 
             </div>
-            
+                <!--
                 <div class="ol-lg-4 col-md-4 col-12">
                     <canvas width="300px" height="300px" id="dailyCals"></canvas>
                     
                     
                 </div>
-              
+              -->
             
             <div class="row row-tile">
                 <a class="border col-lg-3 col-md-4 col-6 square" href ="food.jsp"> 
