@@ -20,7 +20,7 @@ public class Database {
 
     private static Connection CON = null;
 
-    public Database() {
+    public Database(){
     }
 
     public static Connection getConnection() throws Exception {
@@ -44,47 +44,52 @@ public class Database {
 
     // ---------------------------------------------USER----------------------------------------------------------
     public User getUser(int id) throws SQLException, Exception {
-        String sql = "SELECT *, COUNT(*) FROM user WHERE userID =?";
-        PreparedStatement st = this.CON.prepareStatement(sql);
+        User user = null;
+        String sql = "SELECT * FROM user WHERE userID =?";
+        PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
 
-        while (rs.next()) {
-            if (rs.getInt("COUNT(*)") == 0) {
-                throw new Exception("No user exists with that User ID");
-            }
-
-            return new User(id, rs.getString("username"), rs.getString("firstname"),
+        if(rs.next()) {
+            user = new User(id, rs.getString("username"), rs.getString("firstname"),
                     rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
                     rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
                     (Date) rs.getDate("dob"), rs.getDouble("exerciseLevel")
             );
 
+        } else {
+            return null;
         }
-        return null;
+        return user;
     }
 
+    public boolean exists(String username) throws SQLException, Exception{
+        String sql = "SELECT * FROM user WHERE username =?";
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        st.setString(1, username);
+        ResultSet rs = st.executeQuery();
+        return rs.next();
+    }
+    
     public User getUser(String username) throws SQLException, Exception {
-        String sql = "SELECT *, COUNT(*) FROM user WHERE username =?";
+        User user = null;
+        String sql = "SELECT * FROM user WHERE username =?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
-
-        while (rs.next()) {
-            if (rs.getInt("COUNT(*)") == 0) {
-                throw new Exception("No user exists with that User ID");
-            }
-
-            return new User(rs.getInt("userID"), username, rs.getString("firstname"),
+        if(rs.next()) {
+            user = new User(rs.getInt("userID"), username, rs.getString("firstname"),
                     rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
                     rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
                     (Date) rs.getDate("dob"), rs.getDouble("exerciseLevel")
             );
+        } else {
+            return null;
         }
-        return null;
+        return user;
     }
 
-    public User insertUser(int id, String username, String password, String firstname,
+    public User insertUser(String username, String password, String firstname,
             String lastname, String gender, Date dob, String postcode,
             String nationality, String email, double height, double weight,
             double exercise) throws Exception {
@@ -101,7 +106,7 @@ public class Database {
                     + "lastname, gender, dob, postcode, nationality, email, "
                     + "height, exerciseLevel) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement st = Database.getConnection().prepareStatement(sql,
+            PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, username);
             st.setString(2, dbPassword);
@@ -117,18 +122,19 @@ public class Database {
             st.setDouble(11, exercise);
 
             st.executeUpdate();
-
+            int userID = 0;
             // get the auto incremented id created by the database, construct user
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    user = new User(key.getInt(1), username, firstname, lastname,
+                    userID = key.getInt(1);
+                    user = new User(userID, username, firstname, lastname,
                             gender, postcode, nationality, email, height, dob, exercise);
                 } else {
                     throw new SQLException("No ID found, User not created");
                 }
             }
             Date now = new Date();
-            insertWeight(id, weight, now);
+            insertWeight(userID, weight, now);
 
         } catch (SQLException ex) {
             System.out.println("Duplicate database entry");
@@ -589,7 +595,7 @@ public class Database {
         Food food = null;
         try {
             String sql = "SELECT * FROM food WHERE id =?";
-            PreparedStatement st = Database.getConnection().prepareStatement(sql);
+            PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, id);
             ResultSet result = st.executeQuery();
 
@@ -621,7 +627,7 @@ public class Database {
             String sql = "INSERT INTO `foodLog` "
                     + "(foodID, userID, meal, date) "
                     + "VALUES (?,?,?,?)";
-            PreparedStatement st = Database.getConnection().prepareStatement(sql,
+            PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, foodID);
             st.setInt(2, userID);

@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width = device-width, initial-scale=1">
 
-        
+
     </head>
     <body class="animated fadeIn">
         <%@ include file="fragments/navbar.jspf" %>
@@ -23,12 +23,12 @@
             <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
             </div>
-            
+            <h1>${error}</h1>
             <div class="row">
                 <div class=" col-lg-3 col-md-2 col-sm-0"></div>
                 <div class="jumbotron border col-lg-6 col-md-8 col-sm-12 animated fadeInUp">
                     <div class=" col-lg-3 col-md-2 col-sm-0"></div>
-                    <form action="Register" method="post">
+                    <form action="RegisterController" method="post">
                         <div class="form-group">
                             <label for="text">Username:</label>
                             <input type="text" class="form-control"  name="username" id="username" required>
@@ -262,7 +262,7 @@
                                 <option value="yemenite">Yemenite</option>
                                 <option value="zambian">Zambian</option>
                                 <option value="zimbabwean">Zimbabwean</option>
-                              </select>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="text">Email:</label>
@@ -284,15 +284,15 @@
                                 <option value="1.55">3-5 times a week</option>
                                 <option value="1.725">6-7 times a week</option>
                                 <option value="1.9">Physical job or exercise 2 times a day</option>
-                              </select>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-default">Register</button>
-                        
+
                     </form>
                 </div>
             </div>
-        <link href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <link href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </body>
 </html>
