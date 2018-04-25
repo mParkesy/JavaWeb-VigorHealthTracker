@@ -30,16 +30,10 @@
                 });
             });
         </script>
-        
+
     </head>
     <body>
         <%@ include file="fragments/navbar.jspf" %>
-        <%
-            if(session.getAttribute("user") == null){
-                response.sendRedirect("login.jsp");
-            }
-            
-        %>
         <div class="container animated fadeIn">
             <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
@@ -64,8 +58,10 @@
                     </a>
                 </div>
                 <div class="border col-lg-3 col-md-4 col-6 square ">
-                    <i style="color:#99d6ff" class="fas fa-users"></i>
-                    <h2>Groups</h2>
+                    <a href ="group.jsp">
+                        <i style="color:#99d6ff" class="fas fa-users"></i>
+                        <h2>Groups</h2>
+                    </a>
                 </div>
                 <div class="border col-lg-3 col-md-4 col-6 square ">
                     <a href ="exercise.jsp">
@@ -87,6 +83,6 @@
                 </div>	
             </div>
         </div>
-       
+
     </body>
 </html>
