@@ -70,7 +70,7 @@ public abstract class Goal {
 //
 //    public void setEnd(Date end) {
 //        this.end = end;
-    }
+//    }
 
     public void setComplete(boolean complete) {
         this.complete = complete;
