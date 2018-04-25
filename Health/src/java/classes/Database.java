@@ -649,4 +649,16 @@ public class Database {
         }
         return log;
     }
+    
+    // ---------------------------------------------GOAL----------------------------------------------------------
+    public Goal insertGoal(){
+        
+        return null;
+    }
+    
+    public Goal getGoal(int groupID){
+        
+        return null;
+    }
+           
 }
