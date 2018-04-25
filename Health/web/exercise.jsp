@@ -38,7 +38,7 @@
                                 <select name="activityID">
                                     <%
 
-                                        for(Activity a : db.allActivity()){
+                                        for(Activity a : new Database().allActivity()){
                                             out.println("<option value=" + a.getActivityID() + ">" + a.getActivity() + "</option>");
                                         }
 
@@ -76,11 +76,7 @@
                       </tr>
                     </thead>
                     <tbody>
-<<<<<<< HEAD
                         <c:forEach items="<%=db.allExercise(currentUser.getID()) %>" var="e">
-=======
-                        <c:forEach items="<%= db.allExercise(currentUser.getID()) %>" var="e">
->>>>>>> master
                             <tr>
                                 <td>
                                     ${e.getActivity().getActivity()}
