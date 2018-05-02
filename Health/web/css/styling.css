@@ -1,0 +1,8 @@
+
+
+.menu{
+    top: 48px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    transform:translateX(-80px);
+}

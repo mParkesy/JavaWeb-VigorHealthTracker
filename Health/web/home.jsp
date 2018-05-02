@@ -28,7 +28,7 @@
                 $(".square").click(function () {
                     //$(this).fadeOut();
                 });
-                
+                /*
                 function generatePie(){
                     var protein = 0;
                     var fat = 0;
@@ -56,6 +56,8 @@
                     };
                 
                 generatePie();
+                */
+                
                 
             });
         </script>

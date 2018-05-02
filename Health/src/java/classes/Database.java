@@ -570,4 +570,35 @@ public class Database {
         }
         return log;
     }
+    
+    //----------------------------NOTIFICATIONS--------------------------------------
+     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
+        ArrayList<Notification> list = new ArrayList<>();
+        String sql = "SELECT * FROM notification WHERE userID =?";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, id);
+        ResultSet rs = st.executeQuery();
+         System.out.println("BOOBS");
+        while (rs.next()) {
+            list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
+        }
+        return list;
+    }
+     
+     public void deleteNotification(int id){
+         
+        Notification n = null;
+        try{
+            String sql = "DELETE FROM notification WHERE id = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        }
+        catch(SQLException ex){
+               System.out.println("ERROR DELETING NOTIF"); 
+        } 
+        
+     }
+
 }

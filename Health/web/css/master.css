@@ -107,11 +107,26 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
     position:absolute;
     background:red;
     border-radius:20px;
-    top:9px;
-    margin-left:15px;
+    top:-5px;
+    right:20px;
     height:18px;
     width:18px;
     line-height:15px;
     text-align: center;
+    color:white;
     
+}
+.bell{
+    font-size:20px;
+  padding:0;
+  margin-right:20px;
+  color:white;
+   opacity:0.5;
+}
+
+.links{
+    color:white;
+}
+.links > div{
+    display:inline-block;
 }
