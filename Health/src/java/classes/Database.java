@@ -83,9 +83,9 @@ public class Database {
     }
 
     public boolean exists(String username) throws SQLException, Exception {
-        System.out.println("test");
         String sql = "SELECT username FROM user WHERE username =?";
-        PreparedStatement st = getConnection().prepareStatement(sql);
+        CON.getConnection();
+        PreparedStatement st = CON.prepareStatement(sql);
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         if(rs == null){

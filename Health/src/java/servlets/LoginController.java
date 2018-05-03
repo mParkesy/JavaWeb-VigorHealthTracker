@@ -72,8 +72,6 @@ public class LoginController extends HttpServlet {
 
         String error = "";
         try {
-            System.out.println("test");
-            System.out.println(db.exists(username));
             if(db.exists(username)){
                 User loginUser = db.getUser(username);
                 System.out.println(db.getPassword(loginUser.getID()));
@@ -94,7 +92,10 @@ public class LoginController extends HttpServlet {
             }
             
         } catch (Exception ex) {
-            System.out.println("Failed to login user");
+            ex.printStackTrace();
+            error = "Error";
+            request.setAttribute("message", error);
+            request.getRequestDispatcher("login.jsp").include(request, response);
         }
 
     }
