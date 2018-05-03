@@ -20,7 +20,8 @@ public class Database {
 
     private static Connection CON = null;
 
-    public Database(){
+    public Database() {
+
     }
 
     public static Connection getConnection() throws Exception {
@@ -50,7 +51,7 @@ public class Database {
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
 
-        if(rs.next()) {
+        if (rs.next()) {
             user = new User(id, rs.getString("username"), rs.getString("firstname"),
                     rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
                     rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
@@ -58,35 +59,51 @@ public class Database {
             );
 
         } else {
-            return null;
+            return user;
         }
         return user;
     }
 
-    public boolean exists(String username) throws SQLException, Exception{
-        String sql = "SELECT * FROM user WHERE username =?";
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        st.setString(1, username);
-        ResultSet rs = st.executeQuery();
-        return rs.next();
-    }
-    
     public User getUser(String username) throws SQLException, Exception {
         User user = null;
         String sql = "SELECT * FROM user WHERE username =?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
-        if(rs.next()) {
+        if (rs.next()) {
             user = new User(rs.getInt("userID"), username, rs.getString("firstname"),
                     rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
                     rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
                     (Date) rs.getDate("dob"), rs.getDouble("exerciseLevel")
             );
         } else {
-            return null;
+            return user;
         }
         return user;
+    }
+
+    public boolean exists(String username) throws SQLException, Exception {
+        System.out.println("test");
+        String sql = "SELECT username FROM user WHERE username =?";
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        st.setString(1, username);
+        ResultSet rs = st.executeQuery();
+        if(rs == null){
+            return false; 
+        } else {
+            return true;
+        }
+    }
+    
+    public String getPassword(int userID) throws SQLException {
+        String sql = "SELECT password FROM user WHERE userID = ?";
+        PreparedStatement st = CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        ResultSet rs = st.executeQuery();
+        while(rs.next()){
+            return rs.getString("password");
+        }
+        return null;
     }
 
     public User insertUser(String username, String password, String firstname,
