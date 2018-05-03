@@ -70,6 +70,12 @@
                     </a>
                 </div>
                 <div class="border col-lg-3 col-md-4 col-6 square ">
+                    <a href ="goal.jsp">
+                        <i style="color:greenyellow" class="fas fa-bullseye"></i>
+                        <h2>Goals</h2>
+                    </a>
+                </div>                
+                <div class="border col-lg-3 col-md-4 col-6 square ">
                     <a href ="profile.jsp">
                         <i style="color:lightseagreen" class="fas fa-user-circle"></i>
                         <h2>Profile</h2>   
