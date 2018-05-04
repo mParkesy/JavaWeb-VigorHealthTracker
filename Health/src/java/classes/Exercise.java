@@ -6,6 +6,8 @@
 package classes;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,16 +18,20 @@ public class Exercise {
     private int minutes;
     private Date date;
     private Activity activity;
-    private int userID;
+    private User user;
     private double distance;  
     
     public Exercise(int exerciseID, int userID, Activity activity, Date date, int minutes, double distance) {
-        this.exerciseID = exerciseID;
-        this.minutes = minutes;
-        this.date = date;
-        this.activity = activity;
-        this.userID = userID;
-        this.distance = distance;
+        try {
+            this.exerciseID = exerciseID;
+            this.minutes = minutes;
+            this.date = date;
+            this.activity = activity;
+            this.user = new Database().getUser(userID);
+            this.distance = distance;
+        } catch (Exception ex) {
+            Logger.getLogger(Exercise.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
    
@@ -37,7 +43,7 @@ public class Exercise {
     
     public double getCaloriesBurnt() throws Exception{
         
-        return (int) (new Database().currentWeight(userID).getWeight() * this.activity.getMET() * this.getHours());
+        return this.user.getWeight() * this.activity.getMET() * this.getHours();
     }
 
     public int getExerciseID() {
@@ -56,8 +62,8 @@ public class Exercise {
         return this.activity.getActivity();
     }
         
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
     public double getDistance() {
