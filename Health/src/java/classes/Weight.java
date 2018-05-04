@@ -5,19 +5,25 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Weight {
 
     private int weightID;
-    private int userID;
+    private User user;
     private double weight;
     private Date date;
 
     public Weight(int weightID, int userID, double weight, Date date) {
-        this.weightID = weightID;
-        this.userID = userID;
-        this.weight = weight;
-        this.date = date;
+        try {
+            this.weightID = weightID;
+            this.user = new Database().getUser(userID);
+            this.weight = weight;
+            this.date = date;
+        } catch (Exception ex) {
+            Logger.getLogger(Weight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
