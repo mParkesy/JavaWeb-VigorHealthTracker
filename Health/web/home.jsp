@@ -28,6 +28,7 @@
                 $(".square").click(function () {
                     //$(this).fadeOut();
                 });
+
                 /*
                 function generatePie(){
                     var protein = 0;
@@ -59,6 +60,7 @@
                 */
                 
                 
+
             });
         </script>
 
@@ -66,14 +68,9 @@
     <body>
         <%@ include file="fragments/navbar.jspf" %>
         <div class="container animated fadeIn">
-            <div class=" page-header">
+            <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
-                
             </div>
-                
-            
-
-            
             <div class="row row-tile">
                 <a class="border col-lg-3 col-md-4 col-6 square" href ="food.jsp"> 
                     <i style="color:#686ea0" class="fas fa-utensils "></i>
@@ -107,8 +104,13 @@
                     <i style="color:darkgrey" class="fas fa-cog "></i>
                     <h2>Settings</h2>   
                 </a> 
+                <a class="border col-lg-3 col-md-4 col-6 square" href ="goal.jsp">
+                        <i style="color:greenyellow" class="fas fa-bullseye"></i>
+                        <h2>Goals</h2>
+                </a>
 
-            </div>
+
+            
         </div>
 
     </body>

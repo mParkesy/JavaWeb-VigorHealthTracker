@@ -701,6 +701,7 @@ public class Database {
         return log;
     }
     
+
     //----------------------------NOTIFICATIONS--------------------------------------
      public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
         ArrayList<Notification> list = new ArrayList<>();
@@ -730,5 +731,18 @@ public class Database {
         } 
         
      }
+
+
+    // ---------------------------------------------GOAL----------------------------------------------------------
+    public Goal insertGoal(){
+        
+        return null;
+    }
+    
+    public Goal getGoal(int groupID){
+        
+        return null;
+    }
+           
 
 }
