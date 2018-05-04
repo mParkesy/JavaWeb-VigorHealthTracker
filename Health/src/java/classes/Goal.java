@@ -6,6 +6,8 @@
 package classes;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,7 +16,7 @@ import java.util.Date;
 public abstract class Goal {
     private int goalID;
     private String goalName;
-    private int userID;
+    private User user;
     //private Date start;
     //private Date end;
     private boolean complete;
@@ -22,7 +24,11 @@ public abstract class Goal {
     public Goal(int goalID, String goalName, int userID, boolean complete) {
         this.goalID = goalID;
         this.goalName = goalName;
-        this.userID = userID;
+        try {
+            this.user = new Database().getUser(userID);
+        } catch (Exception ex) {
+            Logger.getLogger(Goal.class.getName()).log(Level.SEVERE, null, ex);
+        }
        // this.start = start;
         //this.end = end;
         this.complete = complete;
@@ -36,8 +42,8 @@ public abstract class Goal {
         return goalName;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
 //    public Date getStart() {
@@ -60,8 +66,8 @@ public abstract class Goal {
         this.goalName = goalName;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 //    public void setStart(Date start) {
