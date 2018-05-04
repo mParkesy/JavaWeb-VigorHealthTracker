@@ -35,7 +35,45 @@ public class GroupController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        String function = request.getParameter("function");
+        int groupID = Integer.parseInt(request.getParameter("groupID"));
+        int userID = 0;
+        Database db = new Database();
+        Group g = db.getGroup(groupID);
+        switch (function) {
+            case "AcceptInvite":
+                userID = Integer.parseInt(request.getParameter("userID"));
+                db.acceptInvite(groupID, userID);
+                break;
+            case "GroupInfo":
+                response.getWriter().println("<h5 class='card-title'>" + g.getGroupName() + "</h5>");
+                response.getWriter().println("<p class=\"card-text\">" + g.getDescription() + "</p>");
+                break;
+            case "AddUser":
+                String username = request.getParameter("username");
+                try {
+                    User u = db.getUser(username);
+                    if (db.insertMember(groupID, u.getID())) {
+                        response.getWriter().println("<h2>Member added</h2>");
+                    } else {
+                        response.getWriter().println("<h1>Failed to add member</h1>");
+                    }
+                    
+                } catch (Exception ex) {
+                    System.out.println("Failed to generate user from username "
+                            + "in add member");
+                }   break;
+            case "IsAdmin":
+                userID = Integer.parseInt(request.getParameter("userID"));
+                if(db.isAdmin(userID, groupID)){
+                    response.getWriter().println("true");
+                } else {
+                    response.getWriter().println("false");
+                }
+            default:
+                break;
+        }
+
     }
 
     /**
@@ -51,13 +89,14 @@ public class GroupController extends HttpServlet {
             throws ServletException, IOException {
         int userID = Integer.parseInt(request.getParameter("userID"));
         String name = request.getParameter("name");
+        String description = request.getParameter("description");
         
         try {
-            new Database().insertGroup(userID, name);
-            request.getRequestDispatcher("group.jsp").include(request, response);
+            new Database().insertGroup(userID, name, description);
+            response.sendRedirect("group.jsp");
         } catch (Exception ex) {
-           ex.printStackTrace();
+            System.out.println("Failed to add group");
         }
-        
+
     }
 }

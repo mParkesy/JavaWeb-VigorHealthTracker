@@ -1,19 +1,27 @@
 package classes;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Group {
 
     private int groupID;
     private String groupName;
-    private int userID;
+    private User user;
+    private String description;
+    private String imagePath;
     //private Goal groupGoal
 
-    public Group(int groupID, String groupName, int userID) {
-        this.groupID = groupID;
-        this.groupName = groupName;
-        this.userID = userID;
+    public Group(int groupID, String groupName, int userID, String description) {
+        try {
+            this.groupID = groupID;
+            this.groupName = groupName;
+            this.user = new Database().getUser(userID);
+            this.description = description;
+        } catch (Exception ex) {
+            Logger.getLogger(Group.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
-   
 
     public int getGroupID() {
         return groupID;
@@ -21,6 +29,10 @@ public class Group {
 
     public String getGroupName() {
         return groupName;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public void setGroupID(int groupID) {
@@ -31,4 +43,25 @@ public class Group {
         this.groupName = groupName;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    
 }

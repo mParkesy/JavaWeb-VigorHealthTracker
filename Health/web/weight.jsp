@@ -14,35 +14,48 @@
         
         
         <script>
-        window.onload = function () {
-            var options = {
-                    animationEnabled: true,  
-                    axisX: {
-                            valueFormatString: "DD MMM"
-                    },
-                    axisY: {
-                            suffix: "kg",
-                            includeZero: false
-                    },
-                    data: [{
-                            yValueFormatString: "###.##kg",
-                            xValueFormatString: "DD MMM,YY",
-                            type: "spline",
-                            dataPoints: [
-                                <c:forEach items="<%=db.allWeight(currentUser.getID()) %>" var="w">
-                                    { x: new Date(${w.getYear()},${w.getMonth()},${w.getDay()}), y: ${w.getWeight()}},
-                                </c:forEach>
-                            ]
-                    }]
-            };
-            $("#chartContainer").CanvasJSChart(options);
+        $(document).ready(function(){
+            var ctx = document.getElementById("weightChart").getContext('2d');
+            var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data:    {
+                datasets: [
+                    {
+                        label: "Weight",
+                        data: [
+                            <c:forEach items="<%=db.allWeight(currentUser.getID()) %>" var="w">
+                                { x: "${w.getDay()}/${w.getMonth()}/${w.getYear()}", y: ${w.getWeight()}},
+                            </c:forEach>
+                        ]
+                    }
+                ]
+            },
+            options: {
+            lineTension :0,
+            responsive: true,
+            scales:     {
+                xAxes: [{
+                    type:       "time",
+                    time:       {
+                        format: 'DD/MM/YYYY',
+                        tooltipFormat: 'll'
+                    }
+                }]
+            }
         }
+            });
+        });
+        
+        
         </script>
+        
     </head>
     <body>
         <%@ include file="fragments/navbar.jspf" %>
-        <div class="graph" id="chartContainer" style="height: 300px;"></div>
-        <script src="scripts/jquery.canvasjs.min.js"></script>
+        <!--<div class="graph" id="chartContainer" style="height: 300px;"></div> -->
+        
+       
+       
         
 
         <!-- Modal -->
@@ -81,7 +94,7 @@
             <div class="col-lg-4 col-md-8 col-sm-10">
                 <h1>Weight History</h1>                
                 
-
+                <canvas id="weightChart" ></canvas>
                 <table class="table table-striped">
                 <thead>
                   <tr>

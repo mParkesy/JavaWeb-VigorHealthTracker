@@ -28,6 +28,7 @@
                 $(".square").click(function () {
                     //$(this).fadeOut();
                 });
+
                 /*
                 function generatePie(){
                     var protein = 0;
@@ -59,31 +60,17 @@
                 */
                 
                 
+
             });
         </script>
-        
+
     </head>
     <body>
         <%@ include file="fragments/navbar.jspf" %>
-        <%
-            if(session.getAttribute("user") == null){
-                response.sendRedirect("login.jsp");
-            }
-            
-        %>
         <div class="container animated fadeIn">
-            <div class=" page-header">
+            <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
-                
             </div>
-                <!--
-                <div class="ol-lg-4 col-md-4 col-12">
-                    <canvas width="300px" height="300px" id="dailyCals"></canvas>
-                    
-                    
-                </div>
-              -->
-            
             <div class="row row-tile">
                 <a class="border col-lg-3 col-md-4 col-6 square" href ="food.jsp"> 
                     <i style="color:#686ea0" class="fas fa-utensils "></i>
@@ -117,8 +104,14 @@
                     <i style="color:darkgrey" class="fas fa-cog "></i>
                     <h2>Settings</h2>   
                 </a> 
-            </div>
+                <a class="border col-lg-3 col-md-4 col-6 square" href ="goal.jsp">
+                        <i style="color:greenyellow" class="fas fa-bullseye"></i>
+                        <h2>Goals</h2>
+                </a>
+
+
+            
         </div>
-       
+
     </body>
 </html>

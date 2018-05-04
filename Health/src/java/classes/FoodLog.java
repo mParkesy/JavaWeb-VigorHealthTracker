@@ -6,6 +6,8 @@
 package classes;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,16 +17,20 @@ public class FoodLog {
 
     private int id;
     private Food food;
-    private int userID;
+    private User user;
     private String meal;
     private Date date;
 
     public FoodLog(int id, Food food, int userID, String meal, Date date) {
-        this.id = id;
-        this.food = food;
-        this.userID = userID;
-        this.meal = meal;
-        this.date = date;
+        try {
+            this.id = id;
+            this.food = food;
+            this.user = new Database().getUser(userID);
+            this.meal = meal;
+            this.date = date;
+        } catch (Exception ex) {
+            Logger.getLogger(FoodLog.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -58,15 +64,15 @@ public class FoodLog {
     /**
      * @return the userID
      */
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
     /**
      * @param userID the userID to set
      */
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
