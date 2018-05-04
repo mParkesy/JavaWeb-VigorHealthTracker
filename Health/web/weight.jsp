@@ -12,7 +12,7 @@
     <head>
         <%@ include file="fragments/header.jspf" %> 
         
-        <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+        
         <script>
         $(document).ready(function(){
             var ctx = document.getElementById("weightChart").getContext('2d');

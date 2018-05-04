@@ -416,6 +416,21 @@ public class Database {
         return group;
     }
 
+    public boolean insertMember(int groupID, int userID) {
+        try {
+            String sql = "INSERT INTO groupmembers (userID, groupID, joined)"
+                    + "VALUES (?,?, 0)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, groupID);
+            st.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Failed to add a new member into a group");
+            return false;
+        }
+    }
+
     public boolean isAdmin(int userID, int groupID) {
         try {
             String sql = "SELECT * FROM ugroup WHERE userID = ? AND groupID = ?";
@@ -487,7 +502,25 @@ public class Database {
         }
     }
 
-    // ---------------------------------------------Activity----------------------------------------------------------
+    public ArrayList<Exercise> getGroupRecentExercise(int groupID) {
+        ArrayList<Exercise> list = new ArrayList<>();
+        try {
+            String sql = "SELECT e.exerciseID, g.userID, e.activityID, max(e.date) FROM exercise e INNER JOIN groupmembers g on e.userID = g.userID where g.groupID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, groupID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                Exercise e = getExercise(result.getInt("exerciseID"));
+                list.add(e);
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get list of group exercises");
+        }
+        return list;
+    }
+
+    // ---------------------------------------------ACTIVITY----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
         try {
@@ -530,7 +563,7 @@ public class Database {
         return activityList;
     }
 
-    // ---------------------------------------------Exercise----------------------------------------------------------
+    // ---------------------------------------------EXERCISE----------------------------------------------------------
     public Exercise insertExercise(int userID, int activityID, Date date, int minutes, double distance) throws Exception {
         Exercise exercise = null;
         try {
@@ -561,7 +594,25 @@ public class Database {
         return exercise;
     }
 
-    // ---------------------------------------------Food----------------------------------------------------------
+    public Exercise getExercise(int exerciseID) throws Exception {
+        Exercise exercise = null;
+        try {
+            String sql = "SELECT * FROM exercise WHERE exerciseID = ?";
+
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, exerciseID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                exercise = new Exercise(exerciseID, result.getInt("userID"), getActivity(result.getInt("activityID")), result.getDate("date"), result.getInt("minutes"), result.getDouble("distance"));
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get exercise by ID");
+        }
+        return exercise;
+    }
+
+    // ---------------------------------------------FOOD----------------------------------------------------------
     public ArrayList<Food> allFood() throws Exception {
         ArrayList<Food> foodList = new ArrayList<>();
         try {
@@ -610,7 +661,7 @@ public class Database {
         return food;
     }
 
-    // ---------------------------------------------FoodLog----------------------------------------------------------
+    // ---------------------------------------------FOODLOG----------------------------------------------------------
     /**
      * Construct a FoodLog instance and add it to the database
      *
@@ -649,4 +700,49 @@ public class Database {
         }
         return log;
     }
+    
+
+    //----------------------------NOTIFICATIONS--------------------------------------
+     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
+        ArrayList<Notification> list = new ArrayList<>();
+        String sql = "SELECT * FROM notification WHERE userID =?";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, id);
+        ResultSet rs = st.executeQuery();
+         System.out.println("BOOBS");
+        while (rs.next()) {
+            list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
+        }
+        return list;
+    }
+     
+     public void deleteNotification(int id){
+         
+        Notification n = null;
+        try{
+            String sql = "DELETE FROM notification WHERE id = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        }
+        catch(SQLException ex){
+               System.out.println("ERROR DELETING NOTIF"); 
+        } 
+        
+     }
+
+
+    // ---------------------------------------------GOAL----------------------------------------------------------
+    public Goal insertGoal(){
+        
+        return null;
+    }
+    
+    public Goal getGoal(int groupID){
+        
+        return null;
+    }
+           
+
 }
