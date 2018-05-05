@@ -37,7 +37,8 @@ public class Database {
         }
     }
 
-    public static String passwordDigest(String p) throws NoSuchAlgorithmException {
+    public static String passwordDigest(String p) 
+            throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("MD5");
         digest.update(p.getBytes(), 0, p.length());
         return new BigInteger(1, digest.digest()).toString(16);
@@ -52,10 +53,12 @@ public class Database {
         ResultSet rs = st.executeQuery();
 
         if (rs.next()) {
-            user = new User(id, rs.getString("username"), rs.getString("firstname"),
-                    rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
-                    (Date) rs.getDate("dob"), rs.getDouble("exerciseLevel")
+            user = new User(id, rs.getString("username"), 
+                    rs.getString("firstname"), rs.getString("lastname"), 
+                    rs.getString("gender"), rs.getString("postcode"),
+                    rs.getString("nationality"), rs.getString("email"), 
+                    rs.getDouble("height"), (Date) rs.getDate("dob"), 
+                    rs.getDouble("exerciseLevel")
             );
 
         } else {
@@ -71,28 +74,17 @@ public class Database {
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            user = new User(rs.getInt("userID"), username, rs.getString("firstname"),
-                    rs.getString("lastname"), rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"), rs.getDouble("height"),
-                    (Date) rs.getDate("dob"), rs.getDouble("exerciseLevel")
+            user = new User(rs.getInt("userID"), username, 
+                    rs.getString("firstname"), rs.getString("lastname"), 
+                    rs.getString("gender"), rs.getString("postcode"),
+                    rs.getString("nationality"), rs.getString("email"), 
+                    rs.getDouble("height"), (Date) rs.getDate("dob"), 
+                    rs.getDouble("exerciseLevel")
             );
         } else {
             return user;
         }
         return user;
-    }
-
-    public boolean exists(String username) throws SQLException, Exception {
-        String sql = "SELECT username FROM user WHERE username =?";
-        CON.getConnection();
-        PreparedStatement st = CON.prepareStatement(sql);
-        st.setString(1, username);
-        ResultSet rs = st.executeQuery();
-        if(rs == null){
-            return false; 
-        } else {
-            return true;
-        }
     }
     
     public String getPassword(int userID) throws SQLException {
@@ -140,12 +132,16 @@ public class Database {
 
             st.executeUpdate();
             int userID = 0;
-            // get the auto incremented id created by the database, construct user
+            /**
+             * get the auto incremented id created by the database, 
+             * construct user
+             */
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
                     userID = key.getInt(1);
                     user = new User(userID, username, firstname, lastname,
-                            gender, postcode, nationality, email, height, dob, exercise);
+                            gender, postcode, nationality, email, height, 
+                            dob, exercise);
                 } else {
                     throw new SQLException("No ID found, User not created");
                 }
@@ -169,7 +165,8 @@ public class Database {
         ArrayList<Weight> weightList = new ArrayList<>();
 
         try {
-            String sql = "SELECT * FROM weight WHERE userID = ? ORDER BY date DESC";
+            String sql = "SELECT * FROM weight WHERE userID = ? "
+                    + "ORDER BY date DESC";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, id);
 
@@ -243,7 +240,8 @@ public class Database {
                 Date wakeTime = result.getDate("wakeTime");
                 int sleepGrade = result.getInt("sleepGrade");
 
-                sleep = new Sleep(sleepID, userID, bedTime, wakeTime, sleepGrade);
+                sleep = new Sleep(sleepID, userID, bedTime, 
+                        wakeTime, sleepGrade);
 
                 sleepList.add(sleep);
             }
@@ -270,7 +268,8 @@ public class Database {
                 int minutes = result.getInt("minutes");
                 double distance = result.getDouble("distance");
 
-                exercise = new Exercise(exerciseID, userID, getActivity(result.getInt("activityID")), date, minutes, distance);
+                exercise = new Exercise(exerciseID, userID, getActivity(
+                        result.getInt("activityID")), date, minutes, distance);
                 exerciseList.add(exercise);
             }
         } catch (SQLException ex) {
@@ -290,8 +289,8 @@ public class Database {
      * @return
      * @throws Exception
      */
-    public Sleep insertSleep(int userID, Date bedTime, Date wakeTime, int sleepGrade)
-            throws Exception {
+    public Sleep insertSleep(int userID, Date bedTime, Date wakeTime, 
+            int sleepGrade) throws Exception {
         Sleep sleep = null;
         try {
             String sql = "INSERT INTO sleep "
@@ -310,7 +309,8 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    sleep = new Sleep(key.getInt(1), userID, bedTime, wakeTime, sleepGrade);
+                    sleep = new Sleep(key.getInt(1), userID, bedTime, 
+                            wakeTime, sleepGrade);
                 } else {
                     throw new SQLException("No ID found, Sleep data not saved");
                 }
@@ -332,7 +332,8 @@ public class Database {
     public Weight currentWeight(int userID) throws Exception {
         Weight weight = null;
         try {
-            String sql = "SELECT * FROM weight WHERE date = (SELECT MAX(date) FROM weight where userID = ?)";
+            String sql = "SELECT * FROM weight WHERE date = (SELECT MAX(date) "
+                    + "FROM weight where userID = ?)";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             ResultSet result = st.executeQuery();
@@ -354,7 +355,8 @@ public class Database {
      * @param userID
      * @throws Exception
      */
-    public Weight insertWeight(int userID, double weight, Date date) throws Exception {
+    public Weight insertWeight(int userID, double weight, Date date) 
+            throws Exception {
         Weight log = null;
         try {
             String sql = "INSERT INTO `weight` (userID, weight, date)"
@@ -372,7 +374,8 @@ public class Database {
                 if (key.next()) {
                     log = new Weight(key.getInt(1), userID, weight, date);
                 } else {
-                    throw new SQLException("No ID found, Weight data not saved");
+                    throw new SQLException("No ID found, "
+                            + "Weight data not saved");
                 }
             }
         } catch (Exception ex) {
@@ -382,7 +385,8 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-    public Group insertGroup(int userID, String name, String description) throws SQLException, Exception {
+    public Group insertGroup(int userID, String name, String description) 
+            throws SQLException, Exception {
         Group group = null;
         try {
             String sql = "INSERT INTO ugroup (userID, name, description)"
@@ -425,7 +429,9 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                group = new Group(result.getInt("groupID"), result.getString("name"), result.getInt("userID"), result.getString("description"));
+                group = new Group(result.getInt("groupID"), 
+                        result.getString("name"), result.getInt("userID"), 
+                        result.getString("description"));
             }
         } catch (Exception ex) {
             System.out.println("Failed to get current weight");
@@ -435,7 +441,8 @@ public class Database {
 
     public boolean isAdmin(int userID, int groupID) {
         try {
-            String sql = "SELECT * FROM ugroup WHERE userID = ? AND groupID = ?";
+            String sql = "SELECT * FROM ugroup WHERE userID = ? "
+                    + "AND groupID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             st.setInt(2, groupID);
@@ -461,7 +468,8 @@ public class Database {
         ArrayList<Group> memberOf = new ArrayList<>();
         try {
 
-            String sql = "SELECT * FROM groupmembers WHERE userID = ? AND joined =?";
+            String sql = "SELECT * FROM groupmembers WHERE userID = ? "
+                    + "AND joined =?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             st.setInt(2, joined);
@@ -472,7 +480,8 @@ public class Database {
                 memberOf.add(group);
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get groups that the user is a part of");
+            System.out.println("Failed to get groups "
+                    + "that the user is a part of");
         }
 
         return memberOf;
@@ -480,7 +489,8 @@ public class Database {
 
     public void acceptInvite(int groupID, int userID) {
         try {
-            String sql = "UPDATE groupmembers SET joined = 1 WHERE userID = ? AND groupID = ?";
+            String sql = "UPDATE groupmembers SET joined = 1 WHERE userID = ? "
+                    + "AND groupID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             st.setInt(2, groupID);
@@ -492,7 +502,8 @@ public class Database {
 
     public boolean sendInvite(int groupID, int userID) {
         try {
-            String sql = "INSERT INTO groupmembers (userID, groupID, joined) VALUES(?,?,0)";
+            String sql = "INSERT INTO groupmembers (userID, groupID, joined) "
+                    + "VALUES(?,?,0)";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             st.setInt(2, groupID);
@@ -515,7 +526,8 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                activity = new Activity(activityID, result.getString("activity"), result.getDouble("MET"));
+                activity = new Activity(activityID, 
+                        result.getString("activity"), result.getDouble("MET"));
             }
         } catch (Exception ex) {
             System.out.println("Failed to get activity");
@@ -548,10 +560,12 @@ public class Database {
     }
 
     // ---------------------------------------------Exercise----------------------------------------------------------
-    public Exercise insertExercise(int userID, int activityID, Date date, int minutes, double distance) throws Exception {
+    public Exercise insertExercise(int userID, int activityID, Date date, 
+            int minutes, double distance) throws Exception {
         Exercise exercise = null;
         try {
-            String sql = "INSERT INTO `exercise` (activityID, userID, date, minutes, distance)"
+            String sql = "INSERT INTO `exercise` (activityID, userID, "
+                    + "date, minutes, distance)"
                     + "VALUES (?,?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
@@ -566,10 +580,12 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    exercise = new Exercise(key.getInt(1), userID, getActivity(activityID), date, minutes, distance);
+                    exercise = new Exercise(key.getInt(1), userID, 
+                            getActivity(activityID), date, minutes, distance);
 
                 } else {
-                    throw new SQLException("No ID found, Exercise data not saved");
+                    throw new SQLException("No ID found, "
+                            + "Exercise data not saved");
                 }
             }
         } catch (Exception ex) {
@@ -617,8 +633,9 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                food = new Food(id, result.getString("name"), result.getDouble("protein"),
-                        result.getDouble("fat"), result.getDouble("carbs"), result.getDouble("energy"),
+                food = new Food(id, result.getString("name"), 
+                        result.getDouble("protein"), result.getDouble("fat"), 
+                        result.getDouble("carbs"), result.getDouble("energy"),
                         result.getDouble("sugar"));
             }
         } catch (Exception ex) {
@@ -656,9 +673,11 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    log = new FoodLog(key.getInt(1), getFood(foodID), userID, meal, date);
+                    log = new FoodLog(key.getInt(1), getFood(foodID), 
+                            userID, meal, date);
                 } else {
-                    throw new SQLException("No ID found, Food Log data not saved");
+                    throw new SQLException("No ID found, "
+                            + "Food Log data not saved");
                 }
             }
         } catch (Exception ex) {

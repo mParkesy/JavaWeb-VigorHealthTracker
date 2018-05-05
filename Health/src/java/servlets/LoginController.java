@@ -10,11 +10,6 @@ import classes.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -41,8 +36,8 @@ public class LoginController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
 
     }
 
@@ -55,13 +50,17 @@ public class LoginController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         Database db = new Database();
-        
-        PrintWriter out = response.getWriter();
+        try {
+            Database.getConnection();
+        } catch (Exception ex) {
+            System.out.println("Failed to get connection to database "
+                    + "before login.");
+        }
 
         String passwordDigest = "";
         try {
@@ -72,7 +71,7 @@ public class LoginController extends HttpServlet {
 
         String error = "";
         try {
-            if(db.exists(username)){
+            if(db.getUser(username) != null){
                 User loginUser = db.getUser(username);
                 System.out.println(db.getPassword(loginUser.getID()));
                 if(passwordDigest.equals(db.getPassword(loginUser.getID()))){
@@ -83,19 +82,21 @@ public class LoginController extends HttpServlet {
                 } else {
                     error = "Password incorrect for that username";
                     request.setAttribute("message", error);
-                    request.getRequestDispatcher("login.jsp").include(request, response);
+                    request.getRequestDispatcher("login.jsp")
+                            .include(request, response);
                 }
             } else {
                 error = "The username you entered does not exist";
                 request.setAttribute("message", error);
-                request.getRequestDispatcher("login.jsp").include(request, response);
+                request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
             }
             
         } catch (Exception ex) {
-            ex.printStackTrace();
-            error = "Error";
+            error = "Error checking credentials, please try again.";
             request.setAttribute("message", error);
-            request.getRequestDispatcher("login.jsp").include(request, response);
+            request.getRequestDispatcher("login.jsp")
+                    .include(request, response);
         }
 
     }
