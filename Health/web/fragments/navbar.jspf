@@ -34,18 +34,48 @@
 
                 $('#notifications').on('click','a',function(){
                     
-                    $.post('NotificationController', {
-                    userID : ${user.getID()},
-                    notifID : $(this).attr('id')
-                    }, function(responseText) {
-                        var num = parseInt($('#notif').text());
-                        if(num == 1){
-                            $('#notif').hide();
-                        }
-                        else{
-                            $('#notif').text(parseInt($('#notif').text()) - 1) ;
-                        }   
-                    });
+                    if($(this).hasClass('invite')){
+                        swal({
+                            title: 'Group Invite',
+                            text: "Would you like to join " + $(this).text().substring(11) +"?",
+                            type: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Join'
+                          }).then((result) => {
+                            if (result.value) {
+                                groupID = $(this).attr('id');
+                                $.get('GroupController', {
+                                    function: "AcceptInvite",
+                                    groupID: groupID,
+                                    userID: ${user.getID()}
+                                }, function (response) {
+                                    swal(
+                                    'Invitation Accepted',
+                                    "user " + ${user.getID()} + " added to Group " + groupID,
+                                    'success'
+                                    );
+                                });
+                            }
+                          });
+                    }
+                    else{
+                        $.post('NotificationController', {
+                        userID : ${user.getID()},
+                        notifID : $(this).attr('id')
+                        }, function(responseText) {
+                            var num = parseInt($('#notif').text());
+                            if(num == 1){
+                                $('#notif').hide();
+                            }
+                            else{
+                                $('#notif').text(parseInt($('#notif').text()) - 1) ;
+                            }   
+                        });
+                    }
+                    
+                    
                 });
                
                 

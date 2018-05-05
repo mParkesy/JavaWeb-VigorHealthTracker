@@ -46,6 +46,15 @@ public class NotificationController extends HttpServlet {
         } catch (Exception ex) {
             Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        try{
+        for(Group g : new Database().getGroupList(userID, 0)){
+            response.getWriter().println("<a id='"+ g.getGroupID()+ "'class='dropdown-item invite' href='#'>"
+                    + "Invited to " + g.getGroupName()
+                    + "</a>" );
+        }
+        } catch (Exception ex) {
+            Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }
