@@ -6,3 +6,34 @@
     border-top-right-radius: 0;
     transform:translateX(-80px);
 }
+
+.msg-head{
+    padding:10px;
+    font-size:18px;
+    border-bottom: 2px white solid;
+}
+
+#msg{
+    right:20px;
+    bottom:0;
+    width:300px;
+    height:400px;
+    background:red;
+    position: fixed;
+}
+#msg .msg{
+    border-radius: 8px;
+    width: 170px;
+    padding:10px;
+    margin:10px;
+}
+
+#msg .to{
+    background: blue;
+    margin-left:100px;
+}
+
+#msg .from{
+    background:grey;
+    
+}

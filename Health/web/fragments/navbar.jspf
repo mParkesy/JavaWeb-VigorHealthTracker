@@ -75,6 +75,22 @@
     </h:choose>
 
         
-    </a>
+    
    
 </nav>
+<div id="msg" >
+    <div class="msg-head">
+        Chat with Fran
+    </div>
+    <div class="msg-body">
+        <div class="msg to">
+            Hi I'm Dan, how do you do partner?
+        </div>
+        <div class="msg from">
+            Hello my name is Fran, how are you?
+        </div>
+        <div class="msg from">
+            Hi?
+        </div>
+    </div>
+</div>
