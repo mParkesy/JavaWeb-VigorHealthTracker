@@ -149,6 +149,7 @@
 
     <h:choose>
         
+
         <h:when test = "${sessionScope.user == null}">
             <a class=' navbar-brand ' href='register.jsp'>Register</a>
         </h:when>
@@ -160,6 +161,7 @@
                 <a class='' ><i class='fas fa-bell bell'></i><div style='display: none' id='notif'></div></a>
                 </button>
                 <div id="notifications" class='dropdown-menu menu ' aria-labelledby='dropdownMenuButton'>
+
 
                 </div>
               </div>

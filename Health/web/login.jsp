@@ -36,12 +36,12 @@
             <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo.png">
             </div>
-            <h1>${message}</h1>
+            <h2>${message}</h2>
             <div class="row">
                 <div class=" col-lg-3 col-md-2 col-sm-0"></div>
                 <div class="jumbotron border col-lg-6 col-md-8 col-sm-12">
                     <div class=" col-lg-3 col-md-2 col-sm-0"></div>
-                    <form action="Login">
+                    <form action="LoginController" method="post">
                         <div class="form-group">
                             <label for="text">Username:</label>
                             <input type="text" class="form-control"  name="username" id="username">
