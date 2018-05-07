@@ -9,7 +9,7 @@
 <html>
     <head>
         <%@ include file="fragments/header.jspf" %>
-       
+
     </head>
     <body>
         <%@ include file="fragments/navbar.jspf" %>
@@ -17,20 +17,27 @@
             <div class=" col-lg-4 col-md-2 col-sm-1"></div>
             <div class="col-lg-4 col-md-8 col-sm-10">
                 <h1>Settings</h1>
-                <form action="UserController" method="post">
+                <h2>${message}</h2>
+                <form class="modal-form" method ="post" action="UserController">
+                    <input type="hidden" name="userID" value="${user.getID()}">
                     <div class="form-group">
-                        <label for="text">Change Password</label>
-                        <input type="password" class="form-control" placeholder="Old Password"  name="username" id="usrOld" required>
-                        <input type="password" class="form-control" placeholder="New Password" name="username" id="usrNew" required>
-                        <input type="password" class="form-control" placeholder="Re-enter New Password" name="username" id="usrNewCheck" required>
-
-                        <input type="Submit" class="form-control"/>
+                        <label for="weight">Old Password:</label>
+                        <input type="password" class="form-control" name="oldpassword">
                     </div>
-                </form>
+                    <div class="form-group">
+                        <label for="date">New Password:</label>
+                        <input type="password" class="form-control" name="newpassword" >
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Retype New Password:</label>
+                        <input type="password" class="form-control" name="renewpassword" >
+                    </div>
+                    <button type="submit" class="btn btn-default">Add</button>
+                </form>    
             </div>
             <div class=" col-lg-4 col-md-2 col-sm-1"></div>
         </div>
     </body>
-    
+
 </html>
 

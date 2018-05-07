@@ -87,7 +87,8 @@ public class Database {
         return user;
     }
     
-    public String getPassword(int userID) throws SQLException {
+    public String getPassword(int userID) throws SQLException, 
+            NoSuchAlgorithmException {
         String sql = "SELECT password FROM user WHERE userID = ?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, userID);
@@ -96,6 +97,20 @@ public class Database {
             return rs.getString("password");
         }
         return null;
+    }
+    
+    public boolean updatePassword(String newPassword, int userID) 
+            throws SQLException{
+        try {
+            String sql = "UPDATE user SET password = ? WHERE userID  = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setString(1,newPassword);
+            st.setInt(2, userID);
+            st.executeUpdate();
+            return true;
+        } catch (SQLException ex){
+            return false;
+        }
     }
 
     public User insertUser(String username, String password, String firstname,
