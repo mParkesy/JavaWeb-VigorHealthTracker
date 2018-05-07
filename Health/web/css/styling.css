@@ -82,3 +82,31 @@
 .msg-title{
     display:inline;
 }
+.carousel{
+    text-align: center;
+    background:rgb(220,220,220);
+    height:350px;
+    width:100%;
+}
+
+.chart-container{
+    text-align:left;
+    position:absolute;
+    
+}
+
+#myChart{
+    
+    margin:auto;
+    margin-left:15%;
+    height:250px;
+}
+
+.content {
+    font-size: 18px;
+    margin-top:50px;
+    position:absolute;
+    display:inline;
+    text-align:left;
+    
+}

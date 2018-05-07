@@ -160,8 +160,16 @@
                 <button class='btn btn-link' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                 <a class='' ><i class='fas fa-bell bell'></i><div style='display: none' id='notif'></div></a>
                 </button>
+                
+                <button class='btn btn-link' type='button'>
+                    <a class='' href="settings.jsp">
+                        <i  class="fas fa-cog bell"></i>
+                    </a>
+                </button>
+                
+                
                 <div id="notifications" class='dropdown-menu menu ' aria-labelledby='dropdownMenuButton'>
-
+                
 
                 </div>
               </div>
