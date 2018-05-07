@@ -38,23 +38,36 @@
                     });
                     
                 }
-                 notifCounter();
-                
-                setInterval(function(){ 
-                    notifCounter();
-                    
-                }, 2000);
+                notifCounter();
                 
                 function getMessages(recipientID){
+                    
                     $.get('MessageController', {
                         userID : ${user.getID()},
                         recipientID : recipientID
                     }, function(response) {
                         $('.msg-body').html(response);
+                        $('.msg-body').scrollTop($('.msg-body')[0].scrollHeight);
                     });
                 }
                 
-                        
+                var notifBefore = $('.dropdown-menu .dropdown-item').length;
+                
+                setInterval(function(){ 
+                    
+                    notifCounter();
+                    getMessages(currentRecipient);
+                    /*
+                    var notifAfter = $('.dropdown-menu .dropdown-item').length;
+                     console.log(notifBefore);
+                    console.log(notifAfter);
+                    if(notifBefore < notifAfter){
+                        var x = document.getElementById("myAudio"); 
+                        x.play();
+                        notifBefore = notifAfter;
+                    }
+                    */
+                }, 2000);
                 
                 $('#notifications').on('click','a',function(){
                     if($(this).hasClass('message')){
@@ -78,18 +91,28 @@
                     }
                     
                 });
-               
-                $('#send').click(function(){
-                console.log(currentRecipient);
-                console.log($('#msg input').val());
-                    $.post('MessageController', {
+                
+                function send(){
+                 $.post('MessageController', {
                         userID : ${user.getID()},
                         recipientID : currentRecipient,
                         message : $('#msg input').val()
-                        }, function(response) {
-                            getMessages(currentRecipient);
-                            
-                        });
+                    }, function(response) {
+                        getMessages(currentRecipient);
+                        $('#msg input').val("");
+                    });
+                }
+                
+                $(document).keypress(function(e) {
+                    if(e.which == 13) {
+                        send();
+                    }
+                });
+                
+                
+                
+                $('#send').click(function(){
+                    send();
                 });
                 
                 
@@ -118,7 +141,11 @@
             
     </h:choose>
 
-        
+<audio id="myAudio">
+  
+  <source src="hello.mp3" type="audio/mpeg">
+  
+</audio>   
     
    
 </nav>

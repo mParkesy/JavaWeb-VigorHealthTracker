@@ -380,14 +380,8 @@ public class Database {
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
                     int groupID = key.getInt(1);
-                    group = getGroup(groupID);
-                    sql = "INSERT INTO groupmembers (userID, groupID, joined)"
-                            + "VALUES (?,?,?)";
-                    st = CON.prepareStatement(sql);
-                    st.setInt(1, userID);
-                    st.setInt(2, groupID);
-                    st.setInt(3, 1);
-                    st.executeUpdate();
+                    insertMember(groupID, userID);
+                    acceptInvite(groupID,userID);
                 } else {
                     throw new SQLException("No ID found, group data not saved");
                 }
@@ -467,7 +461,10 @@ public class Database {
 
             while (result.next()) {
                 Group group = getGroup(result.getInt("groupID"));
-                memberOf.add(group);
+                if(!(isAdmin(userID,group.getGroupID()) && joined == 0)){
+                    memberOf.add(group);
+                }
+                
             }
         } catch (Exception ex) {
             System.out.println("Failed to get groups that the user is a part of");
@@ -799,6 +796,21 @@ public class Database {
             st.executeUpdate();
         } catch (Exception ex) {
             System.out.println("Failed to send message");
+        }
+    }
+    
+    //Set message as seen
+    public void setSeen(int userID, int senderID) throws SQLException{
+        try {
+            String sql = "UPDATE message SET seen = 1 WHERE senderID = ? AND recipientID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, senderID);
+            st.setInt(2, userID);
+
+            st.executeUpdate();
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
         }
     }
 }

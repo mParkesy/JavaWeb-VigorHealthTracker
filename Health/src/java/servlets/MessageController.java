@@ -40,8 +40,15 @@ public class MessageController extends HttpServlet {
             throws ServletException, IOException {
         int userID = Integer.parseInt(request.getParameter("userID"));
         int recipientID = Integer.parseInt(request.getParameter("recipientID"));
+       Database db = new Database();
         try {
-            for(Message m : new Database().getMessages(userID,recipientID)){
+           db.setSeen(userID, recipientID);
+        } catch (SQLException ex) {
+            Logger.getLogger(MessageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            for(Message m : db.getMessages(userID,recipientID)){
                 String type = "to";
                 if(m.getSender().getID() == userID){
                     type = "from";
@@ -52,8 +59,9 @@ public class MessageController extends HttpServlet {
             }
         } catch (Exception ex) {
               response.getWriter().println("ERROR getting message list");
-               Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
     /**
