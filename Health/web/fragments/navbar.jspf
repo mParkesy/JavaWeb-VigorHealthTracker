@@ -88,7 +88,7 @@
                         message : $('#msg input').val()
                         }, function(response) {
                             getMessages(currentRecipient);
-                            alert("done");
+                            
                         });
                 });
                 
