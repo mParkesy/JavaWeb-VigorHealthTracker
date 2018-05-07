@@ -7,6 +7,8 @@ package servlets;
 
 import classes.*;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,10 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author owner
  */
-@WebServlet(name = "NotificationController", urlPatterns = {"/NotificationController"})
-public class NotificationController extends HttpServlet {
+@WebServlet(name = "MessageController", urlPatterns = {"/MessageController"})
+public class MessageController extends HttpServlet {
 
-   
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -36,30 +38,21 @@ public class NotificationController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        int userID = Integer.parseInt(request.getParameter("userID"));   
-        try{
-            
-            
-            
-            for(Notification n : new Database().getNotifications(userID)){
-                response.getWriter().println("<a id='"+ n.getId()+ "'class='dropdown-item' href='#'>" + n.getDesc()
-                    + "</a>" );
-            }
-            
-        } catch (Exception ex) {
-            Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         try{
-        for(Integer i : new Database().getUnread(userID)){
-            response.getWriter().println("<a id='"+ i 
-                + "'class='dropdown-item message' href='#'>Message from "
-                + new Database().getUser(i).getUsername()
-                + "</a>" );
+        int userID = Integer.parseInt(request.getParameter("userID"));
+        int recipientID = Integer.parseInt(request.getParameter("recipientID"));
+        try {
+            for(Message m : new Database().getMessages(userID,recipientID)){
+                String type = "to";
+                if(m.getSender().getID() == userID){
+                    type = "from";
+                }
+                response.getWriter().println("<div class='msg " + type + "'>"
+                  + m.getMessage()
+                  + "</div>");
             }
         } catch (Exception ex) {
-            response.getWriter().println("ERROR READING MSG");
-            Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
+              response.getWriter().println("ERROR getting message list");
+               Logger.getLogger(NotificationController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -75,9 +68,14 @@ public class NotificationController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int userID = Integer.parseInt(request.getParameter("userID"));
-        int notifID = Integer.parseInt(request.getParameter("notifID"));
-        new Database().deleteNotification(notifID);
-        
+        int recipientID = Integer.parseInt(request.getParameter("recipientID"));
+        String message = request.getParameter("message");
+        try {
+            new Database().sendMessage(message, userID, recipientID);
+        } catch (SQLException ex) {
+            response.getWriter().println("error sending message");
+        }
     }
+
 
 }

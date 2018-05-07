@@ -745,4 +745,60 @@ public class Database {
     }
            
 
+    // ---------------------------------------------MESSAGE----------------------------------------------------------
+    
+    //gets conversation between two users
+    public ArrayList<Message> getMessages(int senderID, int recipientID) throws SQLException, Exception {
+        ArrayList<Message> list = new ArrayList<>();
+        String sql = "SELECT * FROM `message` "
+                + "WHERE (recipientID = ? AND senderID = ?) "
+                + "OR (recipientID = ? AND senderID = ?)"
+                + "ORDER BY time ASC";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, recipientID);
+        st.setInt(2, senderID);
+        st.setInt(3, senderID);
+        st.setInt(4, recipientID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            User sender = this.getUser(rs.getInt("senderID"));
+            User recipent = this.getUser(rs.getInt("recipientID"));
+            Message msg = new Message(rs.getString("message"),sender,recipent);
+            list.add(msg);
+        }
+        return list;
+    }
+    
+    public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception{
+         ArrayList<Integer> list = new ArrayList<>();
+        String sql = "SELECT senderID ,MAX(time) "
+                + "FROM message WHERE recipientID = ? "
+                + "AND seen = 0 "
+                + "GROUP BY senderID";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            list.add(rs.getInt("senderID"));
+        }
+        return list;
+    }
+    
+    //Send message
+    public void sendMessage(String message, int senderID, int recipientID) throws SQLException{
+        try {
+            String sql = "INSERT INTO `message` "
+                    + "(senderID, recipientID, message,seen) "
+                    + "VALUES (?,?,?,0)";
+            PreparedStatement st = CON.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+            st.setInt(1, senderID);
+            st.setInt(2, recipientID);
+            st.setString(3, message);
+
+            st.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println("Failed to send message");
+        }
+    }
 }

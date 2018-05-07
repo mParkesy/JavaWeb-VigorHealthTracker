@@ -10,24 +10,15 @@ package classes;
  * @author owner
  */
 public class Message {
-    private int id;
     private String message;
     private User sender;
     private User recipent;
     //private DateTime
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
+    public Message( String message, User sender, User recipent) {
+        this.message = message;
+        this.sender = sender;
+        this.recipent = recipent;
     }
 
     /**

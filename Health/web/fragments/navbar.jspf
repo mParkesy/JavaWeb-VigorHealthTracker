@@ -8,7 +8,20 @@
         <script>
             $(document).ready(function(){
                 
+                var currentRecipient = 0;
                 
+                $('#notifications').on('click','.message',function(){
+                    $('#msg').removeClass('slideOutDown');
+                    $('#msg').show(); 
+                    $('.msg-title').text("Chat with " + $(this).text().substring(13));
+                });
+                $('#close').click(function(){
+                    $('#msg').addClass('slideOutDown');
+                    setTimeout(function(){ 
+                        $('#msg').hide(); 
+                    }, 1000);
+                    
+                });
                 function notifCounter(){
                     $.get('NotificationController', {
                     userID : ${user.getID()}
@@ -31,25 +44,56 @@
                     notifCounter();
                     
                 }, 2000);
-
-                $('#notifications').on('click','a',function(){
-                    
-                    $.post('NotificationController', {
-                    userID : ${user.getID()},
-                    notifID : $(this).attr('id')
-                    }, function(responseText) {
-                        var num = parseInt($('#notif').text());
-                        if(num == 1){
-                            $('#notif').hide();
-                        }
-                        else{
-                            $('#notif').text(parseInt($('#notif').text()) - 1) ;
-                        }   
+                
+                function getMessages(recipientID){
+                    $.get('MessageController', {
+                        userID : ${user.getID()},
+                        recipientID : recipientID
+                    }, function(response) {
+                        $('.msg-body').html(response);
                     });
+                }
+                
+                        
+                
+                $('#notifications').on('click','a',function(){
+                    if($(this).hasClass('message')){
+                        currentRecipient = $(this).attr('id');
+                        getMessages(currentRecipient);
+                    }
+                    else{
+                        $.post('NotificationController', {
+                        userID : ${user.getID()},
+                        notifID : $(this).attr('id')
+
+                        }, function(responseText) {
+                            var num = parseInt($('#notif').text());
+                            if(num == 1){
+                                $('#notif').hide();
+                            }
+                            else{
+                                $('#notif').text(parseInt($('#notif').text()) - 1) ;
+                            }   
+                        });
+                    }
+                    
                 });
                
+                $('#send').click(function(){
+                console.log(currentRecipient);
+                console.log($('#msg input').val());
+                    $.post('MessageController', {
+                        userID : ${user.getID()},
+                        recipientID : currentRecipient,
+                        message : $('#msg input').val()
+                        }, function(response) {
+                            getMessages(currentRecipient);
+                            alert("done");
+                        });
+                });
                 
-            })
+                
+            });
         </script>
 
     <h:choose>
@@ -78,19 +122,26 @@
     
    
 </nav>
-<div id="msg" >
+<div id="msg" class="animated slideInUp" style="display:none">
     <div class="msg-head">
-        Chat with Fran
+        <div class="msg-title">
+            Chat
+        </div>
+        
+        
+        <a hre="#" id="close">
+            <i class="fas fa-times close"></i>
+        </a>
     </div>
     <div class="msg-body">
-        <div class="msg to">
-            Hi I'm Dan, how do you do partner?
-        </div>
-        <div class="msg from">
-            Hello my name is Fran, how are you?
-        </div>
-        <div class="msg from">
-            Hi?
-        </div>
+        
+        
     </div>
+    <div class="msg-footer">
+        <input type="text" class="form-control"/>
+        <button type="submit" id="send" class="btn btn-primary">
+            <i class="fas fa-paper-plane send"></i>
+        </button>
+    </div>
+    
 </div>
