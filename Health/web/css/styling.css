@@ -6,3 +6,79 @@
     border-top-right-radius: 0;
     transform:translateX(-80px);
 }
+
+.msg-head{
+    padding:10px;
+    border-bottom: 1px rgb(220,220,220) solid;
+    background:rgb(220,220,220);
+    border-radius: 8px 8px 0 0;
+}
+.msg-body{
+    overflow-y: scroll;
+    height:300px;
+}
+#msg{
+    right:20px;
+    bottom:0;
+    width:300px;
+    background:white;
+    border:1px solid rgb(220,220,220);
+    position: fixed;
+    border-radius: 10px 10px 0 0;
+    z-index: 3;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    display:none;
+}
+#msg .msg{
+    border-radius: 8px;
+    width: 170px;
+    padding:10px;
+    margin:10px;   
+}
+
+.msg-footer{
+    width:100%;
+    display:inline;
+    padding:0;
+}
+
+.msg-footer input{
+    display:inline-block;
+    width:250px;
+    transform:translateY(2px);
+    border-radius: 8px 0 0 8px;
+}
+.send{
+    font-size:20px;
+    margin:0;
+    padding:0;
+}
+
+.close{
+    float:right;
+    padding:0;
+    margin:0;
+}
+
+.msg-footer .btn{
+    border-radius:0 8px 8px 0;
+    width:47px;
+    margin:0;
+    margin-left:-4px;
+    text-align: center;
+    display:inline-block;
+}
+
+#msg .from{
+    background: rgb(180,220,255);
+    margin-left:100px;
+}
+
+#msg .to{
+    background:rgb(230,230,230);
+    
+}
+
+.msg-title{
+    display:inline;
+}

@@ -8,7 +8,20 @@
         <script>
             $(document).ready(function(){
                 
+                var currentRecipient = 0;
                 
+                $('#notifications').on('click','.message',function(){
+                    $('#msg').removeClass('slideOutDown');
+                    $('#msg').show(); 
+                    $('.msg-title').text("Chat with " + $(this).text().substring(13));
+                });
+                $('#close').click(function(){
+                    $('#msg').addClass('slideOutDown');
+                    setTimeout(function(){ 
+                        $('#msg').hide(); 
+                    }, 1000);
+                    
+                });
                 function notifCounter(){
                     $.get('NotificationController', {
                     userID : ${user.getID()}
@@ -25,16 +38,43 @@
                     });
                     
                 }
-                 notifCounter();
+                notifCounter();
+                
+                function getMessages(recipientID){
+                    
+                    $.get('MessageController', {
+                        userID : ${user.getID()},
+                        recipientID : recipientID
+                    }, function(response) {
+                        $('.msg-body').html(response);
+                        $('.msg-body').scrollTop($('.msg-body')[0].scrollHeight);
+                    });
+                }
+                
+                var notifBefore = $('.dropdown-menu .dropdown-item').length;
                 
                 setInterval(function(){ 
+                    
                     notifCounter();
-                    
+                    getMessages(currentRecipient);
+                    /*
+                    var notifAfter = $('.dropdown-menu .dropdown-item').length;
+                     console.log(notifBefore);
+                    console.log(notifAfter);
+                    if(notifBefore < notifAfter){
+                        var x = document.getElementById("myAudio"); 
+                        x.play();
+                        notifBefore = notifAfter;
+                    }
+                    */
                 }, 2000);
-
+                
                 $('#notifications').on('click','a',function(){
-                    
-                    if($(this).hasClass('invite')){
+                    if($(this).hasClass('message')){
+                        currentRecipient = $(this).attr('id');
+                        getMessages(currentRecipient);
+                    }
+                    else if($(this).hasClass('invite')){
                         swal({
                             title: 'Group Invite',
                             text: "Would you like to join " + $(this).text().substring(11) +"?",
@@ -64,6 +104,7 @@
                         $.post('NotificationController', {
                         userID : ${user.getID()},
                         notifID : $(this).attr('id')
+
                         }, function(responseText) {
                             var num = parseInt($('#notif').text());
                             if(num == 1){
@@ -74,12 +115,36 @@
                             }   
                         });
                     }
-                    
-                    
+  
+
                 });
-               
                 
-            })
+                function send(){
+                 $.post('MessageController', {
+                        userID : ${user.getID()},
+                        recipientID : currentRecipient,
+                        message : $('#msg input').val()
+                    }, function(response) {
+                        getMessages(currentRecipient);
+                        $('#msg input').val("");
+                    });
+                }
+                
+                $(document).keypress(function(e) {
+                    if(e.which == 13) {
+                        send();
+                    }
+
+                });
+                
+                
+                
+                $('#send').click(function(){
+                    send();
+                });
+                
+                
+            });
         </script>
 
     <h:choose>
@@ -104,7 +169,34 @@
             
     </h:choose>
 
-        
-    </a>
+<audio id="myAudio">
+  
+  <source src="hello.mp3" type="audio/mpeg">
+  
+</audio>   
+    
    
 </nav>
+<div id="msg" class="animated slideInUp" style="display:none">
+    <div class="msg-head">
+        <div class="msg-title">
+            Chat
+        </div>
+        
+        
+        <a hre="#" id="close">
+            <i class="fas fa-times close"></i>
+        </a>
+    </div>
+    <div class="msg-body">
+        
+        
+    </div>
+    <div class="msg-footer">
+        <input type="text" class="form-control"/>
+        <button type="submit" id="send" class="btn btn-primary">
+            <i class="fas fa-paper-plane send"></i>
+        </button>
+    </div>
+    
+</div>
