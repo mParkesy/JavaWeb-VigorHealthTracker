@@ -46,8 +46,9 @@ public class GroupController extends HttpServlet {
                 db.acceptInvite(groupID, userID);
                 break;
             case "GroupInfo":
-                response.getWriter().println("<h5 class='card-title'>" + g.getGroupName() + "</h5>");
-                response.getWriter().println("<p class=\"card-text\">" + g.getDescription() + "</p>");
+                //response.getWriter().println("<h5 class='card-title'>" + g.getGroupName() + "</h5>");
+                //response.getWriter().println("<p class=\"card-text\">" + g.getDescription() + "</p>");
+                response.getWriter().println(g.toJSON());
                 break;
             case "AddUser":
                 String username = request.getParameter("username");

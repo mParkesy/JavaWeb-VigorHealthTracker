@@ -24,11 +24,11 @@
                         userID: ${user.getID()}
                     }, function (response) {
                         swal(
-                                'Invitation Accepted',
-                                "user " + ${user.getID()} + " added to Group " + groupID,
-                                'success'
-                                )
-                    })
+                            'Invitation Accepted',
+                            "user " + ${user.getID()} + " added to Group " + groupID,
+                            'success'
+                            )
+                })
                 })
                 $('td a').click(function () {
                     groupID = $(this).attr('id');
@@ -36,6 +36,8 @@
                         function: "GroupInfo",
                         groupID: groupID
                     }, function (response) {
+                        var obj = JSON.parse(response);
+                        alert(obj.description);
                         $(".card-body h5").remove();
                         $(".card-body p").remove();
                         $(".card-body").prepend(response);

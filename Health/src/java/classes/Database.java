@@ -820,7 +820,7 @@ public class Database {
     
     public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception{
          ArrayList<Integer> list = new ArrayList<>();
-        String sql = "SELECT senderID ,MAX(time) "
+        String sql = "SELECT senderID ,MIN(time) "
                 + "FROM message WHERE recipientID = ? "
                 + "AND seen = 0 "
                 + "GROUP BY senderID";

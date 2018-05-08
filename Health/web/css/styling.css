@@ -4,7 +4,7 @@
     top: 48px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    transform:translateX(-80px);
+    transform:translateX(-60px);
 }
 
 .msg-head{
@@ -86,7 +86,7 @@
     text-align: center;
     background:rgb(220,220,220);
     height:350px;
-    width:100%;
+    width:102.7%;
 }
 
 .chart-container{

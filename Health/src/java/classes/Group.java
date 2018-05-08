@@ -1,5 +1,5 @@
 package classes;
-
+import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,6 +62,16 @@ public class Group {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-
+    
+    public String toJSON(){
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        str.append("\"description\": " + "\"" + this.description + "\"" + ",");
+        str.append("\"groupID\": " + "\"" + this.groupID + "\"" + ",");
+        str.append("\"groupName\": " + "\"" + this.groupName + "\"" + ",");
+        str.append("\"user\": " +  this.user.getID());
+        str.append("}");
+        return str.toString();
+    }
     
 }
