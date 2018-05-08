@@ -8,6 +8,7 @@ package servlets;
 import classes.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -46,8 +47,6 @@ public class GroupController extends HttpServlet {
                 db.acceptInvite(groupID, userID);
                 break;
             case "GroupInfo":
-                //response.getWriter().println("<h5 class='card-title'>" + g.getGroupName() + "</h5>");
-                //response.getWriter().println("<p class=\"card-text\">" + g.getDescription() + "</p>");
                 response.getWriter().println(g.toJSON());
                 break;
             case "AddUser":
@@ -71,6 +70,22 @@ public class GroupController extends HttpServlet {
                 } else {
                     response.getWriter().println("false");
                 }
+                break;
+            case "Members":
+                response.getWriter().println("[");
+                userID = Integer.parseInt(request.getParameter("userID"));
+                ArrayList<User> members = db.getMembers(groupID);
+                for(User u: members){
+                    //if(u.getID() != userID){
+                        response.getWriter().println(u.toJSON());
+                    //}
+                    
+                    if(members.indexOf(u) != (members.size() -1)){
+                        response.getWriter().println(",");
+                    }
+                }
+                response.getWriter().println("]");
+                break;
             default:
                 break;
         }

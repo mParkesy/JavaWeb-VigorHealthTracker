@@ -85,9 +85,11 @@
         <%@ include file="fragments/navbar.jspf" %>
         
         <div class="container animated fadeIn">
+            
             <div class=" col-lg-3 col-md-4 col-6 page-header">
                 <img src="img/logo4.png">
             </div>
+            
             <div  id="carouselExampleIndicators" class="carousel slide row" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -171,6 +173,6 @@
 
             
         </div>
-
+    </div>
     </body>
 </html>

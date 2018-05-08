@@ -1,18 +1,15 @@
 		*{
 			transition:all ease 0.2s;
 		}
+                body{
+                    overflow-x: hidden;
+                }
 
 		.square {
 
 			text-align:center;
 			height:200px;
 			width:250px;
-		}
-		div i{
-
-			font-size:70px;
-			padding:30px;
-			margin:auto;
 		}
 		
 		.square:hover{
@@ -194,5 +191,32 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
 
 .home{
     font-size: 25px;
+}
+
+.square i{
+    font-size:70px;
+    margin:35px;
+}
+
+#groupInfo{
+    height:80vh;
+}
+
+.list-group-item a{
+    color:black;
+}
+.active a{
+    color:white;
+}
+
+.active a:hover{
+    color:white;
+}
+
+.group-container{
+    margin-top:20px;
+}
+.groups{
+    background:rgba(255,255,255,0.75);
 }
 

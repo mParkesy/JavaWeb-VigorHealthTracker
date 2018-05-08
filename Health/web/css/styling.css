@@ -110,3 +110,27 @@
     text-align:left;
     
 }
+
+.msg-btn{
+    margin: 0 10px 0 10px;
+    float:right;
+}
+
+.slideOutDown,.slideInUp {
+    animation-duration: 0.5s;
+}
+
+.progress{
+    height:50px;
+}
+
+#groupInfo{
+     background: rgba(255,255,255,0.8);
+}
+body{
+    transition: none; 
+    
+}
+body:after {
+    background: rgba(0,0,0,0.1);
+}

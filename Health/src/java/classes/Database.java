@@ -440,10 +440,11 @@ public class Database {
             while (result.next()) {
                 group = new Group(result.getInt("groupID"), 
                         result.getString("name"), result.getInt("userID"), 
-                        result.getString("description"));
+                        result.getString("description"),
+                        result.getString("image"));
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get current weight");
+            System.out.println("Failed to get group");
         }
         return group;
     }
@@ -559,7 +560,25 @@ public class Database {
         }
         return list;
     }
+    
+    public ArrayList<User> getMembers(int groupID) {
+        ArrayList<User> list = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM groupmembers where groupID = ? AND joined = 1";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, groupID);
+            ResultSet result = st.executeQuery();
 
+            while (result.next()) {
+                User user = getUser(result.getInt("userID"));
+                list.add(user);
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get member list");
+        }
+        return list;
+    }
+    
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
@@ -850,7 +869,7 @@ public class Database {
             System.out.println("Failed to send message");
         }
     }
-    
+
     //Set message as seen
     public void setSeen(int userID, int senderID) throws SQLException{
         try {
