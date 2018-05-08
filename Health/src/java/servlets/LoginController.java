@@ -73,7 +73,6 @@ public class LoginController extends HttpServlet {
         try {
             if(db.getUser(username) != null){
                 User loginUser = db.getUser(username);
-                System.out.println(db.getPassword(loginUser.getID()));
                 if(passwordDigest.equals(db.getPassword(loginUser.getID()))){
                     HttpSession session = request.getSession();
                     session.setMaxInactiveInterval(10 * 60);

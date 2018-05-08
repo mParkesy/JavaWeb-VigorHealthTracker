@@ -9,8 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.TimeStamp;
 import java.util.ArrayList;
 import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Database {
 
@@ -251,12 +253,11 @@ public class Database {
 
             while (result.next()) {
                 int sleepID = result.getInt("sleepID");
-                Date bedTime = result.getDate("bedTime");
-                Date wakeTime = result.getDate("wakeTime");
+                java.sql.Timestamp bedTime = result.getTimestamp("bedTime");
+                java.sql.Timestamp wakeTime = result.getTimestamp("wakeTime");
                 int sleepGrade = result.getInt("sleepGrade");
-
-                sleep = new Sleep(sleepID, userID, bedTime, 
-                        wakeTime, sleepGrade);
+                sleep = new Sleep(sleepID, userID, new DateTime(bedTime.getTime()), 
+                        new DateTime(wakeTime.getTime()), sleepGrade);
 
                 sleepList.add(sleep);
             }
@@ -304,7 +305,7 @@ public class Database {
      * @return
      * @throws Exception
      */
-    public Sleep insertSleep(int userID, Date bedTime, Date wakeTime, 
+    public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime, 
             int sleepGrade) throws Exception {
         Sleep sleep = null;
         try {
@@ -314,14 +315,13 @@ public class Database {
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
-            java.sql.Date newBed = new java.sql.Date(bedTime.getTime());
-            st.setDate(2, newBed);
-            java.sql.Date newWake = new java.sql.Date(wakeTime.getTime());
-            st.setDate(3, newWake);
+            java.sql.Timestamp bed = new java.sql.Timestamp(bedTime.getMillis());
+            st.setTimestamp(2, bed);
+            java.sql.Timestamp wake = new java.sql.Timestamp(wakeTime.getMillis());
+            st.setTimestamp(3, wake);
             st.setInt(4, sleepGrade);
 
-            st.executeQuery();
-
+            st.executeUpdate();
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
                     sleep = new Sleep(key.getInt(1), userID, bedTime, 
@@ -331,6 +331,7 @@ public class Database {
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             System.out.println("Failed to insert sleep data");
         }
         return sleep;
@@ -758,7 +759,6 @@ public class Database {
         PreparedStatement st = this.CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
-         System.out.println("BOOBS");
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
         }
