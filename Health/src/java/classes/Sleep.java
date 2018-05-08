@@ -8,6 +8,8 @@ package classes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,7 +17,7 @@ import java.util.Date;
  */
 public class Sleep {
     private int sleepID;
-    private int userID;
+    private User user;
     private Date bedTime;
     private Date wakeTime;
     private int sleepGrade;
@@ -29,11 +31,15 @@ public class Sleep {
      * @param sleepGrade 
      */
     public Sleep(int sleepID, int userID, Date bedTime, Date wakeTime, int sleepGrade) {
-        this.sleepID = sleepID;
-        this.userID = userID;
-        this.bedTime = bedTime;
-        this.wakeTime = wakeTime;
-        this.sleepGrade = sleepGrade;
+        try {
+            this.sleepID = sleepID;
+            this.user = new Database().getUser(userID);
+            this.bedTime = bedTime;
+            this.wakeTime = wakeTime;
+            this.sleepGrade = sleepGrade;
+        } catch (Exception ex) {
+            Logger.getLogger(Sleep.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
    
@@ -80,8 +86,8 @@ public class Sleep {
         return sleepID;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
     
     
