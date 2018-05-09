@@ -7,14 +7,9 @@ package servlets;
 
 import classes.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,8 +33,8 @@ public class RegisterController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
     }
 
     /**
@@ -51,9 +46,16 @@ public class RegisterController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         Database db = new Database();
+        try {
+            Database.getConnection();
+        } catch (Exception ex) {
+            System.out.println("Failed to get connection to database "
+                    + "before login.");
+        }
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String repassword = request.getParameter("repassword");
@@ -65,14 +67,16 @@ public class RegisterController extends HttpServlet {
         try {
             date = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
         } catch (ParseException ex) {
-            System.out.println("Failed to change date format in register controller");
+            System.out.println("Failed to change date format in "
+                    + "register controller");
         }
         String postcode = request.getParameter("postcode");
         String nationality = request.getParameter("nationality");
         String email = request.getParameter("email");
         double height = Double.parseDouble(request.getParameter("height"));
         double weight = Double.parseDouble(request.getParameter("weight"));
-        double exercise = Double.parseDouble(request.getParameter("exerciseLevel"));
+        double exercise = 
+                Double.parseDouble(request.getParameter("exerciseLevel"));
 
         String error;
         String success;
@@ -80,22 +84,28 @@ public class RegisterController extends HttpServlet {
         if (!password.equals(repassword)) {
             error = "Entered passwords were not the same.";
             request.setAttribute("error", error);
-            request.getRequestDispatcher("register.jsp").include(request, response);
+            request.getRequestDispatcher("register.jsp")
+                    .include(request, response);
         }
 
         try {
-            if (!db.exists(username)) {
-                User registered = db.insertUser(username, password, firstname, lastname, gender, date, postcode, nationality, email, height, weight, exercise);
+            if (db.getUser(username) == null) {
+                User registered = db.insertUser(username, password, firstname, 
+                        lastname, gender, date, postcode, nationality, email, 
+                        height, weight, exercise);
                 success = "Registration successful, please log in";
                 request.setAttribute("message", success);
-                request.getRequestDispatcher("login.jsp").include(request, response);
+                request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
             } else {
-                error = "Username already exists. Please register again";
+                error = "Username already exists. Please try again";
                 request.setAttribute("error", error);
-                request.getRequestDispatcher("register.jsp").include(request, response);
+                request.getRequestDispatcher("register.jsp")
+                        .include(request, response);
             }
         } catch (Exception ex) {
-            System.out.println("Failed to check if username exists during registration");
+            System.out.println("Failed to check if username "
+                    + "exists during registration");
         }
     }
 }
