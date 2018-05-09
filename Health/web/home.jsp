@@ -117,8 +117,15 @@
                           
                         
                   </div>
-                  <div class="carousel-item">
-                   
+                  <div class="carousel-item ">
+                        <h1>Weight</h1>
+                        <h3>Current Weight - </h3>
+                        <br>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <br>
+                        <p><b>Keep going!</b> You are 25% of the way to your goal</p>
                   </div>
                   <div class="carousel-item">
                    

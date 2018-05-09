@@ -18,13 +18,15 @@ import java.util.logging.Logger;
 public abstract class Goal {
     private int goalID;
     //private String goalName;
+    
     private User user;
+    private double start;
     private double target;
     //private Date start;
     //private Date end;
     private boolean complete;
 
-    public Goal(int goalID, double target, int userID, boolean complete) {
+    public Goal(int goalID, double target, int userID) throws Exception {
         this.goalID = goalID;
         this.target = target;
         try {
@@ -34,7 +36,13 @@ public abstract class Goal {
         }
        // this.start = start;
         //this.end = end;
-        this.complete = complete;
+        if(user.getWeight() - this.target < 0){
+            this.complete = true;
+        }
+        else{
+            this.complete = false;
+        }
+        this.start = user.getWeight();
     }
 
     public int getGoalID() {
@@ -83,7 +91,10 @@ public abstract class Goal {
 //    public void setEnd(Date end) {
 //        this.end = end;
 //    }
-
+    //returns difference between start and goal weight
+    public double getDifference(){
+        return this.start - this.target;
+    }
      public double weightLeft(){
         double left = 0;
         try {
