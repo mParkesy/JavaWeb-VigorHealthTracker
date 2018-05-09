@@ -106,9 +106,9 @@ public class GroupController extends HttpServlet {
         int userID = Integer.parseInt(request.getParameter("userID"));
         String name = request.getParameter("name");
         String description = request.getParameter("description");
-        
+        String image = request.getParameter("image");
         try {
-            new Database().insertGroup(userID, name, description);
+            new Database().insertGroup(userID, name, description,image);
             response.sendRedirect("group.jsp");
         } catch (Exception ex) {
             System.out.println("Failed to add group");

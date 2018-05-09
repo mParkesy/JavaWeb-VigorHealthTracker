@@ -114,6 +114,17 @@
                                 <label for="groupdescription">Group Description:</label>
                                 <textarea maxlength="535" class="form-control"  name="description"></textarea>
                             </div>
+                            
+                            <div class="form-group">
+                                <label for="grouptheme">Theme:</label>
+                                 <select class="form-control" name="image">
+                                    <option value="img/urban.jpg" >Urban</option>
+                                    <option value="img/leaves.jpg" >Nature</option>
+                                    <option value="img/runner.jpg" >Running</option>
+                                    <option value="img/waves.jpg">Waves</option>
+                                  </select>
+                            </div>
+                            
                             <button type='submit' class='btn btn-default'>Create Group</button>
                         </form>
                     </div>

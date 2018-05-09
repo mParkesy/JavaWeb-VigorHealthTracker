@@ -400,17 +400,18 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-    public Group insertGroup(int userID, String name, String description) 
+    public Group insertGroup(int userID, String name, String description, String image) 
             throws SQLException, Exception {
         Group group = null;
         try {
-            String sql = "INSERT INTO ugroup (userID, name, description)"
-                    + "VALUES (?,?,?)";
+            String sql = "INSERT INTO ugroup (userID, name, description, image)"
+                    + "VALUES (?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
             st.setString(2, name);
             st.setString(3, description);
+            st.setString(4, image);
             st.executeUpdate();
 
             try (ResultSet key = st.getGeneratedKeys()) {
@@ -425,6 +426,7 @@ public class Database {
 
         } catch (Exception ex) {
             System.out.println("Failed to insert group");
+            ex.printStackTrace();
         }
         return group;
     }
@@ -777,7 +779,6 @@ public class Database {
         PreparedStatement st = this.CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
-         System.out.println("BOOBS");
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
         }
