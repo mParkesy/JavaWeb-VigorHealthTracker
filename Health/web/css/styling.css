@@ -111,6 +111,7 @@
     
 }
 
+
 .msg-btn{
     margin: 0 10px 0 10px;
     float:right;
@@ -134,3 +135,8 @@ body{
 body:after {
     background: rgba(0,0,0,0.1);
 }
+
+body{
+    background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url(../img/waves.jpg) no-repeat fixed center;
+}
+
