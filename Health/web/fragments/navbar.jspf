@@ -9,17 +9,36 @@
             $(document).ready(function(){
                 
                 var currentRecipient = 0;
-                
-                $('#notifications').on('click','.message',function(){
+                var currentUsername = "";
+                function showMenu(){
+                    
                     $('#msg').removeClass('slideOutDown');
                     $('#msg').show(); 
-                    $('.msg-title').text("Chat with " + $(this).text().substring(13));
-                });
-                $('#close').click(function(){
+                    $('.msg-title').text("Chat with " + currentUsername);
+                }
+                function hideMenu(){
                     $('#msg').addClass('slideOutDown');
                     setTimeout(function(){ 
                         $('#msg').hide(); 
-                    }, 1000);
+                    }, 500);
+                }
+                $('#notifications').on('click','.message',function(){
+                    currentUsername = $(this).text().substring(13);
+                    
+                    getMessages();
+                    showMenu();
+                });
+                
+                $('.list-group').on('click','.msg-btn',function(){
+                    currentUsername = $(this).parent().text();
+                    currentRecipient = $(this).attr('id');
+                    getMessages();
+                    showMenu();
+                });
+                
+                
+                $('#close').click(function(){
+                    hideMenu();
                     
                 });
                 function notifCounter(){
@@ -40,14 +59,15 @@
                 }
                 notifCounter();
                 
-                function getMessages(recipientID){
+                function getMessages(){
                     
                     $.get('MessageController', {
                         userID : ${user.getID()},
-                        recipientID : recipientID
+                        recipientID : currentRecipient
                     }, function(response) {
                         $('.msg-body').html(response);
                         $('.msg-body').scrollTop($('.msg-body')[0].scrollHeight);
+                        
                     });
                 }
                 
@@ -56,23 +76,15 @@
                 setInterval(function(){ 
                     
                     notifCounter();
-                    getMessages(currentRecipient);
-                    /*
-                    var notifAfter = $('.dropdown-menu .dropdown-item').length;
-                     console.log(notifBefore);
-                    console.log(notifAfter);
-                    if(notifBefore < notifAfter){
-                        var x = document.getElementById("myAudio"); 
-                        x.play();
-                        notifBefore = notifAfter;
-                    }
-                    */
-                }, 2000);
+                    if($('#msg').is(":visible")){
+                        getMessages(currentRecipient)
+                    } 
+                }, 3000);
                 
                 $('#notifications').on('click','a',function(){
                     if($(this).hasClass('message')){
                         currentRecipient = $(this).attr('id');
-                        getMessages(currentRecipient);
+                        getMessages();
                     }
                     else if($(this).hasClass('invite')){
                         swal({
@@ -91,11 +103,13 @@
                                     groupID: groupID,
                                     userID: ${user.getID()}
                                 }, function (response) {
-                                    swal(
-                                    'Invitation Accepted',
-                                    "user " + ${user.getID()} + " added to Group " + groupID,
-                                    'success'
-                                    );
+                                    swal({
+                                    position: 'top-end',
+                                    type: 'success',
+                                    title: 'Invitation Accepted',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                    });
                                 });
                             }
                           });
@@ -134,11 +148,8 @@
                     if(e.which == 13) {
                         send();
                     }
-
                 });
-                
-                
-                
+
                 $('#send').click(function(){
                     send();
                 });
@@ -182,7 +193,7 @@
                 </div>
               </div>
             
-            <a class=' navbar-brand' href='Logout'>Logout</a>
+            <a class=' navbar-brand' href='LogoutController'>Logout</a>
         </h:otherwise>  
             
     </h:choose>
