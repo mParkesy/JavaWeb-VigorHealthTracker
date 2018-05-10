@@ -87,7 +87,8 @@ public class Database {
         return user;
     }
     
-    public String getPassword(int userID) throws SQLException {
+    public String getPassword(int userID) throws SQLException, 
+            NoSuchAlgorithmException {
         String sql = "SELECT password FROM user WHERE userID = ?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, userID);
@@ -96,6 +97,20 @@ public class Database {
             return rs.getString("password");
         }
         return null;
+    }
+    
+    public boolean updatePassword(String newPassword, int userID) 
+            throws SQLException{
+        try {
+            String sql = "UPDATE user SET password = ? WHERE userID  = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setString(1,newPassword);
+            st.setInt(2, userID);
+            st.executeUpdate();
+            return true;
+        } catch (SQLException ex){
+            return false;
+        }
     }
 
     public User insertUser(String username, String password, String firstname,
@@ -401,14 +416,8 @@ public class Database {
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
                     int groupID = key.getInt(1);
-                    group = getGroup(groupID);
-                    sql = "INSERT INTO groupmembers (userID, groupID, joined)"
-                            + "VALUES (?,?,?)";
-                    st = CON.prepareStatement(sql);
-                    st.setInt(1, userID);
-                    st.setInt(2, groupID);
-                    st.setInt(3, 1);
-                    st.executeUpdate();
+                    insertMember(groupID, userID);
+                    acceptInvite(groupID,userID);
                 } else {
                     throw new SQLException("No ID found, group data not saved");
                 }
@@ -437,6 +446,21 @@ public class Database {
             System.out.println("Failed to get current weight");
         }
         return group;
+    }
+
+    public boolean insertMember(int groupID, int userID) {
+        try {
+            String sql = "INSERT INTO groupmembers (userID, groupID, joined)"
+                    + "VALUES (?,?, 0)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, groupID);
+            st.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Failed to add a new member into a group");
+            return false;
+        }
     }
 
     public boolean isAdmin(int userID, int groupID) {
@@ -477,7 +501,10 @@ public class Database {
 
             while (result.next()) {
                 Group group = getGroup(result.getInt("groupID"));
-                memberOf.add(group);
+                if(!(isAdmin(userID,group.getGroupID()) && joined == 0)){
+                    memberOf.add(group);
+                }
+                
             }
         } catch (Exception ex) {
             System.out.println("Failed to get groups "
@@ -515,7 +542,25 @@ public class Database {
         }
     }
 
-    // ---------------------------------------------Activity----------------------------------------------------------
+    public ArrayList<Exercise> getGroupRecentExercise(int groupID) {
+        ArrayList<Exercise> list = new ArrayList<>();
+        try {
+            String sql = "SELECT e.exerciseID, g.userID, e.activityID, max(e.date) FROM exercise e INNER JOIN groupmembers g on e.userID = g.userID where g.groupID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, groupID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                Exercise e = getExercise(result.getInt("exerciseID"));
+                list.add(e);
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get list of group exercises");
+        }
+        return list;
+    }
+
+    // ---------------------------------------------ACTIVITY----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
         try {
@@ -559,7 +604,8 @@ public class Database {
         return activityList;
     }
 
-    // ---------------------------------------------Exercise----------------------------------------------------------
+
+    // ---------------------------------------------EXERCISE----------------------------------------------------------
     public Exercise insertExercise(int userID, int activityID, Date date, 
             int minutes, double distance) throws Exception {
         Exercise exercise = null;
@@ -594,7 +640,25 @@ public class Database {
         return exercise;
     }
 
-    // ---------------------------------------------Food----------------------------------------------------------
+    public Exercise getExercise(int exerciseID) throws Exception {
+        Exercise exercise = null;
+        try {
+            String sql = "SELECT * FROM exercise WHERE exerciseID = ?";
+
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, exerciseID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                exercise = new Exercise(exerciseID, result.getInt("userID"), getActivity(result.getInt("activityID")), result.getDate("date"), result.getInt("minutes"), result.getDouble("distance"));
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get exercise by ID");
+        }
+        return exercise;
+    }
+
+    // ---------------------------------------------FOOD----------------------------------------------------------
     public ArrayList<Food> allFood() throws Exception {
         ArrayList<Food> foodList = new ArrayList<>();
         try {
@@ -644,7 +708,7 @@ public class Database {
         return food;
     }
 
-    // ---------------------------------------------FoodLog----------------------------------------------------------
+    // ---------------------------------------------FOODLOG----------------------------------------------------------
     /**
      * Construct a FoodLog instance and add it to the database
      *
@@ -684,5 +748,121 @@ public class Database {
             System.out.println("Failed to insert food log");
         }
         return log;
+    }
+    
+
+    //----------------------------NOTIFICATIONS--------------------------------------
+     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
+        ArrayList<Notification> list = new ArrayList<>();
+        String sql = "SELECT * FROM notification WHERE userID =?";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, id);
+        ResultSet rs = st.executeQuery();
+         System.out.println("BOOBS");
+        while (rs.next()) {
+            list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
+        }
+        return list;
+    }
+     
+     public void deleteNotification(int id){
+         
+        Notification n = null;
+        try{
+            String sql = "DELETE FROM notification WHERE id = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        }
+        catch(SQLException ex){
+               System.out.println("ERROR DELETING NOTIF"); 
+        } 
+        
+     }
+
+
+    // ---------------------------------------------GOAL----------------------------------------------------------
+    public Goal insertGoal(){
+        
+        return null;
+    }
+    
+    public Goal getGoal(int groupID){
+        
+        return null;
+    }
+           
+
+    // ---------------------------------------------MESSAGE----------------------------------------------------------
+    
+    //gets conversation between two users
+    public ArrayList<Message> getMessages(int senderID, int recipientID) throws SQLException, Exception {
+        ArrayList<Message> list = new ArrayList<>();
+        String sql = "SELECT * FROM `message` "
+                + "WHERE (recipientID = ? AND senderID = ?) "
+                + "OR (recipientID = ? AND senderID = ?)"
+                + "ORDER BY time ASC";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, recipientID);
+        st.setInt(2, senderID);
+        st.setInt(3, senderID);
+        st.setInt(4, recipientID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            User sender = this.getUser(rs.getInt("senderID"));
+            User recipent = this.getUser(rs.getInt("recipientID"));
+            Message msg = new Message(rs.getString("message"),sender,recipent);
+            list.add(msg);
+        }
+        return list;
+    }
+    
+    public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception{
+         ArrayList<Integer> list = new ArrayList<>();
+        String sql = "SELECT senderID ,MIN(time) "
+                + "FROM message WHERE recipientID = ? "
+                + "AND seen = 0 "
+                + "GROUP BY senderID";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            list.add(rs.getInt("senderID"));
+        }
+        return list;
+    }
+    
+    //Send message
+    public void sendMessage(String message, int senderID, int recipientID) throws SQLException{
+        try {
+            String sql = "INSERT INTO `message` "
+                    + "(senderID, recipientID, message,seen) "
+                    + "VALUES (?,?,?,0)";
+            PreparedStatement st = CON.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+            st.setInt(1, senderID);
+            st.setInt(2, recipientID);
+            st.setString(3, message);
+
+            st.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println("Failed to send message");
+        }
+    }
+    
+    //Set message as seen
+    public void setSeen(int userID, int senderID) throws SQLException{
+        try {
+            String sql = "UPDATE message SET seen = 1 WHERE senderID = ? AND recipientID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, senderID);
+            st.setInt(2, userID);
+
+            st.executeUpdate();
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
     }
 }

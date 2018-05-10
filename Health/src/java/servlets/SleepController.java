@@ -50,24 +50,7 @@ public class SleepController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userID = Integer.parseInt(request.getParameter("userID"));
-        double weight = Double.parseDouble(request.getParameter("weight"));
-        Date date = new Date();
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("date"));
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
         
-        PrintWriter out=response.getWriter();
-        
-         try {
-            //Sleep newSleep = new Sleep(userID);
-            request.getRequestDispatcher("home.jsp").include(request, response);          
-        } catch (Exception ex) {
-            request.getRequestDispatcher("weight.jsp").include(request, response);
-            
-        }
         
     }
 }
