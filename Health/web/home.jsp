@@ -21,13 +21,7 @@
                             .append(title)
                             );
                 }
-                $("img").click(function () {
-                    createTile();
-
-                });
-                $(".square").click(function () {
-                    //$(this).fadeOut();
-                });
+                
 
                 /*
                 function generatePie(){
@@ -69,8 +63,8 @@
                         datasets: [{
                             data: [1000,1500],
                             backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
                             ]
                         }]
                     },

@@ -35,7 +35,7 @@
                         $(".card-body .card-text").text(obj.description);
                         $('body').css('background', "linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url('" + obj.imagePath + "') no-repeat fixed center")
                         $.get('GroupController', {
-                            function: "IsAdmin",
+                             function: "IsAdmin",
                             groupID: groupID,
                             userID: ${user.getID()}
                         }, function (response) {

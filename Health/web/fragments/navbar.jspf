@@ -3,8 +3,9 @@
 <%@page import="java.io.PrintWriter"%>
 <%@ page pageEncoding="UTF-8" %>
 <%@ taglib prefix = "h" uri = "http://java.sun.com/jsp/jstl/core" %>
-<nav class="navbar navbar-toggleable-md navbar-dark bg-dark">
-    <a href="home.jsp" class="navbar-brand" >
+<div class="bar bg-light">
+<nav class="navbar navbar-toggleable-md navbar-light bg-light container">
+  
         <script>
             $(document).ready(function(){
                 
@@ -165,24 +166,25 @@
             <a class=' navbar-brand ' href='register.jsp'>Register</a>
         </h:when>
         <h:otherwise>
-            <button class='navbar-toggler ' type='button'> <i  class='home fas fa-home'></i></button>
-            <div class='links navbar-brand'>
+           
+            <a href="home.jsp"><img class=' ' style="height:45px" src="img/logo4.png"/></a>
+            
             <div class='dropdown'>
                 
-                <button class='btn btn-link' type='button'>
-                    <a class='' href="settings.jsp">
-                        <i  class="fas fa-cog bell"></i>
-                    </a>
-                </button>
                 
-                <button class='btn btn-link' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    <a class='' >
-                        <i class='fas fa-bell bell'></i>
+                    <a class="navbar-brand" href="settings.jsp">
+                        <i  class="fas fa-cog"></i>
+                    </a>
+              
+                
+               
+                    <a class="navbar-brand" href="#" data-toggle='dropdown'>
+                        <i class='fas fa-bell'></i>
                         <div style='display: none' id='notif'>
                             
                         </div>
                     </a>
-                </button>
+                
                 
                 
                 
@@ -191,9 +193,13 @@
                 
 
                 </div>
+                
+                 <a class="navbar-brand" href="LogoutController">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
               </div>
             
-            <a class=' navbar-brand' href='LogoutController'>Logout</a>
+           
         </h:otherwise>  
             
     </h:choose>
@@ -206,6 +212,7 @@
     
    
 </nav>
+</div>
 <div id="msg" class="animated slideInUp" style="display:none">
     <div class="msg-head">
         <div class="msg-title">
