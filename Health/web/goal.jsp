@@ -84,7 +84,7 @@
                     })
              })
         </script>
-        
+      
     </head>
     <body >
          <%@ include file="fragments/navbar.jspf" %>

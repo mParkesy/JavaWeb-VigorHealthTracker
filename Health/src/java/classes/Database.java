@@ -915,6 +915,28 @@ public class Database {
     }
 
     //----------------------------NOTIFICATIONS--------------------------------------
+    
+        public void insertNotification(int userID, String text)
+            throws Exception {
+        
+        try {
+            String sql = "INSERT INTO `notification` "
+                    + "(userID,Text) "
+                    + "VALUES(?,?)";
+            PreparedStatement st = CON.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS);
+            st.setInt(1, userID);
+            st.setString(2, text);
+            st.executeUpdate();
+            EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text,"New Notification");
+            notif.sendEmail();
+            
+        } catch (Exception ex) {
+            System.out.println("Failed to insert notification");
+        }
+        
+    }
+    
     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
         ArrayList<Notification> list = new ArrayList<>();
         String sql = "SELECT * FROM notification WHERE userID =?";
