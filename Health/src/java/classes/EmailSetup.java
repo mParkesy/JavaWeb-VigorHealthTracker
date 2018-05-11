@@ -32,6 +32,12 @@ public class EmailSetup {
         this.subject = subject;
     }
 
+    public EmailSetup(String toAddress, String message, String subject) {
+        this.toAddress = toAddress;
+        this.message = message;
+        this.subject = subject;
+    }
+
     public void sendEmail() throws NoSuchProviderException {
         Properties props = new Properties();
         props.setProperty("mail.host", "smtp-mail.outlook.com");
