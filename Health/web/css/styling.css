@@ -99,7 +99,6 @@
 #myChart{
     
     margin:auto;
-    margin-left:15%;
     height:250px;
 }
 
@@ -122,9 +121,11 @@
     animation-duration: 0.5s;
 }
 
+
 .progress{
     height:50px;
 }
+
 
 #groupInfo{
      background: rgba(255,255,255,0.8);
@@ -158,4 +159,32 @@ body:after {
     background:rgba(255,255,255,0.85);
     margin-bottom: 50px;
     padding: 30px;
+}
+
+.carousel-item{
+    padding:0 100px;
+}
+.carousel-item .progress{
+    width:50%;
+    margin:auto;
+}
+
+h1 a i{
+    font-size:40px;
+    padding:0;
+}
+
+.goal{
+    margin-bottom:20px;
+    background:rgba(255,255,255,0.6);
+}
+
+.goal .progress{
+    background:rgba(255,255,255,0.6);
+    border:1px solid rgba(0,0,0,0.2);
+}
+
+.progress-bar{
+    width:0;
+    transition: all ease 1s;
 }

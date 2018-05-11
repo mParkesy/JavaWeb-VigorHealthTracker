@@ -120,6 +120,7 @@ public class User {
         return new Database().currentWeight(id).getWeight();
     }
     
+
     public String toJSON(){
         StringBuilder str = new StringBuilder();
         str.append("{");
@@ -127,5 +128,9 @@ public class User {
         str.append("\"username\": " + "\"" +  this.username + "\"");
         str.append("}");
         return str.toString();
+    }
+    public Double getExercise() throws Exception{
+        return new Database().getMaxExercise(id).getDistance();
+
     }
 }
