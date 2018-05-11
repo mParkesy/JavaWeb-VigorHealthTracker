@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -82,21 +83,23 @@ public class RegisterController extends HttpServlet {
         String error;
         String success;
 
-        if (!password.equals(repassword)) {
-            error = "Entered passwords were not the same.";
-            request.setAttribute("error", error);
-            request.getRequestDispatcher("register.jsp")
-                    .include(request, response);
-        }
-
         try {
-            if (db.getUser(username) == null) {
+            if (!password.equals(repassword)) {
+                error = "Entered passwords were not the same.";
+                request.setAttribute("error", error);
+                request.getRequestDispatcher("register.jsp")
+                        .include(request, response);
+            } else if (db.getUser(username) == null) {
                 InetAddress address = InetAddress.getLocalHost();
                 String ip = address.getHostAddress();
                 String stamp = String.valueOf(System.currentTimeMillis());
-                String link = ip + ":8080/Health/verify.jsp?verification=" + stamp;
-                Database.sendMail(email, "vigorhealthtracker@outlook.com", "Vigor123", link);
-                //Database.sendMail("matt.parkes@outlook.com", "vigorhealth@engineer.com", "Vigor123", link);
+                String link = ip + ":8080/Health/verify.jsp?verification="
+                        + stamp;
+
+                EmailSetup verifyEmail = new EmailSetup(email, "Vigor Health Activation");
+                String message = verifyEmail.setUpVerifyEmail(link, firstname);
+                verifyEmail.setMessage(message);
+                verifyEmail.sendEmail();
 
                 User registered = db.insertUser(username, password, firstname,
                         lastname, gender, date, postcode, nationality, email,

@@ -54,7 +54,7 @@ public class Database {
         return new BigInteger(1, digest.digest()).toString(16);
     }
 
-    public static void sendMail(String toAddress, String user, String psw, String key) throws NoSuchProviderException {
+    public static void sendMail(String toAddress, String fromAdress, String password, String key) throws NoSuchProviderException {
 
         final String msg = "<html><body><h3>** THIS IS AN AUTOMATED MESSAGE - PLEASE, DO NOT REPLY **</h3>This e-mail has been sent to you automatically as part of the registration process.<br> "
                 + "To activate your account, click the activation link below.<br><br>" + key + "</body></html>";
@@ -70,7 +70,7 @@ public class Database {
         Transport transport = session.getTransport();
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(user));
+            message.setFrom(new InternetAddress(fromAdress));
             message.addRecipient(RecipientType.TO, new InternetAddress(toAddress));
 
             message.setSubject("Your account activation");
@@ -78,7 +78,7 @@ public class Database {
             message.setContent(msg, "text/html");
             message.setSentDate(new Date());
 
-            transport.connect("smtp-mail.outlook.com", user, psw);
+            transport.connect("smtp-mail.outlook.com", fromAdress, password);
             transport.sendMessage(message, message.getRecipients(RecipientType.TO));
             transport.close();
             //System.out.println("Message sent....");
