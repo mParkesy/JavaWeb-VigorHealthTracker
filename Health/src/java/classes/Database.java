@@ -10,7 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.joda.time.DateTime;
 
 /**
@@ -36,6 +41,7 @@ public class Database {
      * A static method that makes the connection to the database, this only runs
      * when the database is using and there are no sessions or once a user
      * logins in
+     *
      * @return A connection variable
      * @throws Exception If the connection to the database fails
      */
@@ -55,6 +61,7 @@ public class Database {
     /**
      * A method that takes a string and digests it, this is used with passwords
      * in the database, the method can digest and undigest a string
+     *
      * @param p The string to digest
      * @return The digested string
      * @throws NoSuchAlgorithmException If the digest fails
@@ -69,6 +76,7 @@ public class Database {
     /**
      * A static method that is used throughout the system, it is called when a
      * sweet alert pop up needs to be generated for an error message to the user
+     *
      * @param message The message required in the alert
      * @return The message surround by the sweet alert body
      */
@@ -86,6 +94,7 @@ public class Database {
     /**
      * A method that returns a User object from the database based on the userID
      * passed to it
+     *
      * @param userID The userID of the User that needs to be constructed
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
@@ -115,6 +124,7 @@ public class Database {
     /**
      * A method that returns a User object from the database based on the
      * username passed to it
+     *
      * @param username The username of the User that needs to be constructed
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
@@ -160,6 +170,7 @@ public class Database {
     /**
      * An update method for a users verification, used when a User has clicked
      * the link emailed to them, it sets their verification string to 1
+     *
      * @param ver The verification string from the URL sent by email
      * @throws Exception If the SQL statement fails to execute
      */
@@ -176,6 +187,7 @@ public class Database {
 
     /**
      * A method that gets the password for a specific User from the database
+     *
      * @param userID The userID of the User whose password is needed
      * @return The password in its long format from the database as a string
      * @throws SQLException If the SQL statement fails to execute
@@ -194,6 +206,7 @@ public class Database {
     /**
      * A method that updates a Users password in the database based on the
      * userID
+     *
      * @param newPassword The new password as as a string
      * @param userID The userID of the Users password that needs changing
      * @return True if successfully change, false if not
@@ -216,6 +229,7 @@ public class Database {
     /**
      * A method that inserts a new User into the database and returns the new
      * User object if it is successful
+     *
      * @param username The new username
      * @param password The new password having been digested
      * @param firstname The new firstname
@@ -293,6 +307,7 @@ public class Database {
 
     /**
      * A method that collects all weight data for a specific User
+     *
      * @param userID The userID of the User whose weight data is being placed
      * into a list
      * @return An ArrayList of Weight objects
@@ -328,6 +343,7 @@ public class Database {
 
     /**
      * A method that collects all food log data for a specific User
+     *
      * @param userID The userID of the User whose food log data is being placed
      * into a list
      * @return An ArrayList of food log objects
@@ -359,6 +375,7 @@ public class Database {
 
     /**
      * A method that collects all sleep data for a specific User
+     *
      * @param userID The userID of the User whose sleep data is being placed
      * into a list
      * @return An ArrayList of Sleep objects
@@ -381,7 +398,7 @@ public class Database {
                 java.sql.Timestamp wakeTime = result.getTimestamp("wakeTime");
                 int sleepGrade = result.getInt("sleepGrade");
 
-                sleep = new Sleep(sleepID, userID, new DateTime(bedTime.getTime()), 
+                sleep = new Sleep(sleepID, userID, new DateTime(bedTime.getTime()),
                         new DateTime(wakeTime.getTime()), sleepGrade);
 
                 sleepList.add(sleep);
@@ -394,6 +411,7 @@ public class Database {
 
     /**
      * A method that collects all exercise data for a specific User
+     *
      * @param userID The userID of the User whose exercise data is being placed
      * into a list
      * @return An ArrayList of Exercise objects
@@ -429,6 +447,7 @@ public class Database {
     // ---------------------------------------------SLEEP----------------------------------------------------------
     /**
      * Construct a sleep instance and add it to the database
+     *
      * @param userID
      * @param bedTime
      * @param wakeTime
@@ -436,7 +455,7 @@ public class Database {
      * @return A new sleep object
      * @throws Exception If the Insert SQL fails to execute
      */
-    public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime, 
+    public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime,
             int sleepGrade) throws Exception {
         Sleep sleep = null;
         try {
@@ -469,9 +488,9 @@ public class Database {
     }
 
     // ---------------------------------------------WEIGHT----------------------------------------------------------
-    
     /**
      * Construct the most recent weight instance from the database
+     *
      * @param userID The userID of the User whose current weight is needed
      * @return The most recent weight object for the user
      * @throws Exception If the Select SQL statement fails to execute
@@ -674,22 +693,48 @@ public class Database {
         }
     }
 
-    public ArrayList<Exercise> getGroupRecentExercise(int groupID) {
-        ArrayList<Exercise> list = new ArrayList<>();
+    public double getGroupDistance(int groupID, String date) {
+        double totalDistance = 0;
         try {
-            String sql = "SELECT e.exerciseID, g.userID, e.activityID, max(e.date) FROM exercise e INNER JOIN groupmembers g on e.userID = g.userID where g.groupID = ?";
+            String sql = "SELECT SUM(exercise.distance) as total FROM exercise INNER JOIN groupmembers on exercise.userID = groupmembers.userID WHERE groupmembers.groupID = ?";
+            if (!date.equals("")) {
+                sql = sql + "AND exercise.date > '" + date + "'";
+            }
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, groupID);
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                Exercise e = getExercise(result.getInt("exerciseID"));
-                list.add(e);
+                totalDistance += result.getDouble("total");
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get list of group exercises");
+            System.out.println("Failed to get groups total distance");
         }
-        return list;
+        return totalDistance;
+    }
+
+    public TreeMap getGroupDistanceLeaderboard(int groupID) throws SQLException {
+        TreeMap<Double, Integer> t = new TreeMap(Collections.reverseOrder());
+        String sql = "SELECT e.userID, SUM(e.distance) as total "
+                + "FROM exercise e INNER JOIN groupmembers g "
+                + "ON e.userID = g.userID "
+                + "WHERE g.groupID = ? GROUP BY e.userID";
+        PreparedStatement st = CON.prepareStatement(sql);
+        st.setInt(1, groupID);
+        ResultSet result = st.executeQuery();
+        
+        while(result.next()){
+            User user = getUser(result.getInt("e.userID"));
+            t.put(result.getDouble("total"), result.getInt("e.userID"));
+        }
+        Set set = t.entrySet();
+        Iterator i = set.iterator();
+        while(i.hasNext()){
+            Map.Entry me = (Map.Entry)i.next();
+            System.out.print(me.getKey()+": " + me.getValue());
+        }
+        
+        return t;
     }
 
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
