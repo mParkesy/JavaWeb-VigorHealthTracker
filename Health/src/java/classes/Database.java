@@ -54,37 +54,14 @@ public class Database {
         return new BigInteger(1, digest.digest()).toString(16);
     }
 
-    public static void sendMail(String toAddress, String fromAdress, String password, String key) throws NoSuchProviderException {
-
-        final String msg = "<html><body><h3>** THIS IS AN AUTOMATED MESSAGE - PLEASE, DO NOT REPLY **</h3>This e-mail has been sent to you automatically as part of the registration process.<br> "
-                + "To activate your account, click the activation link below.<br><br>" + key + "</body></html>";
-        Properties props = new Properties();
-
-        props.setProperty("mail.host", "smtp-mail.outlook.com");
-        props.setProperty("mail.smtp.auth", "true");
-        props.setProperty("mail.smtp.port", "587");
-        props.setProperty("mail.smtp.starttls.enable", "true");
-        props.setProperty("mail.transport.protocol", "smtp");
-        Session session = Session.getInstance(props, null);
-        session.setDebug(true);
-        Transport transport = session.getTransport();
-        try {
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(fromAdress));
-            message.addRecipient(RecipientType.TO, new InternetAddress(toAddress));
-
-            message.setSubject("Your account activation");
-            // message.setText(msg, "utf-8");
-            message.setContent(msg, "text/html");
-            message.setSentDate(new Date());
-
-            transport.connect("smtp-mail.outlook.com", fromAdress, password);
-            transport.sendMessage(message, message.getRecipients(RecipientType.TO));
-            transport.close();
-            //System.out.println("Message sent....");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+    public static String makeAlert(String message) {
+        return "<script>"
+                + "swal({type : 'error',"
+                + "title: 'Error',"
+                + "text: '" + message + "',"
+                + "showConfirmButton: false,"
+                + "timer: 3000"
+                + "})</script>";
     }
 
 // ---------------------------------------------USER----------------------------------------------------------
@@ -141,7 +118,7 @@ public class Database {
         }
         return null;
     }
-    
+
     public String getVerification(int userID) throws SQLException,
             NoSuchAlgorithmException {
         String sql = "SELECT verification FROM user WHERE userID = ?";
@@ -152,9 +129,9 @@ public class Database {
             return rs.getString("verification");
         }
         return null;
-    }  
-    
-    public void updateVerification(String ver) throws Exception{
+    }
+
+    public void updateVerification(String ver) throws Exception {
         try {
             String sql = "UPDATE user SET verification = 1 WHERE verification  = ?";
             PreparedStatement st = getConnection().prepareStatement(sql);
@@ -162,7 +139,7 @@ public class Database {
             st.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("Failed to verify account");
-        }        
+        }
     }
 
     public boolean updatePassword(String newPassword, int userID)
@@ -211,7 +188,7 @@ public class Database {
             st.setDouble(10, height);
             st.setDouble(11, exercise);
             st.setString(12, verification);
-            
+
             st.executeUpdate();
             int userID = 0;
             /**

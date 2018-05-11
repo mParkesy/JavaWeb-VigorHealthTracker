@@ -81,34 +81,28 @@ public class LoginController extends HttpServlet {
                         session.setAttribute("user", db.getUser(username));
                         response.sendRedirect("home.jsp");
                     } else {
-                      //  error = "You have not verified your account, \n"
-                      //          + "please check your emails to verify your account";
-                      error = "<script>"
-                              + "swal({type : 'error',"
-                              + "title: 'Not Verified',"
-                              + "showConfirmButton: false,"
-                              + "timer: 3000"
-                              + "})</script>";
-                        request.setAttribute("message", error);
+                      error = "You have not verified your account, "
+                              + "please check your emails";
+                        request.setAttribute("message", Database.makeAlert(error));
                         request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                     }
                 } else {
                     error = "Password incorrect for that username";
-                    request.setAttribute("message", error);
+                    request.setAttribute("message", Database.makeAlert(error));
                     request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                 }
             } else {
                 error = "The username you entered does not exist";
-                request.setAttribute("message", error);
+                request.setAttribute("message", Database.makeAlert(error));
                 request.getRequestDispatcher("login.jsp")
                         .include(request, response);
             }
             
         } catch (Exception ex) {
             error = "Error checking credentials, please try again.";
-            request.setAttribute("message", error);
+            request.setAttribute("message", Database.makeAlert(error));
             request.getRequestDispatcher("login.jsp")
                     .include(request, response);
         }

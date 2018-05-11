@@ -182,7 +182,7 @@
                 </div>
               </div>
             
-            <a class=' navbar-brand' href='Logout'>Logout</a>
+            <a class=' navbar-brand' href='LogoutController'>Logout</a>
         </h:otherwise>  
             
     </h:choose>
