@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
+import org.joda.time.Hours;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -53,23 +54,30 @@ public class SleepController extends HttpServlet {
         String bedTime = request.getParameter("bedTime");
         String wakeTime = request.getParameter("wakeTime");
         int grade = Integer.parseInt(request.getParameter("sleepGrade"));
-        
-        int last = Integer.parseInt(bedDate.substring(bedDate.length() - 1)) + 1;
-        String wakeDate = (bedDate.substring(0, bedDate.length() - 1) + (Integer.toString(last)));
 
+        // format date and time together
         String fullBed = bedDate + " " + bedTime;
-        String fullWake = wakeDate + " " + wakeTime;
-        
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+        // bed date and time to datetime object
         DateTime bed = fmt.parseDateTime(fullBed);
+
+        // get last digit of bedDate and add 1
+        //int last = Integer.parseInt(bedDate.substring(bedDate.length() - 1)) + 1;
+        //String wakeDate = (bedDate.substring(0, bedDate.length() - 1) + (Integer.toString(last)));
+        String fullWake = bedDate + " " + wakeTime;
+
         DateTime wake = fmt.parseDateTime(fullWake);
-        
-        
+        int hours = Hours.hoursBetween(bed, wake).getHours();
+        if (hours < 24) {
+            bed = bed.plusDays(1);
+            wake = wake.plusDays(1);
+        } else {
+            wake = wake.plusDays(1);
+        }
 //        Date bed = new Date();
 //        Date wake = new Date();
 //        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 //
-
 //        String fullBed = bedDate + " " + bedTime;
 //        String fullWake = wakeDate + " " + wakeTime;
 //        try {
@@ -78,16 +86,17 @@ public class SleepController extends HttpServlet {
 //        } catch (ParseException ex) {
 //            System.out.println("Failed to create Date objects for sleep");
 //        }
-
         Database db = new Database();
         try {
-            Sleep sleep = db.insertSleep(userID, bed, wake,grade);
+
+            Sleep sleep = db.insertSleep(userID, bed, wake, grade);
             response.sendRedirect("sleep.jsp");
+
         } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Failed to create sleep object");
         }
-        
+
 //        int last = Integer.parseInt(bedDate.substring(bedDate.length() - 1)) +1;
 //        bedDate = (bedDate.substring(0, bedDate.length() -1) + (Integer.toString(last)));
 //        System.out.println(bedDate);

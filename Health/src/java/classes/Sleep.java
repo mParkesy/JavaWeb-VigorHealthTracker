@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -50,10 +51,12 @@ public class Sleep {
     /**
      * @return the total amount of sleep
      */
-    public int getTotalSleep(){
+    public double getTotalSleep(){
+        Minutes mins = Minutes.minutesBetween(this.bedTime, this.wakeTime);
         Hours hours = Hours.hoursBetween(this.bedTime, this.wakeTime);
         int numHours = hours.getHours();
-        return numHours;
+        int numMins = mins.getMinutes();
+        return (double) numMins /60;
     }
     
     /**

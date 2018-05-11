@@ -28,6 +28,7 @@
     <body>
         <%@ include file="fragments/navbar.jspf" %>
         <div class="row">
+            ${message}
             <div class=" col-lg-4 col-md-2 col-sm-1"></div>
             <div class="col-lg-4 col-md-8 col-sm-10">
                 <h1>Sleep form</h1>
