@@ -7,6 +7,7 @@ package servlets;
 
 import classes.*;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class RegisterController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, 
+    protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         Database db = new Database();
         try {
@@ -75,8 +76,8 @@ public class RegisterController extends HttpServlet {
         String email = request.getParameter("email");
         double height = Double.parseDouble(request.getParameter("height"));
         double weight = Double.parseDouble(request.getParameter("weight"));
-        double exercise = 
-                Double.parseDouble(request.getParameter("exerciseLevel"));
+        double exercise
+                = Double.parseDouble(request.getParameter("exerciseLevel"));
 
         String error;
         String success;
@@ -90,9 +91,16 @@ public class RegisterController extends HttpServlet {
 
         try {
             if (db.getUser(username) == null) {
-                User registered = db.insertUser(username, password, firstname, 
-                        lastname, gender, date, postcode, nationality, email, 
-                        height, weight, exercise);
+                InetAddress address = InetAddress.getLocalHost();
+                String ip = address.getHostAddress();
+                String stamp = String.valueOf(System.currentTimeMillis());
+                String link = ip + ":8080/Health/verify.jsp?verification=" + stamp;
+                Database.sendMail(email, "vigorhealthtracker@outlook.com", "Vigor123", link);
+                //Database.sendMail("matt.parkes@outlook.com", "vigorhealth@engineer.com", "Vigor123", link);
+
+                User registered = db.insertUser(username, password, firstname,
+                        lastname, gender, date, postcode, nationality, email,
+                        height, weight, exercise, stamp);
                 success = "Registration successful, please log in";
                 request.setAttribute("message", success);
                 request.getRequestDispatcher("login.jsp")

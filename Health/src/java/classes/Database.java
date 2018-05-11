@@ -1,8 +1,10 @@
 package classes;
 
+import com.sun.mail.smtp.SMTPTransport;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,6 +13,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
+import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class Database {
 
@@ -37,14 +47,47 @@ public class Database {
         }
     }
 
-    public static String passwordDigest(String p) 
+    public static String passwordDigest(String p)
             throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("MD5");
         digest.update(p.getBytes(), 0, p.length());
         return new BigInteger(1, digest.digest()).toString(16);
     }
 
-    // ---------------------------------------------USER----------------------------------------------------------
+    public static void sendMail(String toAddress, String user, String psw, String key) throws NoSuchProviderException {
+
+        final String msg = "<html><body><h3>** THIS IS AN AUTOMATED MESSAGE - PLEASE, DO NOT REPLY **</h3>This e-mail has been sent to you automatically as part of the registration process.<br> "
+                + "To activate your account, click the activation link below.<br><br>" + key + "</body></html>";
+        Properties props = new Properties();
+
+        props.setProperty("mail.host", "smtp-mail.outlook.com");
+        props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.port", "587");
+        props.setProperty("mail.smtp.starttls.enable", "true");
+        props.setProperty("mail.transport.protocol", "smtp");
+        Session session = Session.getInstance(props, null);
+        session.setDebug(true);
+        Transport transport = session.getTransport();
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(user));
+            message.addRecipient(RecipientType.TO, new InternetAddress(toAddress));
+
+            message.setSubject("Your account activation");
+            // message.setText(msg, "utf-8");
+            message.setContent(msg, "text/html");
+            message.setSentDate(new Date());
+
+            transport.connect("smtp-mail.outlook.com", user, psw);
+            transport.sendMessage(message, message.getRecipients(RecipientType.TO));
+            transport.close();
+            //System.out.println("Message sent....");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+// ---------------------------------------------USER----------------------------------------------------------
     public User getUser(int id) throws SQLException, Exception {
         User user = null;
         String sql = "SELECT * FROM user WHERE userID =?";
@@ -53,11 +96,11 @@ public class Database {
         ResultSet rs = st.executeQuery();
 
         if (rs.next()) {
-            user = new User(id, rs.getString("username"), 
-                    rs.getString("firstname"), rs.getString("lastname"), 
+            user = new User(id, rs.getString("username"),
+                    rs.getString("firstname"), rs.getString("lastname"),
                     rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"), 
-                    rs.getDouble("height"), (Date) rs.getDate("dob"), 
+                    rs.getString("nationality"), rs.getString("email"),
+                    rs.getDouble("height"), (Date) rs.getDate("dob"),
                     rs.getDouble("exerciseLevel")
             );
 
@@ -74,11 +117,11 @@ public class Database {
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            user = new User(rs.getInt("userID"), username, 
-                    rs.getString("firstname"), rs.getString("lastname"), 
+            user = new User(rs.getInt("userID"), username,
+                    rs.getString("firstname"), rs.getString("lastname"),
                     rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"), 
-                    rs.getDouble("height"), (Date) rs.getDate("dob"), 
+                    rs.getString("nationality"), rs.getString("email"),
+                    rs.getDouble("height"), (Date) rs.getDate("dob"),
                     rs.getDouble("exerciseLevel")
             );
         } else {
@@ -86,29 +129,52 @@ public class Database {
         }
         return user;
     }
-    
-    public String getPassword(int userID) throws SQLException, 
+
+    public String getPassword(int userID) throws SQLException,
             NoSuchAlgorithmException {
         String sql = "SELECT password FROM user WHERE userID = ?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, userID);
         ResultSet rs = st.executeQuery();
-        while(rs.next()){
+        while (rs.next()) {
             return rs.getString("password");
         }
         return null;
     }
     
-    public boolean updatePassword(String newPassword, int userID) 
-            throws SQLException{
+    public String getVerification(int userID) throws SQLException,
+            NoSuchAlgorithmException {
+        String sql = "SELECT verification FROM user WHERE userID = ?";
+        PreparedStatement st = CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            return rs.getString("verification");
+        }
+        return null;
+    }  
+    
+    public void updateVerification(String ver) throws Exception{
+        try {
+            String sql = "UPDATE user SET verification = 1 WHERE verification  = ?";
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            st.setString(1, ver);
+            st.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("Failed to verify account");
+        }        
+    }
+
+    public boolean updatePassword(String newPassword, int userID)
+            throws SQLException {
         try {
             String sql = "UPDATE user SET password = ? WHERE userID  = ?";
             PreparedStatement st = CON.prepareStatement(sql);
-            st.setString(1,newPassword);
+            st.setString(1, newPassword);
             st.setInt(2, userID);
             st.executeUpdate();
             return true;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             return false;
         }
     }
@@ -116,7 +182,7 @@ public class Database {
     public User insertUser(String username, String password, String firstname,
             String lastname, String gender, Date dob, String postcode,
             String nationality, String email, double height, double weight,
-            double exercise) throws Exception {
+            double exercise, String verification) throws Exception {
         User user = null;
         try {
             String dbPassword = "";
@@ -128,8 +194,8 @@ public class Database {
 
             String sql = "INSERT INTO `user`(username, password, firstname, "
                     + "lastname, gender, dob, postcode, nationality, email, "
-                    + "height, exerciseLevel) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                    + "height, exerciseLevel, verification) "
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, username);
@@ -144,18 +210,19 @@ public class Database {
             st.setString(9, email);
             st.setDouble(10, height);
             st.setDouble(11, exercise);
-
+            st.setString(12, verification);
+            
             st.executeUpdate();
             int userID = 0;
             /**
-             * get the auto incremented id created by the database, 
-             * construct user
+             * get the auto incremented id created by the database, construct
+             * user
              */
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
                     userID = key.getInt(1);
                     user = new User(userID, username, firstname, lastname,
-                            gender, postcode, nationality, email, height, 
+                            gender, postcode, nationality, email, height,
                             dob, exercise);
                 } else {
                     throw new SQLException("No ID found, User not created");
@@ -255,7 +322,7 @@ public class Database {
                 Date wakeTime = result.getDate("wakeTime");
                 int sleepGrade = result.getInt("sleepGrade");
 
-                sleep = new Sleep(sleepID, userID, bedTime, 
+                sleep = new Sleep(sleepID, userID, bedTime,
                         wakeTime, sleepGrade);
 
                 sleepList.add(sleep);
@@ -304,7 +371,7 @@ public class Database {
      * @return
      * @throws Exception
      */
-    public Sleep insertSleep(int userID, Date bedTime, Date wakeTime, 
+    public Sleep insertSleep(int userID, Date bedTime, Date wakeTime,
             int sleepGrade) throws Exception {
         Sleep sleep = null;
         try {
@@ -324,7 +391,7 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    sleep = new Sleep(key.getInt(1), userID, bedTime, 
+                    sleep = new Sleep(key.getInt(1), userID, bedTime,
                             wakeTime, sleepGrade);
                 } else {
                     throw new SQLException("No ID found, Sleep data not saved");
@@ -370,7 +437,7 @@ public class Database {
      * @param userID
      * @throws Exception
      */
-    public Weight insertWeight(int userID, double weight, Date date) 
+    public Weight insertWeight(int userID, double weight, Date date)
             throws Exception {
         Weight log = null;
         try {
@@ -400,7 +467,7 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-    public Group insertGroup(int userID, String name, String description) 
+    public Group insertGroup(int userID, String name, String description)
             throws SQLException, Exception {
         Group group = null;
         try {
@@ -417,7 +484,7 @@ public class Database {
                 if (key.next()) {
                     int groupID = key.getInt(1);
                     insertMember(groupID, userID);
-                    acceptInvite(groupID,userID);
+                    acceptInvite(groupID, userID);
                 } else {
                     throw new SQLException("No ID found, group data not saved");
                 }
@@ -438,8 +505,8 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                group = new Group(result.getInt("groupID"), 
-                        result.getString("name"), result.getInt("userID"), 
+                group = new Group(result.getInt("groupID"),
+                        result.getString("name"), result.getInt("userID"),
                         result.getString("description"));
             }
         } catch (Exception ex) {
@@ -501,10 +568,10 @@ public class Database {
 
             while (result.next()) {
                 Group group = getGroup(result.getInt("groupID"));
-                if(!(isAdmin(userID,group.getGroupID()) && joined == 0)){
+                if (!(isAdmin(userID, group.getGroupID()) && joined == 0)) {
                     memberOf.add(group);
                 }
-                
+
             }
         } catch (Exception ex) {
             System.out.println("Failed to get groups "
@@ -571,7 +638,7 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                activity = new Activity(activityID, 
+                activity = new Activity(activityID,
                         result.getString("activity"), result.getDouble("MET"));
             }
         } catch (Exception ex) {
@@ -604,9 +671,8 @@ public class Database {
         return activityList;
     }
 
-
     // ---------------------------------------------EXERCISE----------------------------------------------------------
-    public Exercise insertExercise(int userID, int activityID, Date date, 
+    public Exercise insertExercise(int userID, int activityID, Date date,
             int minutes, double distance) throws Exception {
         Exercise exercise = null;
         try {
@@ -626,7 +692,7 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    exercise = new Exercise(key.getInt(1), userID, 
+                    exercise = new Exercise(key.getInt(1), userID,
                             getActivity(activityID), date, minutes, distance);
 
                 } else {
@@ -697,8 +763,8 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                food = new Food(id, result.getString("name"), 
-                        result.getDouble("protein"), result.getDouble("fat"), 
+                food = new Food(id, result.getString("name"),
+                        result.getDouble("protein"), result.getDouble("fat"),
                         result.getDouble("carbs"), result.getDouble("energy"),
                         result.getDouble("sugar"));
             }
@@ -737,7 +803,7 @@ public class Database {
 
             try (ResultSet key = st.getGeneratedKeys()) {
                 if (key.next()) {
-                    log = new FoodLog(key.getInt(1), getFood(foodID), 
+                    log = new FoodLog(key.getInt(1), getFood(foodID),
                             userID, meal, date);
                 } else {
                     throw new SQLException("No ID found, "
@@ -749,53 +815,47 @@ public class Database {
         }
         return log;
     }
-    
 
     //----------------------------NOTIFICATIONS--------------------------------------
-     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
+    public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
         ArrayList<Notification> list = new ArrayList<>();
         String sql = "SELECT * FROM notification WHERE userID =?";
         PreparedStatement st = this.CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
-         System.out.println("BOOBS");
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
         }
         return list;
     }
-     
-     public void deleteNotification(int id){
-         
+
+    public void deleteNotification(int id) {
+
         Notification n = null;
-        try{
+        try {
             String sql = "DELETE FROM notification WHERE id = ?";
             PreparedStatement st = this.CON.prepareStatement(sql);
             st.setInt(1, id);
             st.executeUpdate();
 
+        } catch (SQLException ex) {
+            System.out.println("ERROR DELETING NOTIF");
         }
-        catch(SQLException ex){
-               System.out.println("ERROR DELETING NOTIF"); 
-        } 
-        
-     }
 
+    }
 
     // ---------------------------------------------GOAL----------------------------------------------------------
-    public Goal insertGoal(){
-        
+    public Goal insertGoal() {
+
         return null;
     }
-    
-    public Goal getGoal(int groupID){
-        
+
+    public Goal getGoal(int groupID) {
+
         return null;
     }
-           
 
     // ---------------------------------------------MESSAGE----------------------------------------------------------
-    
     //gets conversation between two users
     public ArrayList<Message> getMessages(int senderID, int recipientID) throws SQLException, Exception {
         ArrayList<Message> list = new ArrayList<>();
@@ -812,14 +872,14 @@ public class Database {
         while (rs.next()) {
             User sender = this.getUser(rs.getInt("senderID"));
             User recipent = this.getUser(rs.getInt("recipientID"));
-            Message msg = new Message(rs.getString("message"),sender,recipent);
+            Message msg = new Message(rs.getString("message"), sender, recipent);
             list.add(msg);
         }
         return list;
     }
-    
-    public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception{
-         ArrayList<Integer> list = new ArrayList<>();
+
+    public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception {
+        ArrayList<Integer> list = new ArrayList<>();
         String sql = "SELECT senderID ,MIN(time) "
                 + "FROM message WHERE recipientID = ? "
                 + "AND seen = 0 "
@@ -832,9 +892,9 @@ public class Database {
         }
         return list;
     }
-    
+
     //Send message
-    public void sendMessage(String message, int senderID, int recipientID) throws SQLException{
+    public void sendMessage(String message, int senderID, int recipientID) throws SQLException {
         try {
             String sql = "INSERT INTO `message` "
                     + "(senderID, recipientID, message,seen) "
@@ -850,9 +910,9 @@ public class Database {
             System.out.println("Failed to send message");
         }
     }
-    
+
     //Set message as seen
-    public void setSeen(int userID, int senderID) throws SQLException{
+    public void setSeen(int userID, int senderID) throws SQLException {
         try {
             String sql = "UPDATE message SET seen = 1 WHERE senderID = ? AND recipientID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
@@ -860,9 +920,9 @@ public class Database {
             st.setInt(2, userID);
 
             st.executeUpdate();
-            
+
         } catch (Exception ex) {
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }
