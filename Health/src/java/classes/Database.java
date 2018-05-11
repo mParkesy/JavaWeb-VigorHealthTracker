@@ -1,10 +1,8 @@
 package classes;
 
-import com.sun.mail.smtp.SMTPTransport;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,15 +11,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
+/**
+ * A class that makes a connection to a MySQL database and contains all methods
+ * that run a query with the database
+ */
 public class Database {
 
     private static final String URL = "jdbc:mysql://localhost/studentdb";
@@ -30,10 +24,21 @@ public class Database {
 
     private static Connection CON = null;
 
+    /**
+     * A blank constructor, Database is instantiated many times and connection
+     * to the database only needs to be made once on login
+     */
     public Database() {
-
     }
 
+    /**
+     * A static method that makes the connection to the database, this only runs
+     * when the database is using and there are no sessions or once a user
+     * logins in
+     *
+     * @return A connection variable
+     * @throws Exception If the connection to the database fails
+     */
     public static Connection getConnection() throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         if (CON == null) {
@@ -47,6 +52,14 @@ public class Database {
         }
     }
 
+    /**
+     * A method that takes a string and digests it, this is used with passwords
+     * in the database, the method can digest and undigest a string
+     *
+     * @param p The string to digest
+     * @return The digested string
+     * @throws NoSuchAlgorithmException If the digest fails
+     */
     public static String passwordDigest(String p)
             throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -54,6 +67,13 @@ public class Database {
         return new BigInteger(1, digest.digest()).toString(16);
     }
 
+    /**
+     * A static method that is used throughout the system, it is called when a
+     * sweet alert pop up needs to be generated for an error message to the user
+     *
+     * @param message The message required in the alert
+     * @return The message surround by the sweet alert body
+     */
     public static String makeAlert(String message) {
         return "<script>"
                 + "swal({type : 'error',"
@@ -65,15 +85,23 @@ public class Database {
     }
 
 // ---------------------------------------------USER----------------------------------------------------------
-    public User getUser(int id) throws SQLException, Exception {
+    /**
+     * A method that returns a User object from the database based on the userID
+     * passed to it
+     *
+     * @param userID The userID of the User that needs to be constructed
+     * @return The User object
+     * @throws SQLException If the SQL statement fails to execute
+     */
+    public User getUser(int userID) throws SQLException {
         User user = null;
         String sql = "SELECT * FROM user WHERE userID =?";
         PreparedStatement st = CON.prepareStatement(sql);
-        st.setInt(1, id);
+        st.setInt(1, userID);
         ResultSet rs = st.executeQuery();
 
         if (rs.next()) {
-            user = new User(id, rs.getString("username"),
+            user = new User(userID, rs.getString("username"),
                     rs.getString("firstname"), rs.getString("lastname"),
                     rs.getString("gender"), rs.getString("postcode"),
                     rs.getString("nationality"), rs.getString("email"),
@@ -87,7 +115,15 @@ public class Database {
         return user;
     }
 
-    public User getUser(String username) throws SQLException, Exception {
+    /**
+     * A method that returns a User object from the database based on the
+     * username passed to it
+     *
+     * @param username The username of the User that needs to be constructed
+     * @return The User object
+     * @throws SQLException If the SQL statement fails to execute
+     */
+    public User getUser(String username) throws SQLException {
         User user = null;
         String sql = "SELECT * FROM user WHERE username =?";
         PreparedStatement st = CON.prepareStatement(sql);
@@ -107,20 +143,14 @@ public class Database {
         return user;
     }
 
-    public String getPassword(int userID) throws SQLException,
-            NoSuchAlgorithmException {
-        String sql = "SELECT password FROM user WHERE userID = ?";
-        PreparedStatement st = CON.prepareStatement(sql);
-        st.setInt(1, userID);
-        ResultSet rs = st.executeQuery();
-        while (rs.next()) {
-            return rs.getString("password");
-        }
-        return null;
-    }
-
-    public String getVerification(int userID) throws SQLException,
-            NoSuchAlgorithmException {
+    /**
+     * A method that gets the verification for a specific User from the database
+     *
+     * @param userID The userID of the User whose verification is needed
+     * @return The verification string from the database
+     * @throws SQLException If the SQL statement fails to execute
+     */
+    public String getVerification(int userID) throws SQLException {
         String sql = "SELECT verification FROM user WHERE userID = ?";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, userID);
@@ -131,6 +161,13 @@ public class Database {
         return null;
     }
 
+    /**
+     * An update method for a users verification, used when a User has clicked
+     * the link emailed to them, it sets their verification string to 1
+     *
+     * @param ver The verification string from the URL sent by email
+     * @throws Exception If the SQL statement fails to execute
+     */
     public void updateVerification(String ver) throws Exception {
         try {
             String sql = "UPDATE user SET verification = 1 WHERE verification  = ?";
@@ -142,6 +179,33 @@ public class Database {
         }
     }
 
+    /**
+     * A method that gets the password for a specific User from the database
+     *
+     * @param userID The userID of the User whose password is needed
+     * @return The password in its long format from the database as a string
+     * @throws SQLException If the SQL statement fails to execute
+     */
+    public String getPassword(int userID) throws SQLException {
+        String sql = "SELECT password FROM user WHERE userID = ?";
+        PreparedStatement st = CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            return rs.getString("password");
+        }
+        return null;
+    }
+
+    /**
+     * A method that updates a Users password in the database based on the
+     * userID
+     *
+     * @param newPassword The new password as as a string
+     * @param userID The userID of the Users password that needs changing
+     * @return True if successfully change, false if not
+     * @throws SQLException If the SQL statement fails to execute
+     */
     public boolean updatePassword(String newPassword, int userID)
             throws SQLException {
         try {
@@ -156,6 +220,26 @@ public class Database {
         }
     }
 
+    /**
+     * A method that inserts a new User into the database and returns the new
+     * User object if it is successful
+     *
+     * @param username The new username
+     * @param password The new password having been digested
+     * @param firstname The new firstname
+     * @param lastname The new lastname
+     * @param gender The new gender
+     * @param dob The new DOB
+     * @param postcode The new postcode
+     * @param nationality The new nationality
+     * @param email The new email
+     * @param height The new height
+     * @param weight The new height
+     * @param exercise The exercise level
+     * @param verification The verification code for the account
+     * @return The new User object
+     * @throws Exception If the Insert SQL statement fails to execute
+     */
     public User insertUser(String username, String password, String firstname,
             String lastname, String gender, Date dob, String postcode,
             String nationality, String email, double height, double weight,
@@ -206,28 +290,31 @@ public class Database {
                 }
             }
             Date now = new Date();
+            // weight instance needs to be created in database
             insertWeight(userID, weight, now);
 
         } catch (SQLException ex) {
-            System.out.println("Duplicate database entry");
+            System.out.println("Duplicate database entry for User");
         }
         return user;
     }
 
     /**
-     * Get all weight data in an arrayList for a specific user
+     * A method that collects all weight data for a specific User
      *
-     * @return A list of all weights
-     * @throws Exception
+     * @param userID The userID of the User whose weight data is being placed
+     * into a list
+     * @return An ArrayList of Weight objects
+     * @throws Exception If the Select SQL fails to execute
      */
-    public ArrayList<Weight> allWeight(int id) throws Exception {
+    public ArrayList<Weight> allWeight(int userID) throws Exception {
         ArrayList<Weight> weightList = new ArrayList<>();
 
         try {
             String sql = "SELECT * FROM weight WHERE userID = ? "
                     + "ORDER BY date DESC";
             PreparedStatement st = CON.prepareStatement(sql);
-            st.setInt(1, id);
+            st.setInt(1, userID);
 
             ResultSet result = st.executeQuery();
             Weight weight;
@@ -237,7 +324,7 @@ public class Database {
                 double newWeight = result.getDouble("weight");
                 Date date = result.getDate("date");
 
-                weight = new Weight(weightID, id, newWeight, date);
+                weight = new Weight(weightID, userID, newWeight, date);
 
                 weightList.add(weight);
             }
@@ -249,8 +336,12 @@ public class Database {
     }
 
     /**
+     * A method that collects all food log data for a specific User
      *
-     * @return @throws Exception
+     * @param userID The userID of the User whose food log data is being placed
+     * into a list
+     * @return An ArrayList of food log objects
+     * @throws Exception If the Select SQL fails to execute
      */
     public ArrayList<FoodLog> allFoodLogs(int userID) throws Exception {
 
@@ -277,10 +368,12 @@ public class Database {
     }
 
     /**
-     * Get all sleep data in an arrayList for a specific user
+     * A method that collects all sleep data for a specific User
      *
-     * @return A list of all sleep
-     * @throws Exception
+     * @param userID The userID of the User whose sleep data is being placed
+     * into a list
+     * @return An ArrayList of Sleep objects
+     * @throws Exception If the Select SQL fails to execute
      */
     public ArrayList<Sleep> allSleep(int userID) throws Exception {
         ArrayList<Sleep> sleepList = new ArrayList<>();
@@ -310,6 +403,13 @@ public class Database {
         return sleepList;
     }
 
+    /**
+     * A method that collects all exercise data for a specific User
+     * @param userID The userID of the User whose exercise data is being placed
+     * into a list
+     * @return An ArrayList of Exercise objects
+     * @throws Exception If the Select SQL fails to execute
+     */
     public ArrayList<Exercise> allExercise(int userID) throws Exception {
         ArrayList<Exercise> exerciseList = new ArrayList<>();
 
