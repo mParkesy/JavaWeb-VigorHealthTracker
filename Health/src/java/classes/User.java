@@ -119,4 +119,8 @@ public class User {
     public Double getWeight() throws Exception{
         return new Database().currentWeight(id).getWeight();
     }
+    
+    public Double getExercise() throws Exception{
+        return new Database().getMaxExercise(id).getDistance();
+    }
 }

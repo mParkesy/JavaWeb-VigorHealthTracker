@@ -657,6 +657,24 @@ public class Database {
         }
         return exercise;
     }
+    public Exercise getMaxExercise(int userID){
+        Exercise exercise = null;
+        try {
+            String sql = "SELECT * FROM exercise WHERE userID = ? AND distance = (SELECT MAX(distance) FROM exercise WHERE userID = ?)";
+
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setInt(2, userID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                exercise = new Exercise(result.getInt("exerciseID"), userID, getActivity(result.getInt("activityID")), result.getDate("date"), result.getInt("minutes"), result.getDouble("distance"));
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get exercise by userID");
+        }
+        return exercise;
+    }
 
     // ---------------------------------------------FOOD----------------------------------------------------------
     public ArrayList<Food> allFood() throws Exception {
@@ -758,7 +776,6 @@ public class Database {
         PreparedStatement st = this.CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
-         System.out.println("BOOBS");
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
         }
@@ -788,9 +805,22 @@ public class Database {
         return null;
     }
     
-    public Goal getGoal(int groupID){
+    public Goal getGoal(int userID,String type) throws SQLException, Exception{
+        try{
+            String sql = "SELECT * FROM goal WHERE userID =? AND type =?";
+        PreparedStatement st = this.CON.prepareStatement(sql);
+        st.setInt(1, userID);
+        st.setString(2, type);
+        ResultSet rs = st.executeQuery();
         
-        return null;
+        while (rs.next()) {
+            return new Goal(rs.getDouble("start"),rs.getDouble("target"),rs.getInt("userID"),rs.getString("type"));
+        }
+        
+        }catch(Exception ex){
+            ex.printStackTrace();;
+        }
+        return new Goal(userID,type);
     }
            
 
