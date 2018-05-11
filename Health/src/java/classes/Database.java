@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.TimeStamp;
 import java.util.ArrayList;
 import java.util.Date;
 import org.joda.time.DateTime;
@@ -37,7 +36,6 @@ public class Database {
      * A static method that makes the connection to the database, this only runs
      * when the database is using and there are no sessions or once a user
      * logins in
-     *
      * @return A connection variable
      * @throws Exception If the connection to the database fails
      */
@@ -57,7 +55,6 @@ public class Database {
     /**
      * A method that takes a string and digests it, this is used with passwords
      * in the database, the method can digest and undigest a string
-     *
      * @param p The string to digest
      * @return The digested string
      * @throws NoSuchAlgorithmException If the digest fails
@@ -72,7 +69,6 @@ public class Database {
     /**
      * A static method that is used throughout the system, it is called when a
      * sweet alert pop up needs to be generated for an error message to the user
-     *
      * @param message The message required in the alert
      * @return The message surround by the sweet alert body
      */
@@ -90,7 +86,6 @@ public class Database {
     /**
      * A method that returns a User object from the database based on the userID
      * passed to it
-     *
      * @param userID The userID of the User that needs to be constructed
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
@@ -120,7 +115,6 @@ public class Database {
     /**
      * A method that returns a User object from the database based on the
      * username passed to it
-     *
      * @param username The username of the User that needs to be constructed
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
@@ -166,7 +160,6 @@ public class Database {
     /**
      * An update method for a users verification, used when a User has clicked
      * the link emailed to them, it sets their verification string to 1
-     *
      * @param ver The verification string from the URL sent by email
      * @throws Exception If the SQL statement fails to execute
      */
@@ -183,7 +176,6 @@ public class Database {
 
     /**
      * A method that gets the password for a specific User from the database
-     *
      * @param userID The userID of the User whose password is needed
      * @return The password in its long format from the database as a string
      * @throws SQLException If the SQL statement fails to execute
@@ -202,7 +194,6 @@ public class Database {
     /**
      * A method that updates a Users password in the database based on the
      * userID
-     *
      * @param newPassword The new password as as a string
      * @param userID The userID of the Users password that needs changing
      * @return True if successfully change, false if not
@@ -225,7 +216,6 @@ public class Database {
     /**
      * A method that inserts a new User into the database and returns the new
      * User object if it is successful
-     *
      * @param username The new username
      * @param password The new password having been digested
      * @param firstname The new firstname
@@ -303,7 +293,6 @@ public class Database {
 
     /**
      * A method that collects all weight data for a specific User
-     *
      * @param userID The userID of the User whose weight data is being placed
      * into a list
      * @return An ArrayList of Weight objects
@@ -339,7 +328,6 @@ public class Database {
 
     /**
      * A method that collects all food log data for a specific User
-     *
      * @param userID The userID of the User whose food log data is being placed
      * into a list
      * @return An ArrayList of food log objects
@@ -371,7 +359,6 @@ public class Database {
 
     /**
      * A method that collects all sleep data for a specific User
-     *
      * @param userID The userID of the User whose sleep data is being placed
      * into a list
      * @return An ArrayList of Sleep objects
@@ -442,15 +429,13 @@ public class Database {
     // ---------------------------------------------SLEEP----------------------------------------------------------
     /**
      * Construct a sleep instance and add it to the database
-     *
      * @param userID
      * @param bedTime
      * @param wakeTime
      * @param sleepGrade
-     * @return
-     * @throws Exception
+     * @return A new sleep object
+     * @throws Exception If the Insert SQL fails to execute
      */
-
     public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime, 
             int sleepGrade) throws Exception {
         Sleep sleep = null;
@@ -484,12 +469,12 @@ public class Database {
     }
 
     // ---------------------------------------------WEIGHT----------------------------------------------------------
+    
     /**
      * Construct the most recent weight instance from the database
-     *
-     * @param userID
-     * @param weightID
-     * @throws Exception
+     * @param userID The userID of the User whose current weight is needed
+     * @return The most recent weight object for the user
+     * @throws Exception If the Select SQL statement fails to execute
      */
     public Weight currentWeight(int userID) throws Exception {
         Weight weight = null;
