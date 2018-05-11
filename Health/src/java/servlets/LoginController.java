@@ -73,7 +73,6 @@ public class LoginController extends HttpServlet {
         try {
             if(db.getUser(username) != null){
                 User loginUser = db.getUser(username);
-                System.out.println(db.getPassword(loginUser.getID()));
                 if(passwordDigest.equals(db.getPassword(loginUser.getID()))){
                     if(db.getVerification(loginUser.getID()).equals("1")){
                         HttpSession session = request.getSession();
