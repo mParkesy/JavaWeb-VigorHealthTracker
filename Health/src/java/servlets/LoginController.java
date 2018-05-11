@@ -75,10 +75,24 @@ public class LoginController extends HttpServlet {
                 User loginUser = db.getUser(username);
                 System.out.println(db.getPassword(loginUser.getID()));
                 if(passwordDigest.equals(db.getPassword(loginUser.getID()))){
-                    HttpSession session = request.getSession();
-                    session.setMaxInactiveInterval(10 * 60);
-                    session.setAttribute("user", db.getUser(username));
-                    response.sendRedirect("home.jsp");
+                    if(db.getVerification(loginUser.getID()).equals("1")){
+                        HttpSession session = request.getSession();
+                        session.setMaxInactiveInterval(10 * 60);
+                        session.setAttribute("user", db.getUser(username));
+                        response.sendRedirect("home.jsp");
+                    } else {
+                      //  error = "You have not verified your account, \n"
+                      //          + "please check your emails to verify your account";
+                      error = "<script>"
+                              + "swal({type : 'error',"
+                              + "title: 'Not Verified',"
+                              + "showConfirmButton: false,"
+                              + "timer: 3000"
+                              + "})</script>";
+                        request.setAttribute("message", error);
+                        request.getRequestDispatcher("login.jsp")
+                            .include(request, response);
+                    }
                 } else {
                     error = "Password incorrect for that username";
                     request.setAttribute("message", error);
