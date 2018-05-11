@@ -1,22 +1,19 @@
 		*{
 			transition:all ease 0.2s;
 		}
+                body{
+                    overflow-x: hidden;
+                }
 
 		.square {
-
+                        background:rgba(255,255,255,0.9);
 			text-align:center;
 			height:200px;
 			width:250px;
 		}
-		div i{
-
-			font-size:70px;
-			padding:30px;
-			margin:auto;
-		}
 		
 		.square:hover{
-			background:rgb(240,240,240);
+			background:rgba(240,240,240,0.9);
 			box-shadow:inset 0 0 20px rgb(50,50,50);
 			cursor: pointer;
 		}
@@ -63,14 +60,7 @@ a{
         vertical-align: top;
 }
 
-img{
-        width:30%;
-        padding:30px 0 30px 0;
-        min-width:250px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-}
+
 .slide{
         width:500px;
         height:500px;
@@ -124,9 +114,9 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
     font-size:14px;
     position:absolute;
     background:red;
-    border-radius:20px;
+    border-radius:5px;
     top:-5px;
-    right:20px;
+    right:45px;
     height:18px;
     width:18px;
     line-height:15px;
@@ -134,16 +124,9 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
     color:white;
     
 }
-.bell{
-    font-size:20px;
-  padding:0;
-  margin-right:20px;
-  color:white;
-   opacity:0.5;
-}
 
 .links{
-    color:white;
+    color:black;
 }
 .links > div{
     display:inline-block;
@@ -155,14 +138,7 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
         vertical-align: top;
 }
 
-img{
-        width:30%;
-        padding:30px 0 30px 0;
-        min-width:250px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-}
+
 .slide{
         width:500px;
         height:500px;
@@ -195,4 +171,32 @@ h2,h2:hover,a:hover, a:active, a:link, a:visited{
 .home{
     font-size: 25px;
 }
+
+.square i{
+    font-size:70px;
+    margin:35px;
+}
+
+#groupInfo{
+    height:80vh;
+}
+
+.list-group-item a{
+    color:black;
+}
+.active a{
+    color:white;
+}
+
+.active a:hover{
+    color:white;
+}
+
+.group-container{
+    margin-top:20px;
+}
+.groups{
+    background:rgba(255,255,255,0.75);
+}
+
 

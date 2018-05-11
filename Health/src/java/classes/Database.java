@@ -400,17 +400,18 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-    public Group insertGroup(int userID, String name, String description) 
+    public Group insertGroup(int userID, String name, String description, String image) 
             throws SQLException, Exception {
         Group group = null;
         try {
-            String sql = "INSERT INTO ugroup (userID, name, description)"
-                    + "VALUES (?,?,?)";
+            String sql = "INSERT INTO ugroup (userID, name, description, image)"
+                    + "VALUES (?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
             st.setString(2, name);
             st.setString(3, description);
+            st.setString(4, image);
             st.executeUpdate();
 
             try (ResultSet key = st.getGeneratedKeys()) {
@@ -425,6 +426,7 @@ public class Database {
 
         } catch (Exception ex) {
             System.out.println("Failed to insert group");
+            ex.printStackTrace();
         }
         return group;
     }
@@ -440,10 +442,11 @@ public class Database {
             while (result.next()) {
                 group = new Group(result.getInt("groupID"), 
                         result.getString("name"), result.getInt("userID"), 
-                        result.getString("description"));
+                        result.getString("description"),
+                        result.getString("image"));
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get current weight");
+            System.out.println("Failed to get group");
         }
         return group;
     }
@@ -559,7 +562,25 @@ public class Database {
         }
         return list;
     }
+    
+    public ArrayList<User> getMembers(int groupID) {
+        ArrayList<User> list = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM groupmembers where groupID = ? AND joined = 1";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, groupID);
+            ResultSet result = st.executeQuery();
 
+            while (result.next()) {
+                User user = getUser(result.getInt("userID"));
+                list.add(user);
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed to get member list");
+        }
+        return list;
+    }
+    
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
@@ -758,7 +779,6 @@ public class Database {
         PreparedStatement st = this.CON.prepareStatement(sql);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
-         System.out.println("BOOBS");
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
         }
@@ -850,7 +870,7 @@ public class Database {
             System.out.println("Failed to send message");
         }
     }
-    
+
     //Set message as seen
     public void setSeen(int userID, int senderID) throws SQLException{
         try {

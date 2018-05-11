@@ -12,12 +12,13 @@ public class Group {
     private String imagePath;
     //private Goal groupGoal
 
-    public Group(int groupID, String groupName, int userID, String description) {
+    public Group(int groupID, String groupName, int userID, String description, String imagePath) {
         try {
             this.groupID = groupID;
             this.groupName = groupName;
             this.user = new Database().getUser(userID);
             this.description = description;
+            this.imagePath = imagePath;
         } catch (Exception ex) {
             Logger.getLogger(Group.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,6 +70,7 @@ public class Group {
         str.append("\"description\": " + "\"" + this.description + "\"" + ",");
         str.append("\"groupID\": " + "\"" + this.groupID + "\"" + ",");
         str.append("\"groupName\": " + "\"" + this.groupName + "\"" + ",");
+        str.append("\"imagePath\": " + "\"" + this.imagePath + "\"" + ",");
         str.append("\"user\": " +  this.user.getID());
         str.append("}");
         return str.toString();
