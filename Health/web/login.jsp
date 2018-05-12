@@ -49,6 +49,10 @@
                         <div class="form-group">
                             <label for="pwd">Password:</label>
                             <input type="password" class="form-control" name="password" id="password">
+                            <a href ="#" data-toggle="modal" 
+                               data-target="#modal1">
+                                Forgotten password
+                            </a>    
                         </div>
                         <button type="submit" class="btn btn-default">Login</button>
                     </form>
@@ -63,7 +67,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body modal-form">
-                        <form class="modal-form" method ="post" action="PasswordController">
+                        <form class="modal-form" method ="post" action="LoginController">
                             
                             <div class="form-group">
                                 <label for="email">Email:</label>

@@ -129,10 +129,10 @@ public class Database {
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
      */
-    public User getUser(String username) throws SQLException {
+    public User getUser(String username) throws SQLException, Exception {
         User user = null;
         String sql = "SELECT * FROM user WHERE username =?";
-        PreparedStatement st = CON.prepareStatement(sql);
+        PreparedStatement st = getConnection().prepareStatement(sql);
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
@@ -174,11 +174,9 @@ public class Database {
      * @param ver The verification string from the URL sent by email
      * @throws Exception If the SQL statement fails to execute
      */
-    public void updateVerification(String ver, int userID) throws Exception {
+    public boolean updateVerification(String ver, int userID) throws Exception {
         try {
-            String sql = "UPDATE user SET verification = 1 "
-                    + "WHERE verification  = ?";
-            String test = "UPDATE user SET verification = ?";
+            String sql = "UPDATE user SET verification = ?";
             PreparedStatement st;
             if(userID == 0){
                 sql = sql + "WHERE verification = ?";
@@ -191,10 +189,17 @@ public class Database {
                 st.setString(1, ver);
                 st.setInt(2, userID);              
             }
-            st.executeUpdate();
+            int affected = st.executeUpdate();
+            System.out.println(affected);
+            if(affected == 0){
+                return false;
+            } else {
+                return true;
+            }
         } catch (SQLException ex) {
             System.out.println("Failed to update verification field");
         }
+        return false;
     }
 
     /**

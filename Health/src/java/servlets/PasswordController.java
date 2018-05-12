@@ -67,7 +67,7 @@ public class PasswordController extends HttpServlet {
                     String link = ip + ":8080/Health/passwordchange"
                             + ".jsp?verification=" + stamp;
                     EmailSetup emailSetup = new EmailSetup(email, link, "Password change");
-
+                    emailSetup.sendEmail();
                 } else {
                     error = Database.makeAlert("Incorrect email address for "
                             + "that username");
@@ -87,6 +87,7 @@ public class PasswordController extends HttpServlet {
             System.out.println("Failed to construct user on "
                     + "forgotten password");
         } catch (Exception ex) {
+            ex.printStackTrace();
             System.out.println("Failed to update verification string for user");
         }
 

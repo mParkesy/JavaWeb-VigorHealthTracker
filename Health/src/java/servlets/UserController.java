@@ -56,7 +56,7 @@ public class UserController extends HttpServlet {
             String renewpassword = request.getParameter("renewpassword");
             int userID = Integer.parseInt(request.getParameter("userID"));
             Database db = new Database();
-            
+
         try {
             String message;
             if(db.getPassword(userID).equals(db.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)){
