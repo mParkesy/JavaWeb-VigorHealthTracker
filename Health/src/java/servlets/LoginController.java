@@ -73,28 +73,35 @@ public class LoginController extends HttpServlet {
         try {
             if(db.getUser(username) != null){
                 User loginUser = db.getUser(username);
-                System.out.println(db.getPassword(loginUser.getID()));
                 if(passwordDigest.equals(db.getPassword(loginUser.getID()))){
-                    HttpSession session = request.getSession();
-                    session.setMaxInactiveInterval(10 * 60);
-                    session.setAttribute("user", db.getUser(username));
-                    response.sendRedirect("home.jsp");
+                    if(db.getVerification(loginUser.getID()).equals("1")){
+                        HttpSession session = request.getSession();
+                        session.setMaxInactiveInterval(10 * 60);
+                        session.setAttribute("user", db.getUser(username));
+                        response.sendRedirect("home.jsp");
+                    } else {
+                      error = "You have not verified your account, "
+                              + "please check your emails";
+                        request.setAttribute("message", Database.makeAlert(error));
+                        request.getRequestDispatcher("login.jsp")
+                            .include(request, response);
+                    }
                 } else {
                     error = "Password incorrect for that username";
-                    request.setAttribute("message", error);
+                    request.setAttribute("message", Database.makeAlert(error));
                     request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                 }
             } else {
                 error = "The username you entered does not exist";
-                request.setAttribute("message", error);
+                request.setAttribute("message", Database.makeAlert(error));
                 request.getRequestDispatcher("login.jsp")
                         .include(request, response);
             }
             
         } catch (Exception ex) {
             error = "Error checking credentials, please try again.";
-            request.setAttribute("message", error);
+            request.setAttribute("message", Database.makeAlert(error));
             request.getRequestDispatcher("login.jsp")
                     .include(request, response);
         }
