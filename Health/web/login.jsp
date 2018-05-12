@@ -55,6 +55,29 @@
                 </div>
             </div>
         </div>
-
+        <div class="modal fade" id="modal1" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Forgotten password</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body modal-form">
+                        <form class="modal-form" method ="post" action="PasswordController">
+                            
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Username:</label>
+                                <input type="text" class="form-control" name="username" >
+                            </div>
+                            <button type="submit" class="btn btn-default">Add</button>
+                        </form>  
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

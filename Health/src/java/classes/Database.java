@@ -174,14 +174,26 @@ public class Database {
      * @param ver The verification string from the URL sent by email
      * @throws Exception If the SQL statement fails to execute
      */
-    public void updateVerification(String ver) throws Exception {
+    public void updateVerification(String ver, int userID) throws Exception {
         try {
-            String sql = "UPDATE user SET verification = 1 WHERE verification  = ?";
-            PreparedStatement st = getConnection().prepareStatement(sql);
-            st.setString(1, ver);
+            String sql = "UPDATE user SET verification = 1 "
+                    + "WHERE verification  = ?";
+            String test = "UPDATE user SET verification = ?";
+            PreparedStatement st;
+            if(userID == 0){
+                sql = sql + "WHERE verification = ?";
+                st = getConnection().prepareStatement(sql);
+                st.setString(1, "1");
+                st.setString(2, ver);              
+            } else {
+                sql = sql + "WHERE userID = ?";
+                st = getConnection().prepareStatement(sql);
+                st.setString(1, ver);
+                st.setInt(2, userID);              
+            }
             st.executeUpdate();
         } catch (SQLException ex) {
-            System.out.println("Failed to verify account");
+            System.out.println("Failed to update verification field");
         }
     }
 
