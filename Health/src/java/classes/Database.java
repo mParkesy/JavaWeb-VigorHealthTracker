@@ -9,9 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.TimeStamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.joda.time.DateTime;
 
 /**
@@ -394,7 +398,7 @@ public class Database {
                 java.sql.Timestamp wakeTime = result.getTimestamp("wakeTime");
                 int sleepGrade = result.getInt("sleepGrade");
 
-                sleep = new Sleep(sleepID, userID, new DateTime(bedTime.getTime()), 
+                sleep = new Sleep(sleepID, userID, new DateTime(bedTime.getTime()),
                         new DateTime(wakeTime.getTime()), sleepGrade);
 
                 sleepList.add(sleep);
@@ -407,6 +411,7 @@ public class Database {
 
     /**
      * A method that collects all exercise data for a specific User
+     *
      * @param userID The userID of the User whose exercise data is being placed
      * into a list
      * @return An ArrayList of Exercise objects
@@ -447,11 +452,10 @@ public class Database {
      * @param bedTime
      * @param wakeTime
      * @param sleepGrade
-     * @return
-     * @throws Exception
+     * @return A new sleep object
+     * @throws Exception If the Insert SQL fails to execute
      */
-
-    public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime, 
+    public Sleep insertSleep(int userID, DateTime bedTime, DateTime wakeTime,
             int sleepGrade) throws Exception {
         Sleep sleep = null;
         try {
@@ -487,9 +491,9 @@ public class Database {
     /**
      * Construct the most recent weight instance from the database
      *
-     * @param userID
-     * @param weightID
-     * @throws Exception
+     * @param userID The userID of the User whose current weight is needed
+     * @return The most recent weight object for the user
+     * @throws Exception If the Select SQL statement fails to execute
      */
     public Weight currentWeight(int userID) throws Exception {
         Weight weight = null;
@@ -696,22 +700,48 @@ public class Database {
         }
     }
 
-    public ArrayList<Exercise> getGroupRecentExercise(int groupID) {
-        ArrayList<Exercise> list = new ArrayList<>();
+    public double getGroupDistance(int groupID, String date) {
+        double totalDistance = 0;
         try {
-            String sql = "SELECT e.exerciseID, g.userID, e.activityID, max(e.date) FROM exercise e INNER JOIN groupmembers g on e.userID = g.userID where g.groupID = ?";
+            String sql = "SELECT SUM(exercise.distance) as total FROM exercise INNER JOIN groupmembers on exercise.userID = groupmembers.userID WHERE groupmembers.groupID = ?";
+            if (!date.equals("")) {
+                sql = sql + "AND exercise.date > '" + date + "'";
+            }
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, groupID);
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                Exercise e = getExercise(result.getInt("exerciseID"));
-                list.add(e);
+                totalDistance += result.getDouble("total");
             }
         } catch (Exception ex) {
-            System.out.println("Failed to get list of group exercises");
+            System.out.println("Failed to get groups total distance");
         }
-        return list;
+        return totalDistance;
+    }
+
+    public TreeMap getGroupDistanceLeaderboard(int groupID) throws SQLException {
+        TreeMap<Double, Integer> t = new TreeMap(Collections.reverseOrder());
+        String sql = "SELECT e.userID, SUM(e.distance) as total "
+                + "FROM exercise e INNER JOIN groupmembers g "
+                + "ON e.userID = g.userID "
+                + "WHERE g.groupID = ? GROUP BY e.userID";
+        PreparedStatement st = CON.prepareStatement(sql);
+        st.setInt(1, groupID);
+        ResultSet result = st.executeQuery();
+        
+        while(result.next()){
+            User user = getUser(result.getInt("e.userID"));
+            t.put(result.getDouble("total"), result.getInt("e.userID"));
+        }
+        Set set = t.entrySet();
+        Iterator i = set.iterator();
+        while(i.hasNext()){
+            Map.Entry me = (Map.Entry)i.next();
+            System.out.print(me.getKey()+": " + me.getValue());
+        }
+        
+        return t;
     }
     
     public ArrayList<User> getMembers(int groupID) {
