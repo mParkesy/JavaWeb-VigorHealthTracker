@@ -15,20 +15,32 @@
                 overflow-y: hidden;
                 
             }
-            #goal{
-                display:none;
+            
+            #groupInfo{
+                opacity:0;
+            }
+            #openModal{
+                margin-left:20px;
+                margin-top:-10px;
+            }
+            h3{
+                display:inline;
             }
         </style>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@ include file="fragments/header.jspf" %>
         <script>
             $(document).ready(function () {
-                
+               
                 var groupID = 0;
                 
+                $('.nav-link').click(function(){
+                    $('.tab-content').show();
+                })
                 
                 $('.list-group-item a').click(function () {
-                    $('#goal').show();
+                    
+                    $('#groupInfo').css('opacity',1);
                     groupID = $(this).attr('id');
                     $('li').removeClass('active');
                     $(this).parent().addClass('active');
@@ -61,11 +73,27 @@
                         }, function (response) {
                             var members = JSON.parse(response);
                             
-                            $('.card-body .list-group').html("");
+                            $('.card-body .members').html("");
                             $('.members-title').text("Members - " + members.length);
                             for (i = 0; i < members.length; i++){
-                                $('.card-body .list-group').append("<li class='list-group-item'>" 
-                                        + members[i].username +"<a id='" + members[i].id + "' href='#' class='msg-btn'><i class='far fa-comment'></i></a></li>");
+                                $('.card-body .members').append("<li class='list-group-item'>" 
+                                    + members[i].username +"<a id='" + members[i].id + "' href='#' class='msg-btn'><i class='far fa-comment'></i></a></li>");
+                            }
+                        })
+                        
+                        $.get('GroupController', {
+                            function: "Leaderboard",
+                            groupID: groupID,
+                            userID: ${user.getID()}
+                        }, function (response) {
+                            
+                            var members = JSON.parse(response);
+                            
+                            $('.card-body .leaderboard').html("");
+                            
+                            for (i = 0; i < members.length; i++){
+                                $('.card-body .leaderboard').append("<li class='list-group-item'><div class='medal'></div>" 
+                                    + members[i].username  +  "<span class='distance'>" + members[i].distance + "km</span></li>");
                             }
                         })
                     }
@@ -142,7 +170,11 @@
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
             <div class="col-lg-4 col-md-8 col-sm-10 card" id="groupInfo">
                 <div class="card-body">
-                    <h3 class='card-title'></h3>
+                    <h3 class='card-title'></h3> 
+                    <button id="openModal" type="button" class="btn btn-primary admin"
+                        data-toggle="modal" data-target="#modal2">Invite
+                    </button>
+                   <br>
                     <p class="card-text"></p>
                     <div id="goal">
                         <h5 class='goal-title'>Current Goal</h5>
@@ -156,26 +188,28 @@
                     <br>
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                          <a class="nav-link active members-title" href="#members" role="tab" data-toggle="tab"></a>
+                          <a class="nav-link members-title" href="#members" role="tab" data-toggle="tab"></a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Leaderboard</a>
+                          <a class="nav-link" href="#leaderboard" role="tab" data-toggle="tab">Leaderboard</a>
                         </li>
                         
                       </ul>
                     
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade in active" id="members">
-                            <ul class="list-group "></ul>
+                    <div class="tab-content ">
+                        <div role="tabpanel" class="tab-pane fade" id="members">
+                            <h5 >Member List</h5>
+                            <ul class="list-group members "></ul>
                         </div>
-                        <div role="tabpanel" class="tab-pane fade" id="buzz">bbb</div>
+                        <div role="tabpanel" class="tab-pane fade" id="leaderboard">
+                            <h5 >Weekly Distance Leaderboard</h5>
+                            <ul class="list-group leaderboard "></ul>
+                        </div>
                         <div role="tabpanel" class="tab-pane fade" id="references">ccc</div>
                     </div>
 
                     
-                    <button id="openModal" type="button" class="btn btn-primary admin"
-                            data-toggle="modal" data-target="#modal2">Invite
-                    </button>
+                  
                 </div>
             </div>
             <div class="modal fade" id="modal2" role="dialog">
@@ -197,7 +231,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-8 col-sm-10 groups">
+            <div class="col-lg-4 col-md-8 col-sm-10 groups ">
                 
                 
                 <h1>Your Groups</h1>                

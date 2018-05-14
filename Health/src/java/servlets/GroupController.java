@@ -8,7 +8,11 @@ package servlets;
 import classes.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -86,6 +90,40 @@ public class GroupController extends HttpServlet {
                 }
                 response.getWriter().println("]");
                 break;
+            case "Leaderboard":
+                response.getWriter().println("[");
+                TreeMap board = null;
+                try {
+                    board = db.getGroupDistanceLeaderboard(groupID);
+                } catch (SQLException ex) {
+                    Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                int counter = 0;
+                Set<Integer> keys = board.descendingKeySet();
+                for(Integer key: keys){
+                    counter++;
+                    StringBuilder str = new StringBuilder();
+                    try {
+                        str.append("{");
+                        str.append("\"username\": "  + "\"" +  db.getUser(key).getUsername() + "\",");
+                        str.append("\"distance\": " + "\"" +  board.get(key) + "\"");
+                        str.append("}");
+                        response.getWriter().println(str.toString());
+                        
+                    } catch (SQLException ex) {
+                        Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    if(counter == keys.size()-1){
+                        response.getWriter().println(",");
+                    }
+                    
+                }
+                
+                response.getWriter().println("]");
+                break;
+                
             default:
                 break;
         }

@@ -153,6 +153,7 @@ public class LoginController extends HttpServlet {
             request.setAttribute("message", error);
             request.getRequestDispatcher("login.jsp")
                     .include(request, response);
+            ex.printStackTrace();
         }
 
     }

@@ -392,7 +392,7 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                int id = result.getInt("id");
+                int id = result.getInt("foodLogID");
                 Food food = getFood(result.getInt("foodID"));
                 String meal = result.getString("meal");
                 Date date = result.getDate("date");
@@ -754,7 +754,7 @@ public class Database {
     }
 
     public TreeMap getGroupDistanceLeaderboard(int groupID) throws SQLException {
-        TreeMap<Double, Integer> t = new TreeMap(Collections.reverseOrder());
+        TreeMap<Integer,Double> t = new TreeMap(Collections.reverseOrder());
         String sql = "SELECT e.userID, SUM(e.distance) as total "
                 + "FROM exercise e INNER JOIN groupmembers g "
                 + "ON e.userID = g.userID "
@@ -765,14 +765,9 @@ public class Database {
 
         while (result.next()) {
             User user = getUser(result.getInt("e.userID"));
-            t.put(result.getDouble("total"), result.getInt("e.userID"));
+            t.put(result.getInt("e.userID"),result.getDouble("total"));
         }
-        Set set = t.entrySet();
-        Iterator i = set.iterator();
-        while (i.hasNext()) {
-            Map.Entry me = (Map.Entry) i.next();
-            System.out.print(me.getKey() + ": " + me.getValue());
-        }
+       
 
         return t;
     }
