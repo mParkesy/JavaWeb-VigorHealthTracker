@@ -30,8 +30,8 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
             function sweet(){
-                swal({type : 'error',
-                    title: 'Error',
+                swal({type : 'success',
+                    title: 'Success',
                     text: 'Please follow the link in your emails',"
                     showConfirmButton: false,"
                     timer: 3000"
@@ -54,11 +54,11 @@
                     <form action="LoginController" method="post">
                         <div class="form-group">
                             <label for="text">Username:</label>
-                            <input type="text" class="form-control"  name="username" id="username">
+                            <input type="text" class="form-control"  name="username" id="username" required>
                         </div>
                         <div class="form-group">
                             <label for="pwd">Password:</label>
-                            <input type="password" class="form-control" name="password" id="password">
+                            <input type="password" class="form-control" name="password" id="password" required>
                             <a href ="#" data-toggle="modal" 
                                data-target="#modal1">
                                 Forgotten password
@@ -81,11 +81,11 @@
                             
                             <div class="form-group">
                                 <label for="email">Email:</label>
-                                <input type="email" class="form-control" name="email">
+                                <input type="email" class="form-control" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="date">Username:</label>
-                                <input type="text" class="form-control" name="username" >
+                                <input type="text" class="form-control" name="username" required>
                             </div>
                             <button onclick="sweet();" type="submit" class="btn btn-default">Submit</button>
                         </form>  

@@ -25,17 +25,26 @@ public class EmailSetup {
     private final String password = "Vigor123";
     private String message;
     private String subject;
+    private String link;
+    private String firstname;
+    private String title;
 
-    public EmailSetup(String toAddress, String subject) {
-        this.toAddress = toAddress;
-        this.message = "";
-        this.subject = subject;
-    }
-
-    public EmailSetup(String toAddress, String message, String subject) {
+    public EmailSetup(String toAddress, String message, String subject, String link, String firstname, String title) {
         this.toAddress = toAddress;
         this.message = message;
         this.subject = subject;
+        this.link = link;
+        this.firstname = firstname;
+        this.title = title;
+    }
+
+    public EmailSetup(String toAddress, String message, String subject, String firstname, String title) {
+        this.toAddress = toAddress;
+        this.message = message;
+        this.subject = subject;
+        this.firstname = firstname;
+        this.title = title;
+        this.link = "";
     }
 
     public void sendEmail() throws NoSuchProviderException {
@@ -102,8 +111,8 @@ public class EmailSetup {
         this.subject = subject;
     }
 
-    public String setUpVerifyEmail(String link, String first) {
-        return "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+    public void setUpEmail() {
+        this.message = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
                 + "<html style=\"width:100%;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0;\">\n"
                 + " <head> \n"
                 + "  <meta charset=\"UTF-8\"> \n"
@@ -233,7 +242,7 @@ public class EmailSetup {
                 + "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
                 + "                    <tbody> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;\"> <img src=\"https://gxtf.stripocdn.email/content/guids/d605c256-7c69-42ec-a316-e7a98718ca3f/images/92021526034317228.png\" alt=\"Smart home logo\" title=\"Smart home logo\" width=\"208\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\"></td> \n"
+                + "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;\"> <img src=\"https://gxtf.stripocdn.email/content/guids/d605c256-7c69-42ec-a316-e7a98718ca3f/images/92021526034317228.png\" alt=\"Smart home logo\" title=\"Vigor logo\" width=\"208\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\"></td> \n"
                 + "                     </tr> \n"
                 + "                    </tbody> \n"
                 + "                   </table> </td> \n"
@@ -274,13 +283,13 @@ public class EmailSetup {
                 + "                       </table> </td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td align=\"left\" style=\"padding:0;Margin:0;padding-bottom:10px;\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:150%;color:#666666;\">Hi&nbsp; " + first + " ,</p></td> \n"
+                + "                      <td align=\"left\" style=\"padding:0;Margin:0;padding-bottom:10px;\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:150%;color:#666666;\">Hi&nbsp; " + this.firstname + " ,</p></td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td align=\"left\" style=\"padding:0;Margin:0;\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:150%;color:#666666;\">Thank you for registering on Vigor Health.<br>If you did not register with us then please ignore this email, otherwise please verify your account by pressing the button below.</p></td> \n"
+                + "                      <td align=\"left\" style=\"padding:0;Margin:0;\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:150%;color:#666666;\">" + this.message + "</p></td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                     <td align=\"left\" style=\"padding:0;Margin:0;padding-top:20px;padding-bottom:20px;\"> " + link +"</td>"
+                + "                     <td align=\"left\" style=\"padding:0;Margin:0;padding-top:20px;padding-bottom:20px;\"> " + this.link +"</td>"
                 + "                    </tbody> \n"
                 + "                   </table> </td> \n"
                 + "                 </tr> \n"
