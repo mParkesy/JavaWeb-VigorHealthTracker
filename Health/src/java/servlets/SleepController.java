@@ -67,13 +67,8 @@ public class SleepController extends HttpServlet {
         String fullWake = bedDate + " " + wakeTime;
 
         DateTime wake = fmt.parseDateTime(fullWake);
-        int hours = Hours.hoursBetween(bed, wake).getHours();
-        if (hours < 24) {
-            bed = bed.plusDays(1);
-            wake = wake.plusDays(1);
-        } else {
-            wake = wake.plusDays(1);
-        }
+
+        wake = wake.plusDays(1);
 //        Date bed = new Date();
 //        Date wake = new Date();
 //        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
