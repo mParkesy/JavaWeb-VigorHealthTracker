@@ -13,36 +13,48 @@
         <%@ include file="fragments/header.jspf" %> 
         <script>
             $(document).ready(function () {
-                var ctx = document.getElementById("sleepChart").getContext('2d');
-                var myLineChart = new Chart(ctx, {
-                    type: 'line',
+            var ctx = document.getElementById("sleepChart").getContext('2d');
+            var myLineChart = new Chart(ctx, {
+            type: 'line',
                     data: {
-                        datasets: [
-                            {
-                                label: "Sleep",
-                                data: [
+                    datasets: [
+                    {
+                    label: "Sleep",
+                            backgroundColor: "rgba(66, 224, 197, 0.15)",
+                            borderColor: "rgba(66, 224, 197, 30)",
+                            data: [
             <c:forEach items="<%=db.allSleep(currentUser.getID())%>" var="s">
-                                    {x: "${s.getDay()}/${s.getMonth()}/${s.getYear()}", y: ${s.getTotalSleep()}},
+                            {x: "${s.getDay()}/${s.getMonth()}/${s.getYear()}", y: ${s.getTotalSleep()}},
             </c:forEach>
+                                                ]
+                                        },
+                                        {
+                                        label: 'Grade',
+                                                backgroundColor: "rgba(24, 76, 63, 0)",
+                                                borderColor: "rgba(56, 165, 134, 30)",
+                                                data: [
+            <c:forEach items="<%=db.allSleep(currentUser.getID())%>" var="s">
+                                                {x: "${s.getDay()}/${s.getMonth()}/${s.getYear()}", y: ${s.getSleepGrade()}},
+            </c:forEach>
+                                                                    ]
+                                                            }
                                                             ]
-                                                        }
-                                                    ]
-                                                },
-                                                options: {
-                                                    lineTension: 0,
-                                                    responsive: true,
-                                                    scales: {
-                                                        xAxes: [{
-                                                                type: "time",
-                                                                time: {
-                                                                    format: 'DD/MM/YYYY',
-                                                                    tooltipFormat: 'll'
-                                                                }
-                                                            }]
-                                                    }
-                                                }
-                                            });
-                                        });
+                                                            },
+                                                            options: {
+                                                            lineTension: 0,
+                                                                    responsive: true,
+                                                                    scales: {
+                                                                    xAxes: [{
+                                                                    type: "time",
+                                                                            time: {
+                                                                            format: 'DD/MM/YYYY',
+                                                                                    unit: 'day'
+                                                                            }
+                                                                    }]
+                                                                    }
+                                                            }
+                                                    });
+                                                    });
 
 
         </script>
