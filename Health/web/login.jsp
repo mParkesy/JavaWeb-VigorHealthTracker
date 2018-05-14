@@ -8,11 +8,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%
-            if (session.getAttribute("user") != null) {
-                session.invalidate();
-            }
-        %>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/animate.css">
         <link rel="stylesheet" href="css/master.css">
