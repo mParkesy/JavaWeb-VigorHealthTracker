@@ -82,9 +82,9 @@ public class Database {
      */
     public static String makeAlert(String message, String type) {
         String title = "";
-        if(type.equals("error")){
+        if (type.equals("error")) {
             title = "There was an error";
-        } else if (type.equals("success")){
+        } else if (type.equals("success")) {
             title = "Success!";
         }
         return "<script>"
@@ -211,7 +211,7 @@ public class Database {
                 st.setInt(2, userID);
             }
             int affected = st.executeUpdate();
-            
+
         } catch (SQLException ex) {
             System.out.println("Failed to update verification field");
         }
@@ -477,6 +477,50 @@ public class Database {
         return exerciseList;
     }
 
+    public void loginLog(int userID) throws SQLException {
+        try {
+            String sql = "INSERT INTO log (userID, login) "
+                    + "VALUES(?,CURRENT_TIMESTAMP)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("Failed to insert into login log");
+        }
+    }
+
+    public void logoutLog(int userID) {
+        try {
+            String sql = "UPDATE log SET logout = CURRENT_TIMESTAMP "
+                    + "WHERE userID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("Failed to update log with logout time");
+        }
+    }
+
+    public boolean isLoggedIn(int userID) {
+        try {
+            String sql = "SELECT logout FROM log WHERE userID = ? "
+                    + "ORDER BY login DESC "
+                    + "LIMIT 1";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet rs = st.executeQuery();
+            while(rs.next()){
+                if(rs.getTimestamp("logout") == null){
+                    return true;
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println("Failed to check if user is logged in");
+            return false;
+        }
+        return false;
+    }
+
     // ---------------------------------------------SLEEP----------------------------------------------------------
     /**
      * Construct a sleep instance and add it to the database
@@ -584,9 +628,7 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-
-    public Group insertGroup(int userID, String name, String description, String image) 
-
+    public Group insertGroup(int userID, String name, String description, String image)
             throws SQLException, Exception {
         Group group = null;
         try {
@@ -627,8 +669,8 @@ public class Database {
 
             while (result.next()) {
 
-                group = new Group(result.getInt("groupID"), 
-                        result.getString("name"), result.getInt("userID"), 
+                group = new Group(result.getInt("groupID"),
+                        result.getString("name"), result.getInt("userID"),
                         result.getString("description"),
                         result.getString("image"));
 
@@ -776,7 +818,7 @@ public class Database {
 
         return t;
     }
-    
+
     public ArrayList<User> getMembers(int groupID) {
         ArrayList<User> list = new ArrayList<>();
         try {
@@ -794,7 +836,7 @@ public class Database {
         }
         return list;
     }
-    
+
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
@@ -891,7 +933,8 @@ public class Database {
         }
         return exercise;
     }
-    public Exercise getMaxExercise(int userID){
+
+    public Exercise getMaxExercise(int userID) {
         Exercise exercise = null;
         try {
             String sql = "SELECT * FROM exercise WHERE userID = ? AND distance = (SELECT MAX(distance) FROM exercise WHERE userID = ?)";
@@ -1003,10 +1046,9 @@ public class Database {
     }
 
     //----------------------------NOTIFICATIONS--------------------------------------
-    
-        public void insertNotification(int userID, String text)
+    public void insertNotification(int userID, String text)
             throws Exception {
-        
+
         try {
             String sql = "INSERT INTO `notification` "
                     + "(userID,Text) "
@@ -1016,15 +1058,15 @@ public class Database {
             st.setInt(1, userID);
             st.setString(2, text);
             st.executeUpdate();
-            EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text,"New Notification");
+            EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text, "New Notification");
             notif.sendEmail();
-            
+
         } catch (Exception ex) {
             System.out.println("Failed to insert notification");
         }
-        
+
     }
-    
+
     public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
         ArrayList<Notification> list = new ArrayList<>();
         String sql = "SELECT * FROM notification WHERE userID =?";
@@ -1058,23 +1100,22 @@ public class Database {
         return null;
     }
 
-    
-    public Goal getGoal(int userID,String type) throws SQLException, Exception{
-        try{
+    public Goal getGoal(int userID, String type) throws SQLException, Exception {
+        try {
             String sql = "SELECT * FROM goal WHERE userID =? AND type =?";
-        PreparedStatement st = this.CON.prepareStatement(sql);
-        st.setInt(1, userID);
-        st.setString(2, type);
-        ResultSet rs = st.executeQuery();
-        
-        while (rs.next()) {
-            return new Goal(rs.getDouble("start"),rs.getDouble("target"),rs.getInt("userID"),rs.getString("type"));
-        }
-        
-        }catch(Exception ex){
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setString(2, type);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                return new Goal(rs.getDouble("start"), rs.getDouble("target"), rs.getInt("userID"), rs.getString("type"));
+            }
+
+        } catch (Exception ex) {
             ex.printStackTrace();;
         }
-        return new Goal(userID,type);
+        return new Goal(userID, type);
 
     }
 

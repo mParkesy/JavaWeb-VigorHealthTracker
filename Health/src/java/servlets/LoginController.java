@@ -123,6 +123,7 @@ public class LoginController extends HttpServlet {
                         HttpSession session = request.getSession();
                         session.setMaxInactiveInterval(10 * 60);
                         session.setAttribute("user", db.getUser(username));
+                        db.loginLog(loginUser.getID());
                         response.sendRedirect("home.jsp");
                     } else {
                         error = Database.makeAlert("You have not verified "
