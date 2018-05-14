@@ -88,10 +88,10 @@
           </div>
         </div>
         
-        <div class=" col-lg-4 col-md-2 col-sm-1"></div>
+        
         <div class="row">
-            <div class=" col-lg-4 col-md-2 col-sm-1"></div>
-            <div class="col-lg-4 col-md-8 col-sm-10">
+            <div class=" col-lg-3 col-md-2 col-sm-1"></div>
+            <div class="col-lg-6 col-md-8 col-sm-10 main">
                 <h1>Weight History</h1>                
                 
                 <canvas id="weightChart" ></canvas>
@@ -119,7 +119,7 @@
                 <button type="button" class="btn btn-info btn-lg"
                         data-toggle="modal" data-target="#myModal">Add Weight</button>
             </div>
-            <div class=" col-lg-4 col-md-2 col-sm-1"></div>
+            <div class=" col-lg-3 col-md-2 col-sm-1"></div>
         </div>
 
     </body>

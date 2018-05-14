@@ -44,7 +44,7 @@
         <%@ include file="fragments/navbar.jspf" %>
         <div class="container">
             <div class=" col-lg-3 col-md-4 col-6 page-header">
-                <img src="img/logo.png">
+                <img style="width:200px" src="img/logo4.png">
             </div>
             ${message}
             <div class="row">

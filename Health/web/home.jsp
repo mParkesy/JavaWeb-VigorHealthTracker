@@ -21,13 +21,7 @@
                             .append(title)
                             );
                 }
-                $("img").click(function () {
-                    createTile();
-
-                });
-                $(".square").click(function () {
-                    //$(this).fadeOut();
-                });
+                
 
                 /*
                 function generatePie(){
@@ -69,8 +63,8 @@
                         datasets: [{
                             data: [1000,1500],
                             backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
                             ]
                         }]
                     },
@@ -85,9 +79,7 @@
         <%@ include file="fragments/navbar.jspf" %>
         
         <div class="container animated fadeIn">
-            <div class=" col-lg-3 col-md-4 col-6 page-header">
-                <img src="img/logo4.png">
-            </div>
+            
             <div  id="carouselExampleIndicators" class="carousel slide row" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -117,8 +109,15 @@
                           
                         
                   </div>
-                  <div class="carousel-item">
-                   
+                  <div class="carousel-item ">
+                        <h1>Weight</h1>
+                        <h3>Current Weight - </h3>
+                        <br>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <br>
+                        <p><b>Keep going!</b> You are 25% of the way to your goal</p>
                   </div>
                   <div class="carousel-item">
                    
@@ -171,6 +170,6 @@
 
             
         </div>
-
+    </div>
     </body>
 </html>

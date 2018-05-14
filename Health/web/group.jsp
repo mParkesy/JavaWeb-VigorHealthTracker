@@ -1,4 +1,4 @@
-f<%-- 
+<%-- 
     Document   : group
     Created on : 18-Apr-2018, 12:41:59
     Author     : Parkesy
@@ -10,39 +10,32 @@ f<%--
 <!DOCTYPE html>
 <html>
     <head>
+        <style>
+            body{
+                overflow-y: hidden;
+            }
+        </style>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@ include file="fragments/header.jspf" %>
         <script>
             $(document).ready(function () {
                 var groupID = 0;
-
-                $('td .btn').click(function () {
+                
+                $('.list-group-item a').click(function () {
+                    
                     groupID = $(this).attr('id');
-                    $.get('GroupController', {
-                        function: "AcceptInvite",
-                        groupID: groupID,
-                        userID: ${user.getID()}
-                    }, function (response) {
-                        swal(
-                            'Invitation Accepted',
-                            "user " + ${user.getID()} + " added to Group " + groupID,
-                            'success'
-                            )
-                })
-                })
-                $('td a').click(function () {
-                    groupID = $(this).attr('id');
+                    $('li').removeClass('active');
+                    $(this).parent().addClass('active');
                     $.get('GroupController', {
                         function: "GroupInfo",
                         groupID: groupID
                     }, function (response) {
                         var obj = JSON.parse(response);
-                        alert(obj.description);
-                        $(".card-body h5").remove();
-                        $(".card-body p").remove();
-                        $(".card-body").prepend(response);
+                        $(".card-body .card-title").text(obj.groupName);
+                        $(".card-body .card-text").text(obj.description);
+                        $('body').css('background', "linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url('" + obj.imagePath + "') no-repeat fixed center")
                         $.get('GroupController', {
-                            function: "IsAdmin",
+                             function: "IsAdmin",
                             groupID: groupID,
                             userID: ${user.getID()}
                         }, function (response) {
@@ -52,6 +45,21 @@ f<%--
 
                             } else {
                                 $(".admin").hide();
+                            }
+                        })
+                        
+                        $.get('GroupController', {
+                            function: "Members",
+                            groupID: groupID,
+                            userID: ${user.getID()}
+                        }, function (response) {
+                            var members = JSON.parse(response);
+                            
+                            $('.card-body .list-group').html("");
+                            $('.members-title').text("Members - " + members.length);
+                            for (i = 0; i < members.length; i++){
+                                $('.card-body .list-group').append("<li class='list-group-item'>" 
+                                        + members[i].username +"<a id='" + members[i].id + "' href='#' class='msg-btn'><i class='far fa-comment'></i></a></li>");
                             }
                         })
                     }
@@ -66,7 +74,13 @@ f<%--
                         groupID: groupID,
                         username: username
                     }, function (response) {
-
+                        swal({
+                        position: 'top-end',
+                        type: 'success',
+                        title: 'Invite sent',
+                        showConfirmButton: false,
+                        timer: 1500
+                      })
                     })
 
                 })
@@ -100,19 +114,44 @@ f<%--
                                 <label for="groupdescription">Group Description:</label>
                                 <textarea maxlength="535" class="form-control"  name="description"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-default">Create new group</button>
+                            
+                            <div class="form-group">
+                                <label for="grouptheme">Theme:</label>
+                                 <select class="form-control" name="image">
+                                    <option value="img/urban.jpg" >Urban</option>
+                                    <option value="img/leaves.jpg" >Nature</option>
+                                    <option value="img/runner.jpg" >Running</option>
+                                    <option value="img/waves.jpg">Waves</option>
+                                  </select>
+                            </div>
+                            
+                            <button type='submit' class='btn btn-default'>Create Group</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row group-container">
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
-            <div class="col-lg-4 col-md-8 col-sm-10 card" style="width: 18rem;">
+            <div class="col-lg-4 col-md-8 col-sm-10 card" id="groupInfo">
                 <div class="card-body">
+                    <h3 class='card-title'></h3>
+                    <p class="card-text"></p>
+                    <h5 class='goal-title'>Current Goal</h5>
+                    <p>Calories burnt 10000/30000</p>
+                    <div class="progress">
+                        
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 75%">75%</div>
+                    </div>
+                    <br>
+                    <h5 class='members-title'></h5>
+                    <ul class="list-group">
+                                            
+                    </ul>
                     <button id="openModal" type="button" class="btn btn-primary admin"
-                            data-toggle="modal" data-target="#modal2">Add new member
+                            data-toggle="modal" data-target="#modal2">Invite
                     </button>
                 </div>
             </div>
@@ -124,61 +163,33 @@ f<%--
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body modal-form">
-                            <form class="modal-form">
+                            
                                 <div class="form-group">
                                     <label for="username">Username:</label>
                                     <input id="username" type="text" class="form-control"  name="username">
                                 </div>
-                                <button type="submit" class="btn btn-default" id="addUser" t>Add</button>
-                            </form>
+                                <button type="button" class="btn btn-default" data-dismiss='modal' id="addUser" t>Add</button>
+                            
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-8 col-sm-10">
-                <h1>Groups you have been invited to</h1>                
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Groups you have been invited to</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="<%=db.getGroupList(currentUser.getID(), 0)%>" var="w">
-                            <tr>
-                                <td>
-                                    ${w.getGroupName()}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-default" id="${w.getGroupID()}">
-                                        Accept
-                                    </button>
-                                </td>
-                            </tr>
+            <div class="col-lg-4 col-md-8 col-sm-10 groups">
+                
+                
+                <h1>Your Groups</h1>                
+                <ul class='list-group'>
+                        <c:forEach items="<%=db.getGroupList(currentUser.getID(), 1)%>" var="w">
+                            
+                            <li class='list-group-item'>
+                                <a href="#" id="${w.getGroupID()}"> ${w.getGroupName()}</a>
+                            </li>
+                            
                         </c:forEach>
-                    </tbody>
-                </table>
+                </ul>
                 <button type="button" class="btn btn-info btn-lg"
                         data-toggle="modal" data-target="#modal1">Create Group
                 </button>
-                <h1>Groups you have joined</h1>                
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Group Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="<%=db.getGroupList(currentUser.getID(), 1)%>" var="w">
-                            <tr>
-                                <td>
-                                    <a href="#" id="${w.getGroupID()}"> ${w.getGroupName()}</a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
             </div>
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
         </div>
