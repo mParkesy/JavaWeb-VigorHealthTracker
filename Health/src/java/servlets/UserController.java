@@ -54,25 +54,42 @@ public class UserController extends HttpServlet {
             String oldpassword = request.getParameter("oldpassword");
             String newpassword = request.getParameter("newpassword");
             String renewpassword = request.getParameter("renewpassword");
-            int userID = Integer.parseInt(request.getParameter("userID"));
+            int userID = 0;
+            if(request.getParameter("userID") == null){
+                User user = (User) 
+                        request.getSession(false).getAttribute("change");
+                userID = user.getID();
+            } else {
+                userID = Integer.parseInt(request.getParameter("userID"));
+            }
+            
             Database db = new Database();
 
         try {
-            String message;
-            if(db.getPassword(userID).equals(db.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)){
-                String digest = db.passwordDigest(newpassword);
+            String error;
+            if(db.getPassword(userID).equals(Database.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)){
+                String digest = Database.passwordDigest(newpassword);
                 if(db.updatePassword(digest,userID)){
-                    message = "Password changed!";
+                    error = Database.makeAlert("Password change successful",
+                            "success");
+                    request.setAttribute("message", error);
+                    request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
                 } else {
-                    message = "Failed to change password, please try again";
+                    error = Database.makeAlert("Failed to change password, "
+                            + "please try again", "error");
+                    request.setAttribute("message", error);
+                    request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
                 }
             } else {
-                message = "You typed your old password incorrectly or the new"
-                        + "passwords did not match";
+                error = Database.makeAlert("You typed your old password "
+                        + "incorrectly or the new passwords did not match",
+                        "error");
+                request.setAttribute("message", error);
+                    request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
             }
-            request.setAttribute("message", message);
-                    request.getRequestDispatcher("settings.jsp")
-                            .include(request, response);
         } catch (SQLException ex) {
             System.out.println("Failed to get users old password in"
                     + "password change");

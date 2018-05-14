@@ -9,12 +9,9 @@ import classes.Database;
 import classes.EmailSetup;
 import classes.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,20 +53,25 @@ public class LoginController extends HttpServlet {
                     InetAddress address = InetAddress.getLocalHost();
                     String ip = address.getHostAddress();
                     String link = ip + ":8080/Health/passwordchange"
-                            + ".jsp?verification=" + stamp 
-                            + "&id=" + user.getID();
-                    EmailSetup emailSetup = new EmailSetup(email, link, "Password change");
+                            + ".jsp?verification=" + stamp;
+                    EmailSetup emailSetup = new EmailSetup(email, link, 
+                            "Password change");
                     emailSetup.sendEmail();
+                    error = Database.makeAlert("Please check your emails", 
+                            "success");
+                    request.setAttribute("message", error);
+                    request.getRequestDispatcher("login.jsp")
+                        .include(request, response);
                 } else {
                     error = Database.makeAlert("Incorrect email address for "
-                            + "that username");
+                            + "that username", "error");
                     request.setAttribute("message", error);
                     request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                 }
             } else {
                 error = Database.makeAlert("That username "
-                        + "doesn't exist, try again");
+                        + "doesn't exist, try again", "error");
                 request.setAttribute("message", error);
                 request.getRequestDispatcher("login.jsp")
                         .include(request, response);
@@ -123,28 +125,32 @@ public class LoginController extends HttpServlet {
                         session.setAttribute("user", db.getUser(username));
                         response.sendRedirect("home.jsp");
                     } else {
-                        error = "You have not verified your account, "
-                                + "please check your emails";
-                        request.setAttribute("message", Database.makeAlert(error));
+                        error = Database.makeAlert("You have not verified "
+                                + "your account, please check your emails", 
+                                "error");
+                        request.setAttribute("message", error);
                         request.getRequestDispatcher("login.jsp")
                                 .include(request, response);
                     }
                 } else {
-                    error = "Password incorrect for that username";
-                    request.setAttribute("message", Database.makeAlert(error));
+                    error = Database.makeAlert("Password incorrect for that "
+                            + "username", "error");
+                    request.setAttribute("message", error);
                     request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                 }
             } else {
-                error = "The username you entered does not exist";
-                request.setAttribute("message", Database.makeAlert(error));
+                error = Database.makeAlert("The username you entered does not "
+                        + "exist", "error");
+                request.setAttribute("message", error);
                 request.getRequestDispatcher("login.jsp")
                         .include(request, response);
             }
 
         } catch (Exception ex) {
-            error = "Error checking credentials, please try again.";
-            request.setAttribute("message", Database.makeAlert(error));
+            error = Database.makeAlert("Error checking credentials, please "
+                    + "try again.", "error");
+            request.setAttribute("message", error);
             request.getRequestDispatcher("login.jsp")
                     .include(request, response);
         }

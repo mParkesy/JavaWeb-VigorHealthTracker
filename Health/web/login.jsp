@@ -28,7 +28,17 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+        <script type="text/javascript">
+            function sweet(){
+                swal({type : 'error',
+                    title: 'Error',
+                    text: 'Please follow the link in your emails',"
+                    showConfirmButton: false,"
+                    timer: 3000"
+                })
+                window.location.replace("login.jsp");
+            }
+        </script>    
     </head>
     <body class="animated fadeIn">
         <%@ include file="fragments/navbar.jspf" %>
@@ -67,7 +77,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body modal-form">
-                        <form class="modal-form" method ="post" action="LoginController">
+                        <form class="modal-form" action="LoginController">
                             
                             <div class="form-group">
                                 <label for="email">Email:</label>
@@ -77,7 +87,7 @@
                                 <label for="date">Username:</label>
                                 <input type="text" class="form-control" name="username" >
                             </div>
-                            <button type="submit" class="btn btn-default">Add</button>
+                            <button onclick="sweet();" type="submit" class="btn btn-default">Submit</button>
                         </form>  
                     </div>
                 </div>

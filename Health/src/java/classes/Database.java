@@ -80,10 +80,16 @@ public class Database {
      * @param message The message required in the alert
      * @return The message surround by the sweet alert body
      */
-    public static String makeAlert(String message) {
+    public static String makeAlert(String message, String type) {
+        String title = "";
+        if(type.equals("error")){
+            title = "There was an error";
+        } else if (type.equals("success")){
+            title = "Success!";
+        }
         return "<script>"
-                + "swal({type : 'error',"
-                + "title: 'Error',"
+                + "swal({type : '" + type + "',"
+                + "title: '" + title + "',"
                 + "text: '" + message + "',"
                 + "showConfirmButton: false,"
                 + "timer: 3000"
@@ -174,32 +180,42 @@ public class Database {
      * @param ver The verification string from the URL sent by email
      * @throws Exception If the SQL statement fails to execute
      */
-    public boolean updateVerification(String ver, int userID) throws Exception {
+    public User updateVerification(String ver, int userID) throws Exception {
+        User user = null;
         try {
             String sql = "UPDATE user SET verification = ?";
-            PreparedStatement st;
-            if(userID == 0){
+            PreparedStatement st = null;
+            if (userID == 0) {
                 sql = sql + "WHERE verification = ?";
                 st = getConnection().prepareStatement(sql);
                 st.setString(1, "1");
-                st.setString(2, ver);              
+                st.setString(2, ver);
+                String sqlSelect = "SELECT * FROM user WHERE verification =?";
+                PreparedStatement st2 = getConnection().prepareStatement(sqlSelect);
+                st2.setString(1, ver);
+
+                ResultSet rs = st2.executeQuery();
+                if (rs.next()) {
+                    user = new User(rs.getInt("userID"), rs.getString("username"),
+                            rs.getString("firstname"), rs.getString("lastname"),
+                            rs.getString("gender"), rs.getString("postcode"),
+                            rs.getString("nationality"), rs.getString("email"),
+                            rs.getDouble("height"), (Date) rs.getDate("dob"),
+                            rs.getDouble("exerciseLevel")
+                    );
+                }
             } else {
                 sql = sql + "WHERE userID = ?";
                 st = getConnection().prepareStatement(sql);
                 st.setString(1, ver);
-                st.setInt(2, userID);              
+                st.setInt(2, userID);
             }
             int affected = st.executeUpdate();
-            System.out.println(affected);
-            if(affected == 0){
-                return false;
-            } else {
-                return true;
-            }
+            
         } catch (SQLException ex) {
             System.out.println("Failed to update verification field");
         }
-        return false;
+        return user;
     }
 
     /**
@@ -739,18 +755,18 @@ public class Database {
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, groupID);
         ResultSet result = st.executeQuery();
-        
-        while(result.next()){
+
+        while (result.next()) {
             User user = getUser(result.getInt("e.userID"));
             t.put(result.getDouble("total"), result.getInt("e.userID"));
         }
         Set set = t.entrySet();
         Iterator i = set.iterator();
-        while(i.hasNext()){
-            Map.Entry me = (Map.Entry)i.next();
-            System.out.print(me.getKey()+": " + me.getValue());
+        while (i.hasNext()) {
+            Map.Entry me = (Map.Entry) i.next();
+            System.out.print(me.getKey() + ": " + me.getValue());
         }
-        
+
         return t;
     }
 
