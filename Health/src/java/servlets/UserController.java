@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
 
-
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -37,7 +36,7 @@ public class UserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     /**
@@ -51,53 +50,109 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Database db = new Database();
+        String type = request.getParameter("type");
+        int userID = 0;
+        if (type.equals("2")) {
+            String username = request.getParameter("username");
+            userID = Integer.parseInt(request.getParameter("userID"));
+            String message = "";
+            try {
+                if (db.getUser(username) == null) {
+                    if (db.updateUsername(userID, username) == true) {
+                        message = Database.makeAlert("Username changed", "success");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("settings.jsp")
+                                .include(request, response);
+                    } else {
+                        message = Database.makeAlert("Username change failed, "
+                                + "please try again", "error");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("settings.jsp")
+                                .include(request, response);
+                    }
+                } else {
+                    message = Database.makeAlert("That username already exists,"
+                            + " please try again", "error");
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("settings.jsp")
+                            .include(request, response);
+                }
+            } catch (Exception ex) {
+                System.out.println("Failed to check if username is already "
+                        + "in use");
+            }
+        } else if (type.equals("3")) {
+            userID = Integer.parseInt(request.getParameter("userID"));
+            double height = Double.parseDouble(request.getParameter("height"));
+            String message = "";
+            try {
+                if (db.updateHeight(userID, height) == true) {
+                    message = Database.makeAlert("Height changed", "success");
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("settings.jsp")
+                            .include(request, response);
+                } else {
+                    message = Database.makeAlert("Height change failed, "
+                            + "please try again", "error");
+                    request.setAttribute("message", message);
+                    request.getRequestDispatcher("settings.jsp")
+                            .include(request, response);
+                }
+            } catch (Exception ex) {
+                System.out.println("Failed to update users height");
+            }
+
+        } else {
             String oldpassword = request.getParameter("oldpassword");
             String newpassword = request.getParameter("newpassword");
-            String renewpassword = request.getParameter("renewpassword");
-            int userID = 0;
-            if(request.getParameter("userID") == null){
-                User user = (User) 
-                        request.getSession(false).getAttribute("change");
+            
+            String renewpassword = "";
+            if(request.getParameter("renewpassword") != null){
+                renewpassword = request.getParameter("renewpassword");
+            } else {
+                renewpassword = newpassword;
+            }
+
+            if (request.getParameter("userID") == null) {
+                User user = (User) request.getSession(false).getAttribute("change");
                 userID = user.getID();
             } else {
                 userID = Integer.parseInt(request.getParameter("userID"));
             }
-            
-            Database db = new Database();
 
-        try {
-            String error;
-            if(db.getPassword(userID).equals(Database.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)){
-                String digest = Database.passwordDigest(newpassword);
-                if(db.updatePassword(digest,userID)){
-                    error = Database.makeAlert("Password change successful",
-                            "success");
-                    request.setAttribute("message", error);
-                    request.getRequestDispatcher("login.jsp")
-                        .include(request, response);
+            try {
+                String error;
+                if (db.getPassword(userID).equals(Database.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)) {
+                    String digest = Database.passwordDigest(newpassword);
+                    if (db.updatePassword(digest, userID)) {
+                        error = Database.makeAlert("Password change successful",
+                                "success");
+                        request.setAttribute("message", error);
+                        request.getRequestDispatcher("login.jsp")
+                                .include(request, response);
+                    } else {
+                        error = Database.makeAlert("Failed to change password, "
+                                + "please try again", "error");
+                        request.setAttribute("message", error);
+                        request.getRequestDispatcher("login.jsp")
+                                .include(request, response);
+                    }
                 } else {
-                    error = Database.makeAlert("Failed to change password, "
-                            + "please try again", "error");
+                    error = Database.makeAlert("You typed your old password "
+                            + "incorrectly or the new passwords did not match",
+                            "error");
                     request.setAttribute("message", error);
                     request.getRequestDispatcher("login.jsp")
-                        .include(request, response);
+                            .include(request, response);
                 }
-            } else {
-                error = Database.makeAlert("You typed your old password "
-                        + "incorrectly or the new passwords did not match",
-                        "error");
-                request.setAttribute("message", error);
-                    request.getRequestDispatcher("login.jsp")
-                        .include(request, response);
+            } catch (SQLException ex) {
+                System.out.println("Failed to get users old password in"
+                        + "password change");
+            } catch (NoSuchAlgorithmException ex) {
+                System.out.println("Failed to digest password in password change");
             }
-        } catch (SQLException ex) {
-            System.out.println("Failed to get users old password in"
-                    + "password change");
-        } catch (NoSuchAlgorithmException ex) {
-            System.out.println("Failed to digest password in password change");
         }
     }
-
-
 
 }

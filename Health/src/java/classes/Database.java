@@ -115,8 +115,7 @@ public class Database {
         if (rs.next()) {
             user = new User(userID, rs.getString("username"),
                     rs.getString("firstname"), rs.getString("lastname"),
-                    rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"),
+                    rs.getString("gender"), rs.getString("email"),
                     rs.getDouble("height"), (Date) rs.getDate("dob"),
                     rs.getDouble("exerciseLevel")
             );
@@ -144,8 +143,7 @@ public class Database {
         if (rs.next()) {
             user = new User(rs.getInt("userID"), username,
                     rs.getString("firstname"), rs.getString("lastname"),
-                    rs.getString("gender"), rs.getString("postcode"),
-                    rs.getString("nationality"), rs.getString("email"),
+                    rs.getString("gender"), rs.getString("email"),
                     rs.getDouble("height"), (Date) rs.getDate("dob"),
                     rs.getDouble("exerciseLevel")
             );
@@ -198,8 +196,7 @@ public class Database {
                 if (rs.next()) {
                     user = new User(rs.getInt("userID"), rs.getString("username"),
                             rs.getString("firstname"), rs.getString("lastname"),
-                            rs.getString("gender"), rs.getString("postcode"),
-                            rs.getString("nationality"), rs.getString("email"),
+                            rs.getString("gender"), rs.getString("email"),
                             rs.getDouble("height"), (Date) rs.getDate("dob"),
                             rs.getDouble("exerciseLevel")
                     );
@@ -280,8 +277,7 @@ public class Database {
      * @throws Exception If the Insert SQL statement fails to execute
      */
     public User insertUser(String username, String password, String firstname,
-            String lastname, String gender, Date dob, String postcode,
-            String nationality, String email, double height, double weight,
+            String lastname, String gender, Date dob, String email, double height, double weight,
             double exercise, String verification) throws Exception {
         User user = null;
         try {
@@ -293,9 +289,9 @@ public class Database {
             }
 
             String sql = "INSERT INTO `user`(username, password, firstname, "
-                    + "lastname, gender, dob, postcode, nationality, email, "
+                    + "lastname, gender, dob, email, "
                     + "height, exerciseLevel, verification) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, username);
@@ -305,12 +301,10 @@ public class Database {
             st.setString(5, gender);
             java.sql.Date date = new java.sql.Date(dob.getTime());
             st.setDate(6, date);
-            st.setString(7, postcode);
-            st.setString(8, nationality);
-            st.setString(9, email);
-            st.setDouble(10, height);
-            st.setDouble(11, exercise);
-            st.setString(12, verification);
+            st.setString(7, email);
+            st.setDouble(8, height);
+            st.setDouble(9, exercise);
+            st.setString(10, verification);
 
             st.executeUpdate();
             int userID = 0;
@@ -322,7 +316,7 @@ public class Database {
                 if (key.next()) {
                     userID = key.getInt(1);
                     user = new User(userID, username, firstname, lastname,
-                            gender, postcode, nationality, email, height,
+                            gender, email, height,
                             dob, exercise);
                 } else {
                     throw new SQLException("No ID found, User not created");
@@ -336,6 +330,42 @@ public class Database {
             System.out.println("Duplicate database entry for User");
         }
         return user;
+    }
+    
+    public boolean updateUsername(int userID, String username){
+        try {
+            String sql = "UPDATE user SET username = ? WHERE userID =?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setString(1, username);
+            st.setInt(2, userID);
+            int affected = st.executeUpdate();
+            if(affected == 0){
+                return false;
+            } else {
+                return true;
+            }
+        } catch(SQLException ex){
+            System.out.println("Failed to update username");
+            return false;
+        }
+    }
+    
+    public boolean updateHeight(int userID, double height){
+        try {
+            String sql = "UPDATE user SET height = ? WHERE userID =?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setDouble(1, height);
+            st.setInt(2, userID);
+            int affected = st.executeUpdate();
+            if(affected == 0){
+                return false;
+            } else {
+                return true;
+            }
+        } catch(SQLException ex){
+            System.out.println("Failed to update user height");
+            return false;
+        }
     }
 
     /**
@@ -1058,8 +1088,9 @@ public class Database {
             st.setInt(1, userID);
             st.setString(2, text);
             st.executeUpdate();
-            EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text, "New Notification");
-            notif.sendEmail();
+            //EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text,"New Notification");
+            //notif.sendEmail();
+            
 
         } catch (Exception ex) {
             System.out.println("Failed to insert notification");
