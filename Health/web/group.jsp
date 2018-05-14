@@ -13,16 +13,22 @@
         <style>
             body{
                 overflow-y: hidden;
+                
+            }
+            #goal{
+                display:none;
             }
         </style>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%@ include file="fragments/header.jspf" %>
         <script>
             $(document).ready(function () {
+                
                 var groupID = 0;
                 
+                
                 $('.list-group-item a').click(function () {
-                    
+                    $('#goal').show();
                     groupID = $(this).attr('id');
                     $('li').removeClass('active');
                     $(this).parent().addClass('active');
@@ -138,18 +144,35 @@
                 <div class="card-body">
                     <h3 class='card-title'></h3>
                     <p class="card-text"></p>
-                    <h5 class='goal-title'>Current Goal</h5>
-                    <p>Calories burnt 10000/30000</p>
-                    <div class="progress">
-                        
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 75%">75%</div>
+                    <div id="goal">
+                        <h5 class='goal-title'>Current Goal</h5>
+                        <p>Calories burnt 10000/30000</p>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 75%">75%</div>
+                        </div>
                     </div>
+                    
                     <br>
-                    <h5 class='members-title'></h5>
-                    <ul class="list-group">
-                                            
-                    </ul>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active members-title" href="#members" role="tab" data-toggle="tab"></a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Leaderboard</a>
+                        </li>
+                        
+                      </ul>
+                    
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="members">
+                            <ul class="list-group "></ul>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="buzz">bbb</div>
+                        <div role="tabpanel" class="tab-pane fade" id="references">ccc</div>
+                    </div>
+
+                    
                     <button id="openModal" type="button" class="btn btn-primary admin"
                             data-toggle="modal" data-target="#modal2">Invite
                     </button>
