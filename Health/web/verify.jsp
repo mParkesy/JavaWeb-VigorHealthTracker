@@ -25,7 +25,7 @@
         <h1>Account verified</h1>
         <%
             Database db = new Database();
-            db.updateVerification(request.getParameter("verification"));
+            db.updateVerification(request.getParameter("verification"), 0);
             
         %>    
     </body>

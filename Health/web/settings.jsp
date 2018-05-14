@@ -21,15 +21,15 @@
                 <form class="modal-form" method ="post" action="UserController">
                     <input type="hidden" name="userID" value="${user.getID()}">
                     <div class="form-group">
-                        <label for="weight">Old Password:</label>
+                        <label for="oldpassword">Old Password:</label>
                         <input type="password" class="form-control" name="oldpassword">
                     </div>
                     <div class="form-group">
-                        <label for="date">New Password:</label>
+                        <label for="newpassword">New Password:</label>
                         <input type="password" class="form-control" name="newpassword" >
                     </div>
                     <div class="form-group">
-                        <label for="date">Retype New Password:</label>
+                        <label for="repassword">Retype New Password:</label>
                         <input type="password" class="form-control" name="renewpassword" >
                     </div>
                     <button type="submit" class="btn btn-default">Add</button>
