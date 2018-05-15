@@ -270,7 +270,7 @@ public class EmailSetup {
                 + "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
                 + "                    <tbody> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td align=\"left\" style=\"padding:0;Margin:0;\"> <h1 style=\"Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#4A7EB0;\">Registration successful</h1></td> \n"
+                + "                      <td align=\"left\" style=\"padding:0;Margin:0;\"> <h1 style=\"Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#4A7EB0;\"> " + title + "</h1></td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
                 + "                      <td align=\"left\" style=\"padding:0;Margin:0;padding-top:5px;padding-bottom:20px;\"> \n"

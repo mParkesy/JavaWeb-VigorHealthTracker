@@ -59,7 +59,7 @@ public class LoginController extends HttpServlet {
                             + "this email.<br> Otherwise please follow the "
                             + "link below: ";
                     EmailSetup changeEmail = new EmailSetup(email, m, 
-                            "Password Change", user.getFirstname(), 
+                            "Password Change", link,  user.getFirstname(), 
                             "Password Change Request");
                     changeEmail.setUpEmail();
                     changeEmail.sendEmail();
