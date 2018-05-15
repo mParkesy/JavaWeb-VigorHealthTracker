@@ -20,21 +20,17 @@ public class User {
     private String firstname;
     private String lastname;
     private String gender;
-    private String postcode;
-    private String nationality;
     private String email;
     private double height;
     private Date dob;   
     private double exerciseLevel;
 
-    public User(int id, String username, String firstname, String lastname, String gender, String postcode, String nationality, String email, double height, Date dob, double exerciseLevel) {
+    public User(int id, String username, String firstname, String lastname, String gender, String email, double height, Date dob, double exerciseLevel) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.gender = gender;
-        this.postcode = postcode;
-        this.nationality = nationality;
         this.email = email;
         this.height = height;
         this.dob = dob;
@@ -95,14 +91,6 @@ public class User {
         }
     }
 
-    public String getPostcode() {
-        return postcode;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -120,7 +108,32 @@ public class User {
         return new Database().currentWeight(id).getWeight();
     }
     
+    public int lose500() throws Exception{
+        return this.getCalories()-500;
+    }
+    
+    public int lose1000() throws Exception{
+        return this.getCalories()-1000;
+    }
+    
+    public int gain500() throws Exception{
+        return this.getCalories()+500;
+    }
+    
+    public int gain1000() throws Exception{
+        return this.getCalories()+1000;
+    }
+    
+    public String toJSON(){
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        str.append("\"id\": "  + this.id + ",");
+        str.append("\"username\": " + "\"" +  this.username + "\"");
+        str.append("}");
+        return str.toString();
+    }
     public Double getExercise() throws Exception{
         return new Database().getMaxExercise(id).getDistance();
+
     }
 }

@@ -1,5 +1,4 @@
 package classes;
-import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,16 +9,19 @@ public class Group {
     private User user;
     private String description;
     private String imagePath;
-    //private Goal groupGoal
+    private String distanceGoal;
 
-    public Group(int groupID, String groupName, int userID, String description) {
+    public Group(int groupID, String groupName, int userID, 
+            String description, String imagePath, String distanceGoal) {
         try {
             this.groupID = groupID;
             this.groupName = groupName;
             this.user = new Database().getUser(userID);
             this.description = description;
+            this.imagePath = imagePath;
+            this.distanceGoal = distanceGoal;
         } catch (Exception ex) {
-            Logger.getLogger(Group.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Failed to construct user when creating group");
         }
     }
 
@@ -62,6 +64,14 @@ public class Group {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
+
+    public String getDistanceGoal() {
+        return distanceGoal;
+    }
+
+    public void setDistanceGoal(String distanceGoal) {
+        this.distanceGoal = distanceGoal;
+    }
     
     public String toJSON(){
         StringBuilder str = new StringBuilder();
@@ -69,6 +79,8 @@ public class Group {
         str.append("\"description\": " + "\"" + this.description + "\"" + ",");
         str.append("\"groupID\": " + "\"" + this.groupID + "\"" + ",");
         str.append("\"groupName\": " + "\"" + this.groupName + "\"" + ",");
+        str.append("\"imagePath\": " + "\"" + this.imagePath + "\"" + ",");
+        str.append("\"distanceGoal\": " + "\"" + this.distanceGoal + "\"" + ",");
         str.append("\"user\": " +  this.user.getID());
         str.append("}");
         return str.toString();

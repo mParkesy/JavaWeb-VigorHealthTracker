@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "WeightController", urlPatterns = {"/WeightController"})
 public class WeightController extends HttpServlet {
 
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -56,19 +55,32 @@ public class WeightController extends HttpServlet {
         int userID = Integer.parseInt(request.getParameter("userID"));
         double weight = Double.parseDouble(request.getParameter("weight"));
         Date date = new Date();
+        String message;
         try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("date"));
+            date = new SimpleDateFormat("yyyy-MM-dd")
+                    .parse(request.getParameter("date"));
         } catch (ParseException ex) {
-            ex.printStackTrace();
+            System.out.println("Failed to parse date when constructing weight");
+            message = Database.makeAlert("Failed to add weight data,"
+                    + "please try again", "error");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("weight.jsp")
+                                .include(request, response);
         }
-        
-        PrintWriter out=response.getWriter();
-        
-         try {
-            new Database().insertWeight(userID,weight,date);
-            request.getRequestDispatcher("weight.jsp").include(request, response);          
+        Database db = new Database();
+        try {
+            db.insertWeight(userID, weight, date);
+            message = Database.makeAlert("Weight added", "success");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("weight.jsp")
+                                .include(request, response);
         } catch (Exception ex) {
-            out.print("Error adding weight");
+            System.out.println("Failed to construct weight object");
+            message = Database.makeAlert("Failed to add weight data,"
+                    + "please try again", "error");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("weight.jsp")
+                                .include(request, response);
         }
     }
 

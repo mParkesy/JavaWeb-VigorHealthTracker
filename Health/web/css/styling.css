@@ -16,12 +16,13 @@
 .msg-body{
     overflow-y: scroll;
     height:300px;
+    
 }
 #msg{
     right:20px;
     bottom:0;
     width:300px;
-    background:white;
+    background:rgba(255,255,255,0.9);
     border:1px solid rgb(220,220,220);
     position: fixed;
     border-radius: 10px 10px 0 0;
@@ -84,7 +85,8 @@
 }
 .carousel{
     text-align: center;
-    background:rgb(220,220,220);
+    background:rgba(150,150,150,0.75);
+    color:white;
     height:350px;
     width:102.7%;
 }
@@ -110,8 +112,56 @@
     
 }
 
+
+.msg-btn{
+    margin: 0 10px 0 10px;
+    float:right;
+    color:rgb(0,90,255)!important;
+}
+
+.slideOutDown,.slideInUp {
+    animation-duration: 0.5s;
+}
+
+
 .progress{
     height:50px;
+}
+
+
+#groupInfo{
+     background: rgba(255,255,255,0.8);
+}
+body{
+    transition: none; 
+    background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url(../img/waves.jpg) no-repeat fixed center;
+    overflow-x: hidden;
+    background-size: cover;
+    
+}
+body:after {
+    background: rgba(0,0,0,0.1);
+}
+
+.container{
+    
+    margin-bottom: 50px;
+}
+.navbar{
+    margin-bottom:0;
+   
+}
+
+.bar{
+    width:100%;
+    height:62px;
+   
+    border-bottom: 1px #5bd7d7 solid;
+}
+.main{
+    background:rgba(255,255,255,0.85);
+    margin-bottom: 50px;
+    padding: 30px;
 }
 
 .carousel-item{
@@ -140,4 +190,28 @@ h1 a i{
 .progress-bar{
     width:0;
     transition: all ease 1s;
+}
+.tab-content{
+    background:white;
+    padding: 10px 15px 0 15px;
+    border-radius: 0 0 10px 10px;
+    display:none;
+}
+.medal{
+    height:20px;
+    width:20px;
+    margin-bottom:-5px;
+    display:inline-block;
+}
+ul .list-group-item:first-of-type .medal{
+    background-image: url(../img/gold.svg);
+}
+ul .list-group-item:nth-of-type(2) .medal{
+    background-image: url(../img/silver.svg);
+}
+ul .list-group-item:nth-of-type(3) .medal{
+    background-image: url(../img/bronze.svg);
+}
+.distance{
+    float:right;
 }
