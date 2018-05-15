@@ -417,7 +417,8 @@ public class Database {
                     + "sum(food.Sugar) as sugar "
                     + "FROM foodlog "
                     + "INNER JOIN food ON foodlog.foodID = food.id "
-                    + "WHERE foodlog.date = CURRENT_DATE";
+                    + "WHERE foodlog.date = CURRENT_DATE "
+                    + "AND foodLog.userID = ?";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             ResultSet result = st.executeQuery();
@@ -434,6 +435,36 @@ public class Database {
         }
         return sum.toJSON();
         
+    }
+    
+    public int getCaloriesBurnt(int userID){
+        int sum = 0;
+        Exercise e =null;
+        try{
+            String sql = "SELECT * FROM exercise WHERE userID = ? "
+                    + "AND date = CURRENT_DATE";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet rs = st.executeQuery();
+            
+            while(rs.next()){
+                
+                int exerciseID = rs.getInt("exerciseID");
+                Date date = rs.getDate("date");
+                int minutes = rs.getInt("minutes");
+                double distance = rs.getDouble("distance");
+                Activity activity = getActivity(
+                        rs.getInt("activityID"));
+
+                e= new Exercise(exerciseID, userID, activity , date, minutes, distance);
+                System.out.println(e.getCaloriesBurnt());
+                sum += e.getCaloriesBurnt();
+            }
+        }catch(Exception ex){
+            System.out.println("Failed to sum calories from today");
+            ex.printStackTrace();
+        }
+        return sum;
     }
 
     /**
