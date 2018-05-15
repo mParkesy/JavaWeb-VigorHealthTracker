@@ -203,13 +203,13 @@ h1 a i{
     margin-bottom:-5px;
     display:inline-block;
 }
-.leaderboard .list-group-item:first-of-type .medal{
+ul .list-group-item:first-of-type .medal{
     background-image: url(../img/gold.svg);
 }
-.leaderboard .list-group-item:nth-of-type(2) .medal{
+ul .list-group-item:nth-of-type(2) .medal{
     background-image: url(../img/silver.svg);
 }
-.leaderboard .list-group-item:nth-of-type(3) .medal{
+ul .list-group-item:nth-of-type(3) .medal{
     background-image: url(../img/bronze.svg);
 }
 .distance{
