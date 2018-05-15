@@ -54,9 +54,15 @@ public class LoginController extends HttpServlet {
                     String ip = address.getHostAddress();
                     String link = ip + ":8080/Health/passwordchange"
                             + ".jsp?verification=" + stamp;
-                    EmailSetup emailSetup = new EmailSetup(email, link, 
-                            "Password change");
-                    emailSetup.sendEmail();
+                    String m = "You have requested a password change.<br>"
+                            + "If you did not request this, then please ignore "
+                            + "this email.<br> Otherwise please follow the "
+                            + "link below: ";
+                    EmailSetup changeEmail = new EmailSetup(email, m, 
+                            "Password Change", link,  user.getFirstname(), 
+                            "Password Change Request");
+                    changeEmail.setUpEmail();
+                    changeEmail.sendEmail();
                     error = Database.makeAlert("Please check your emails", 
                             "success");
                     request.setAttribute("message", error);
@@ -123,6 +129,7 @@ public class LoginController extends HttpServlet {
                         HttpSession session = request.getSession();
                         session.setMaxInactiveInterval(10 * 60);
                         session.setAttribute("user", db.getUser(username));
+                        db.loginLog(loginUser.getID());
                         response.sendRedirect("home.jsp");
                     } else {
                         error = Database.makeAlert("You have not verified "
@@ -153,6 +160,7 @@ public class LoginController extends HttpServlet {
             request.setAttribute("message", error);
             request.getRequestDispatcher("login.jsp")
                     .include(request, response);
+            ex.printStackTrace();
         }
 
     }

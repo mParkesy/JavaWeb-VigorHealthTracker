@@ -29,37 +29,33 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <%
-            String stamp = request.getParameter("verification");
+        <div class="row">
+            <div class=" col-lg-3 col-md-2 col-sm-1"></div>
+            <div class="col-lg-6 col-md-8 col-sm-10 main">
+                <%
+                    String stamp = request.getParameter("verification");
 
-            Database db = new Database();
-            User user = db.updateVerification(stamp, 0);
-            if (user != null) {
-                session.setAttribute("change", user);
-        %>
-        <form class="modal-form" method ="post" action="UserController">
-            <div class="form-group">
-                <label for="oldpassword">Old Password:</label>
-                <input type="password" class="form-control" name="oldpassword">
-            </div>
-            <div class="form-group">
-                <label for="newpassword">New Password:</label>
-                <input type="password" class="form-control" name="newpassword" >
-            </div>
-            <div class="form-group">
-                <label for="repassword">Retype New Password:</label>
-                <input type="password" class="form-control" name="renewpassword" >
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form> 
-        <%
-            } else {
+                    Database db = new Database();
+                    User user = db.updateVerification(stamp, 0);
+                    if (user != null) {
+                        session.setAttribute("change", user);
+                %>
+                <form class="modal-form" method ="post" action="UserController?type=5">
+                    <div class="form-group">
+                        <label for="newpassword">New Password:</label>
+                        <input type="password" class="form-control" name="newpassword" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" required>
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form> 
+                <%
+                    } else {
 
-                response.sendRedirect("login.jsp");
-            }
-        %>
-
+                        response.sendRedirect("login.jsp");
+                    }
+                %>
+            </div>
+            <div class=" col-lg-3 col-md-2 col-sm-1"></div>
+        </div>
 
     </body>
 </html>

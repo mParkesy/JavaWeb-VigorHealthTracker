@@ -23,9 +23,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ExerciseController", urlPatterns = {"/ExerciseController"})
 public class ExerciseController extends HttpServlet {
-
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -35,8 +32,8 @@ public class ExerciseController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
         
     }
 
@@ -49,25 +46,39 @@ public class ExerciseController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException {
+        // get user ID and date from form
         int userID = Integer.parseInt(request.getParameter("userID"));
         Date date = new Date();
         try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("date"));
+            // parse date to SQL format
+            date = new SimpleDateFormat("yyyy-MM-dd")
+                    .parse(request.getParameter("date"));
         } catch (ParseException ex) {
-            ex.printStackTrace();
+            System.out.println("Failed to parse date in exercise controller");
         }
+        // get other parameters
         int activityID = Integer.parseInt(request.getParameter("activityID"));
         int minutes = Integer.parseInt(request.getParameter("minutes"));
         double distance = Double.parseDouble(request.getParameter("distance"));
-        
-        PrintWriter out=response.getWriter();
-        
+        String message;
         try {
-            Exercise exercise  = new Database().insertExercise(userID, activityID, date, minutes, distance);
+            // construct exercise object
+            Exercise exercise  = new Database().insertExercise(userID, 
+                    activityID, date, minutes, distance);
+            // create user alert
+            message = Database.makeAlert("Exercise added", "success");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("exercise.jsp")
+                                .include(request, response);
         } catch (Exception ex) {
-            out.print("Error adding exercise");
+            System.out.println("Failed to construct exercise object");
+            message = Database.makeAlert("Failed to add exercise,"
+                    + "please try again", "error");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("exercise.jsp")
+                                .include(request, response);
         }
     }
 
