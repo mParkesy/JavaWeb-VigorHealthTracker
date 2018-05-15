@@ -11,7 +11,7 @@
 <html>
     <head>
         <%@ include file="fragments/header.jspf" %>
-        
+
         <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
         <script type="text/javascript">
 
@@ -36,9 +36,7 @@
                             <div class="form-group">
                                 <label for="activity">Activity:</label>
                                 <select name="activityID">
-                                    <%
-
-                                        for(Activity a : new Database().allActivity()){
+                                    <%                                        for (Activity a : new Database().allActivity()) {
                                             out.println("<option value=" + a.getActivityID() + ">" + a.getActivity() + "</option>");
                                         }
 
@@ -59,39 +57,39 @@
                 </div> 
             </div>
         </div>
-       
+
         <div class="row">    
             <div class=" col-lg-3 col-md-2 col-sm-1"></div>
             <div class="col-lg-6 col-md-8 col-sm-10 main">
                 <h1>Exercise History</h1>                
-                
+                ${message}
                 <table class="table table-striped">
                     <thead>
-                      <tr>
-                        <th>Activity</th>
-                        <th>Date</th>
-                        <th>Minutes Exercised</th>
-                        <th>Distance Exercised</th>
-                        <th>Calories Burnt</th>
-                      </tr>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Duration</th>
+                            <th>Distance</th>
+                            <th>Calories</th>
+                            <th>Date</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <c:forEach items="<%=db.allExercise(currentUser.getID()) %>" var="e">
+                        <c:forEach items="<%=db.allExercise(currentUser.getID())%>" var="e">
                             <tr>
                                 <td>
                                     ${e.getActivity().getActivity()}
                                 </td>
                                 <td>
-                                    ${e.getDate()}
+                                    ${e.getMinutes()} minutes
                                 </td>
                                 <td>
-                                    ${e.getMinutes()}
-                                </td>
-                                <td>
-                                    ${e.getDistance()}
+                                    ${e.getDistance()}km
                                 </td>
                                 <td>
                                     ${e.getCaloriesBurnt()}
+                                </td>
+                                <td>
+                                    ${e.getDate()}
                                 </td>
                             </tr>
                         </c:forEach>
@@ -104,5 +102,5 @@
             <div class=" col-lg-3 col-md-2 col-sm-1"></div>
         </div>
     </body>
-    
+
 </html>

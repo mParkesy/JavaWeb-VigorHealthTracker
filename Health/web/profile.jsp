@@ -44,14 +44,38 @@
                             Calorie Breakdown <i class="far fa-arrow-alt-circle-down"></i>
                         </a>
                     </li>
-
                     <div class="collapse" id="collapseList">
-
                         <li class="list-group-item"> - To maintain your weight you need: ${user.getCalories()} calories per day</li>
                         <li class="list-group-item"> - To lose 0.5kg per week you need: ${user.lose500()} calories per day</li>
                         <li class="list-group-item"> - To lose 1kg per week you need: ${user.lose1000()} calories per day</li>
                         <li class="list-group-item"> - To gain 0.5kg per week you need: ${user.gain500()} calories per day</li>
                         <li class="list-group-item"> - To gain 1kg per week you need: ${user.gain1000()} calories per day</li>
+                    </div>
+                    <li class="list-group-item">
+                        <a class="" data-toggle="collapse" href="#collapseFormula" role="button" aria-expanded="false" aria-controls="collapseFormula">
+                            Formula Breakdown <i class="far fa-arrow-alt-circle-down"></i>
+                        </a>
+                    </li>
+                    <div class="collapse" id="collapseFormula">
+                        <li class="list-group-item"> 
+                            Basic Metabolic Rate:<br>
+                            &nbsp;= 10 x weight(kg) + 6.25 x height(cm) - 5 x age(years)<br>
+                            &nbsp;+ 5 for men<br>
+                            &nbsp;-161 for women
+                        </li>
+                        <li class="list-group-item">
+                            Body Mass Index:<br>
+                            &nbsp;= weight(kg) / height(m) squared
+                        </li>
+                        <li class="list-group-item">
+                            Harris-Benedict Formula:<br>
+                            &nbsp;= BMR x activity level<br>
+                            &nbsp;&nbsp;1.2 - Little or no exercise<br>
+                            &nbsp;&nbsp;1.375 - 1 to 3 times a week<br>
+                            &nbsp;&nbsp;1.55 - 3 to 5 times a week<br>
+                            &nbsp;&nbsp;1.725 - 6 to 7 times a week<br>
+                            &nbsp;&nbsp;1.9 - Physical job or 2 times a day
+                        </li>
                     </div>
                 </ul>
             </div>
