@@ -102,28 +102,52 @@ public class UserController extends HttpServlet {
             } catch (Exception ex) {
                 System.out.println("Failed to update users height");
             }
-
         } else {
-            String oldpassword = request.getParameter("oldpassword");
             String newpassword = request.getParameter("newpassword");
-            
-            String renewpassword = "";
-            if(request.getParameter("renewpassword") != null){
-                renewpassword = request.getParameter("renewpassword");
-            } else {
-                renewpassword = newpassword;
-            }
+            userID = Integer.parseInt(request.getParameter("userID"));
+            String error;
+            boolean canChange = false;
+            if (type.equals("4")) {
+                String oldpassword = request.getParameter("oldpassword");
+                String renewpassword = request.getParameter("renewpassword");
 
-            if (request.getParameter("userID") == null) {
-                User user = (User) request.getSession(false).getAttribute("change");
-                userID = user.getID();
+                try {
+                    if (db.getPassword(userID).equals(Database
+                            .passwordDigest(oldpassword))
+                            && newpassword.equals(renewpassword)) {
+                        canChange = true;
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Failed to get password for the user "
+                            + "userID specified");
+                    error = Database.makeAlert("Failed to change password, "
+                            + "please try again", "error");
+                    request.setAttribute("message", error);
+                    request.getRequestDispatcher("settings.jsp")
+                            .include(request, response);
+                }
+            } else if (type.equals("5")) {
+                if (request.getParameter("userID") == null) {
+                    User user = (User) request.getSession(false).getAttribute("change");
+                    userID = user.getID();
+                    canChange = true;
+                } else {
+                    error = Database.makeAlert("Failed to change password, "
+                            + "please try again", "error");
+                    request.setAttribute("message", error);
+                    request.getRequestDispatcher("login.jsp")
+                            .include(request, response);
+                }
             } else {
-                userID = Integer.parseInt(request.getParameter("userID"));
+                error = Database.makeAlert("There was an error", "error");
+                request.setAttribute("message", error);
+                request.getRequestDispatcher("settings.jsp")
+                        .include(request, response);
             }
 
             try {
-                String error;
-                if (db.getPassword(userID).equals(Database.passwordDigest(oldpassword)) && newpassword.equals(renewpassword)) {
+
+                if (canChange) {
                     String digest = Database.passwordDigest(newpassword);
                     if (db.updatePassword(digest, userID)) {
                         error = Database.makeAlert("Password change successful",
@@ -146,13 +170,9 @@ public class UserController extends HttpServlet {
                     request.getRequestDispatcher("login.jsp")
                             .include(request, response);
                 }
-            } catch (SQLException ex) {
-                System.out.println("Failed to get users old password in"
-                        + "password change");
-            } catch (NoSuchAlgorithmException ex) {
-                System.out.println("Failed to digest password in password change");
+            } catch (Exception ex) {
+                System.out.println("Failed to digest password");
             }
         }
     }
-
 }

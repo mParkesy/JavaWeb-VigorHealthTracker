@@ -54,13 +54,13 @@ public class LoginController extends HttpServlet {
                     String ip = address.getHostAddress();
                     String link = ip + ":8080/Health/passwordchange"
                             + ".jsp?verification=" + stamp;
-
-                    EmailSetup changeEmail = new EmailSetup(email, "You have "
-                            + "requested a password change.<br>"
+                    String m = "You have requested a password change.<br>"
                             + "If you did not request this, then please ignore "
                             + "this email.<br> Otherwise please follow the "
-                            + "link below: ", link, "Password Change", 
-                            user.getFirstname(), "Password Change Requested");
+                            + "link below: ";
+                    EmailSetup changeEmail = new EmailSetup(email, m, 
+                            "Password Change", user.getFirstname(), 
+                            "Password Change Request");
                     changeEmail.setUpEmail();
                     changeEmail.sendEmail();
                     error = Database.makeAlert("Please check your emails", 

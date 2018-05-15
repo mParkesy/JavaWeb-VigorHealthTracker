@@ -36,7 +36,7 @@
                     </li>
                 </ul>
                 <div class="collapse" id="collapseForm">
-                    <form class="modal-form" method ="post" action="UserController">
+                    <form class="modal-form" method ="post" action="UserController?type=4">
                         <input type="hidden" name="userID" value="${user.getID()}">
                         <div class="form-group">
                             <label for="oldpassword">Old Password:</label>

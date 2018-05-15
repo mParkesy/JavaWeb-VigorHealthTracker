@@ -40,11 +40,7 @@
                     if (user != null) {
                         session.setAttribute("change", user);
                 %>
-                <form class="modal-form" method ="post" action="UserController">
-                    <div class="form-group">
-                        <label for="oldpassword">Old Password:</label>
-                        <input type="password" class="form-control" name="oldpassword" required>
-                    </div>
+                <form class="modal-form" method ="post" action="UserController?type=5">
                     <div class="form-group">
                         <label for="newpassword">New Password:</label>
                         <input type="password" class="form-control" name="newpassword" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$" required>

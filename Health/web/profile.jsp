@@ -29,7 +29,7 @@
                         <li class="list-group-item">Age: ${user.getAge()}</li>
                     </ul>
                     <form action="settings.jsp" style="padding-left: 10px; padding-bottom:  10px;">
-                        <button type="submit" class="btn btn-info btn-default">Change password</button>
+                        <button type="submit" class="btn btn-info btn-default">Settings</button>
                     </form>
                 </div>
                 <h1 >Health Info</h1>
