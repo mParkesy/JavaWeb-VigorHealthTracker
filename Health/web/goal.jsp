@@ -98,7 +98,6 @@
               <div class="modal-body modal-form">
                   
                 <form class="modal-form" method ="post" action="GoalController">
-                    
                     <input type="hidden" name="userID" value="${user.getID()}">
                         <div class="form-group">
                             <label for="date">Type</label>
@@ -115,8 +114,7 @@
                         <div id="distance" class="form-group">
                             <label for="distance">Goal Distance</label>
                             <input type="number" class="form-control" step="0.1" name="distance">
-                        </div>
-                        
+                        </div>        
                         <button type="submit" class="btn btn-default">Add Goal</button>
                 </form>    
               </div>

@@ -806,7 +806,9 @@ public class Database {
     public Exercise getMaxExercise(int userID){
         Exercise exercise = null;
         try {
-            String sql = "SELECT * FROM exercise WHERE userID = ? AND distance = (SELECT MAX(distance) FROM exercise WHERE userID = ?)";
+            String sql = "SELECT * FROM exercise WHERE userID = ? "
+                    + "AND distance = (SELECT MAX(distance) "
+                    + "FROM exercise WHERE userID = ?)";
 
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
@@ -814,12 +816,17 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                exercise = new Exercise(result.getInt("exerciseID"), userID, getActivity(result.getInt("activityID")), result.getDate("date"), result.getInt("minutes"), result.getDouble("distance"));
+                exercise = new Exercise(result.getInt("exerciseID"), 
+                        userID, getActivity(result.getInt("activityID")), 
+                        result.getDate("date"), result.getInt("minutes"), 
+                        result.getDouble("distance"));
             }
         } catch (Exception ex) {
             System.out.println("Failed to get exercise by userID");
         }
         return exercise;
+        
+        
     }
 
     // ---------------------------------------------FOOD----------------------------------------------------------
@@ -965,9 +972,21 @@ public class Database {
     }
 
     // ---------------------------------------------GOAL----------------------------------------------------------
-    public Goal insertGoal() {
-
-        return null;
+    public boolean insertGoal(int userID, double start, double target, String type) {
+        try {
+            String sql = "INSERT INTO (userID, start, target, type)"
+                    + "VALUES (?,?,?,?)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setDouble(2, start);
+            st.setDouble(userID, target);
+            st.setString(4, type);
+            st.executeUpdate();
+            return true;
+        }catch(Exception ex){
+            System.out.println("Failed to insert goal");
+            return false;
+        }       
     }
 
     
