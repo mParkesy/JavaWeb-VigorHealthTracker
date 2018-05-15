@@ -89,7 +89,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach items="<%=db.allExercise(currentUser.getID())%>" var="e">
+                        <c:forEach items="<%=db.allExercise(currentUser.getID(), "") %>" var="e">
                             <tr>
                                 <td>
                                     ${e.getActivity().getActivity()}

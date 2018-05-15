@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -94,6 +96,13 @@ public class Database {
                 + "showConfirmButton: false,"
                 + "timer: 3000"
                 + "})</script>";
+    }
+
+    public static String getLastSunday() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_WEEK, -(cal.get(Calendar.DAY_OF_WEEK) - 1));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(cal.getTime());
     }
 
 // ---------------------------------------------USER----------------------------------------------------------
@@ -422,7 +431,7 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                int id = result.getInt("id");
+                int id = result.getInt("foodLogID");
                 Food food = getFood(result.getInt("foodID"));
                 String meal = result.getString("meal");
                 Date date = result.getDate("date");
@@ -480,11 +489,15 @@ public class Database {
      * @return An ArrayList of Exercise objects
      * @throws Exception If the Select SQL fails to execute
      */
-    public ArrayList<Exercise> allExercise(int userID) throws Exception {
+    public ArrayList<Exercise> allExercise(int userID, String inputDate)
+            throws Exception {
         ArrayList<Exercise> exerciseList = new ArrayList<>();
-
         try {
             String sql = "SELECT * FROM exercise WHERE userID = ?";
+            if (!inputDate.equals("")) {
+                sql += " AND date > '" + inputDate + "'";
+            }
+
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
 
@@ -658,18 +671,20 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
-    public Group insertGroup(int userID, String name, String description, String image)
+    public Group insertGroup(int userID, String name, String description, 
+            String image, String distanceGoal)
             throws SQLException, Exception {
         Group group = null;
         try {
-            String sql = "INSERT INTO ugroup (userID, name, description, image)"
-                    + "VALUES (?,?,?,?)";
+            String sql = "INSERT INTO ugroup (userID, name, description, image, distanceGoal)"
+                    + "VALUES (?,?,?,?,?)";
             PreparedStatement st = CON.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, userID);
             st.setString(2, name);
             st.setString(3, description);
             st.setString(4, image);
+            st.setString(5, distanceGoal);
             st.executeUpdate();
 
             try (ResultSet key = st.getGeneratedKeys()) {
@@ -702,11 +717,13 @@ public class Database {
                 group = new Group(result.getInt("groupID"),
                         result.getString("name"), result.getInt("userID"),
                         result.getString("description"),
-                        result.getString("image"));
+                        result.getString("image"), 
+                        result.getString("distanceGoal"));
 
             }
         } catch (Exception ex) {
             System.out.println("Failed to get group");
+
         }
         return group;
     }
@@ -737,6 +754,7 @@ public class Database {
             while (result.next()) {
                 return true;
             }
+            return false;
         } catch (Exception ex) {
             System.out.println("Failed to check if admin");
         }
@@ -808,10 +826,12 @@ public class Database {
     public double getGroupDistance(int groupID, String date) {
         double totalDistance = 0;
         try {
-            String sql = "SELECT SUM(exercise.distance) as total FROM exercise INNER JOIN groupmembers on exercise.userID = groupmembers.userID WHERE groupmembers.groupID = ?";
-            if (!date.equals("")) {
-                sql = sql + "AND exercise.date > '" + date + "'";
-            }
+            String sql = "SELECT SUM(exercise.distance) as total FROM exercise "
+                    + "INNER JOIN groupmembers on "
+                    + "exercise.userID = groupmembers.userID "
+                    + "WHERE groupmembers.groupID = ? "
+                    + "AND date > '" + date + "'";
+            
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, groupID);
             ResultSet result = st.executeQuery();
@@ -821,29 +841,43 @@ public class Database {
             }
         } catch (Exception ex) {
             System.out.println("Failed to get groups total distance");
+            ex.printStackTrace();
         }
         return totalDistance;
     }
 
     public TreeMap getGroupDistanceLeaderboard(int groupID) throws SQLException {
-        TreeMap<Double, Integer> t = new TreeMap(Collections.reverseOrder());
+        TreeMap<Integer, Double> t = new TreeMap(Collections.reverseOrder());
+        String date = getLastSunday();
         String sql = "SELECT e.userID, SUM(e.distance) as total "
                 + "FROM exercise e INNER JOIN groupmembers g "
                 + "ON e.userID = g.userID "
-                + "WHERE g.groupID = ? GROUP BY e.userID";
+                + "WHERE g.groupID = ? AND date > '" + date
+                + "' GROUP BY e.userID";
         PreparedStatement st = CON.prepareStatement(sql);
         st.setInt(1, groupID);
         ResultSet result = st.executeQuery();
 
         while (result.next()) {
-            User user = getUser(result.getInt("e.userID"));
-            t.put(result.getDouble("total"), result.getInt("e.userID"));
+            t.put(result.getInt("e.userID"), result.getDouble("total"));
         }
-        Set set = t.entrySet();
-        Iterator i = set.iterator();
-        while (i.hasNext()) {
-            Map.Entry me = (Map.Entry) i.next();
-            System.out.print(me.getKey() + ": " + me.getValue());
+        return t;
+    }
+
+    public TreeMap getGroupCalorieLeaderboard(int groupID)
+            throws SQLException, Exception {
+        TreeMap<Integer, Integer> t = new TreeMap();
+        String date = getLastSunday();
+        ArrayList<User> userList = getMembers(groupID);
+        for (User u : userList) {
+            int calories = 0;
+            ArrayList<Exercise> exerciseList = allExercise(u.getID(), date);
+            for (Exercise e : exerciseList) {
+                calories += e.getCaloriesBurnt();
+            }
+            if (calories != 0) {
+                t.put(u.getID(), calories);
+            }
         }
 
         return t;
@@ -852,7 +886,8 @@ public class Database {
     public ArrayList<User> getMembers(int groupID) {
         ArrayList<User> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM groupmembers where groupID = ? AND joined = 1";
+            String sql = "SELECT * FROM groupmembers where groupID = ? "
+                    + "AND joined = 1";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, groupID);
             ResultSet result = st.executeQuery();
@@ -865,6 +900,29 @@ public class Database {
             System.out.println("Failed to get member list");
         }
         return list;
+    }
+
+    
+    public boolean updateGroup(int groupID, String name, String description, 
+            String image, String distanceGoal){
+        try {
+            String sql = "UPDATE ugroup SET name = ?, description = ?, "
+                    + "image = ?, distanceGoal =? WHERE groupID = ?"; 
+            PreparedStatement st = CON.prepareCall(sql);
+            st.setString(1, name);
+            st.setString(2, description);
+            st.setString(3, image);
+            st.setString(4, distanceGoal);
+            st.setInt(5, groupID);
+            int affected  = st.executeUpdate();
+            if(affected > 0){
+                return true;
+            }
+        }catch (Exception ex){
+            System.out.println("Failed to update group");
+            return false;
+        }
+        return false;
     }
 
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
@@ -1095,8 +1153,6 @@ public class Database {
                     "New Notification");
             notif.setUpEmail();
             notif.sendEmail();
-            
-
         } catch (Exception ex) {
             System.out.println("Failed to insert notification");
         }
