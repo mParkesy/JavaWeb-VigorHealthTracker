@@ -104,10 +104,10 @@ public class UserController extends HttpServlet {
             }
         } else {
             String newpassword = request.getParameter("newpassword");
-            userID = Integer.parseInt(request.getParameter("userID"));
             String error;
             boolean canChange = false;
             if (type.equals("4")) {
+                userID = Integer.parseInt(request.getParameter("userID"));
                 String oldpassword = request.getParameter("oldpassword");
                 String renewpassword = request.getParameter("renewpassword");
 
