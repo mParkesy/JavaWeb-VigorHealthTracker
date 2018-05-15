@@ -84,8 +84,8 @@
 }
 .carousel{
     text-align: center;
-    background:rgba(150,150,150,0.75);
-    color:white;
+    background:rgba(255,255,255,0.9);
+    color:black;
     height:350px;
     width:102.7%;
 }
@@ -162,6 +162,7 @@ body:after {
 }
 
 .carousel-item{
+    color:rgba(0,0,0,0.5);
     padding:0 100px;
 }
 .carousel-item .progress{
@@ -200,4 +201,21 @@ h1 a i{
     width:25px;
     margin:0;
     padding:0;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+}
+ol.carousel-indicators li{
+    background: rgba(0,0,0,0.5);
+}
+
+ol.carousel-indicators li.active
+ {
+  
+  background: black;
 }

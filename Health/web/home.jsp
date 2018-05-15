@@ -78,10 +78,10 @@
                             data: [caloriesSum,caloriesMax-caloriesSum],
                             backgroundColor: [
                                 'rgba(153, 255, 230, 0.65)',
-                                'rgba(255, 255, 255, 0.15)'
+                                'rgba(0,0,0, 0.1)'
                             ],
-                            borderWidth:[5,0],
-                            borderColor:['rgba(153, 255, 230, 0.3)','rgba(153, 255, 230, 0.65)']
+                            borderWidth:[0,0]
+                            
                         }]
                     },
                     options: {
@@ -98,11 +98,11 @@
         
         <div class="container animated fadeIn">
             
-            <div  id="carouselExampleIndicators" class="carousel slide row" data-ride="carousel">
+            <div  id="carouselExampleIndicators" class="carousel slide row border" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                   <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                  
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
@@ -137,9 +137,7 @@
                         <br>
                         <p><b>Keep going!</b> You are 25% of the way to your goal</p>
                   </div>
-                  <div class="carousel-item">
-                   
-                  </div>
+                  
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
