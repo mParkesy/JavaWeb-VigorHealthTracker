@@ -5,6 +5,8 @@
  */
 package classes;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -57,8 +59,9 @@ public class Exercise {
      * Getter for exercise date
      * @return The exercise date as a Date object
      */
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        return df.format(this.date);
     }
 
     /**

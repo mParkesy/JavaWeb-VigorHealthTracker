@@ -5,8 +5,8 @@
  */
 package servlets;
 
+import classes.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,9 +34,14 @@ public class LogoutController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Database db = new Database();
+        User user = (User) 
+                        request.getSession(false).getAttribute("user");
+        db.logoutLog(user.getID());
         response.setContentType("text/html");   
-        HttpSession session=request.getSession();  
-        session.invalidate();        
+        HttpSession session=request.getSession(false);  
+        session.invalidate();     
+        
         response.sendRedirect("login.jsp");                
     }
 

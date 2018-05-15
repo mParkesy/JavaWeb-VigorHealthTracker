@@ -16,12 +16,13 @@
 .msg-body{
     overflow-y: scroll;
     height:300px;
+    
 }
 #msg{
     right:20px;
     bottom:0;
     width:300px;
-    background:white;
+    background:rgba(255,255,255,0.9);
     border:1px solid rgb(220,220,220);
     position: fixed;
     border-radius: 10px 10px 0 0;
@@ -115,6 +116,7 @@
 .msg-btn{
     margin: 0 10px 0 10px;
     float:right;
+    color:rgb(0,90,255)!important;
 }
 
 .slideOutDown,.slideInUp {
@@ -134,6 +136,7 @@ body{
     transition: none; 
     background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url(../img/waves.jpg) no-repeat fixed center;
     overflow-x: hidden;
+    background-size: cover;
     
 }
 body:after {
@@ -188,8 +191,27 @@ h1 a i{
     width:0;
     transition: all ease 1s;
 }
-
-.active,.show{
-    background:rgba(0,0,0,0) !important;
-    border-bottom:0!important;
+.tab-content{
+    background:white;
+    padding: 10px 15px 0 15px;
+    border-radius: 0 0 10px 10px;
+    display:none;
+}
+.medal{
+    height:20px;
+    width:20px;
+    margin-bottom:-5px;
+    display:inline-block;
+}
+ul .list-group-item:first-of-type .medal{
+    background-image: url(../img/gold.svg);
+}
+ul .list-group-item:nth-of-type(2) .medal{
+    background-image: url(../img/silver.svg);
+}
+ul .list-group-item:nth-of-type(3) .medal{
+    background-image: url(../img/bronze.svg);
+}
+.distance{
+    float:right;
 }
