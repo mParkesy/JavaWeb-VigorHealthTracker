@@ -96,18 +96,37 @@
     <body>
         
         <%@ include file="fragments/navbar.jspf" %>
-        
+        <div class="modal fade" id="foodModal" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Add Food</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                          <input placeholder="Search" type="text" id="food2" class="form-control" />
+                          
+                            <ul class="list-group" id="foodList"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
-            <div class="col-lg-4 col-md-8 col-sm-10">
+            <div class="col-lg-4 col-md-8 col-sm-10 main">
                 <canvas width="400px" height="400px" id="myChart"></canvas>
             </div>
-            <div class="col-lg-4 col-md-8 col-sm-10">
-            <form>
-                    AutoComplete input <input type="text" id="food2" />
-            </form>
+            <div class="col-lg-4 col-md-8 col-sm-10 main">
+                
+            
+                 
            
-            <h1>Food Log</h1>
+           
+            <h1 style="display:inline">Food Log</h1>
+            <button type="button" class="btn btn-primary add"
+                    data-toggle="modal" data-target="#foodModal">
+                <i class="fas fa-plus"></i>
+            </button>
             <table class="table" id="foodLog">
                 <thead>
                     <tr>
@@ -121,8 +140,7 @@
                     
                 </tbody>
             </table>
-            <h1>Food List</h1>
-            <ul class="list-group" id="foodList"></ul>
+            
             </div>
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
         </div>

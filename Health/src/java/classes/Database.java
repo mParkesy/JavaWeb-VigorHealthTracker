@@ -386,13 +386,13 @@ public class Database {
 
         ArrayList<FoodLog> logs = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM foodLog where userID = ?";
+            String sql = "SELECT * FROM foodLog where userID = ? AND date > 2018-05-16";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                int id = result.getInt("id");
+                int id = result.getInt("foodLogID");
                 Food food = getFood(result.getInt("foodID"));
                 String meal = result.getString("meal");
                 Date date = result.getDate("date");

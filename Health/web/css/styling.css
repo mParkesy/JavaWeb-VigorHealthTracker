@@ -134,7 +134,7 @@ body{
     transition: none; 
     background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url(../img/waves.jpg) no-repeat fixed center;
     overflow-x: hidden;
-    
+    background-size: cover;
 }
 body:after {
     background: rgba(0,0,0,0.1);
@@ -189,7 +189,8 @@ h1 a i{
     transition: all ease 1s;
 }
 
-.active,.show{
-    background:rgba(0,0,0,0) !important;
-    border-bottom:0!important;
+.add{
+    display:inline-block;
+    margin-bottom:15px;
+    margin-left:10px;
 }
