@@ -405,6 +405,36 @@ public class Database {
         return logs;
 
     }
+    
+    //returns daily nutrients fir a user as a json string
+    public String getNutrients(int userID){
+        Food sum = new Food();
+        try {
+            String sql = "SELECT SUM(food.Protein) as protein,"
+                    + "sum(food.Fat) as fat, "
+                    + "sum(food.Carbs) as carbs, "
+                    + "sum(food.Energy) as energy, "
+                    + "sum(food.Sugar) as sugar "
+                    + "FROM foodlog "
+                    + "INNER JOIN food ON foodlog.foodID = food.id "
+                    + "WHERE foodlog.date = CURRENT_DATE";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet result = st.executeQuery();
+            
+            while (result.next()) {
+                sum.setCarbs(result.getDouble("carbs"));
+                sum.setSugar(result.getDouble("sugar"));
+                sum.setProtein(result.getDouble("protein"));
+                sum.setEnergy(result.getDouble("energy"));
+                sum.setFat(result.getDouble("fat"));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Failed to get a user's nutrients");
+        }
+        return sum.toJSON();
+        
+    }
 
     /**
      * A method that collects all sleep data for a specific User

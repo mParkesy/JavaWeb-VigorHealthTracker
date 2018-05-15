@@ -45,10 +45,15 @@ public class FoodController extends HttpServlet {
             System.out.println(ex);
         }
 
-        response.setContentType("text/plain");
-
+        //response.setContentType("text/plain");
+        response.getWriter().println("[");
         try {
             for (FoodLog f : logs) {
+                response.getWriter().println(f.getFood().toJSON());
+                if(f != logs.get(logs.size() - 1)){
+                    response.getWriter().println(",");
+                }
+                /*
                 Food food = f.getFood();
                 response.getWriter().println("<tr>");
                 response.getWriter().println("<td>" + food.getName() + "</td>");
@@ -56,10 +61,13 @@ public class FoodController extends HttpServlet {
                 response.getWriter().println("<td class='carbs'>" + food.getCarbs() + "</td>");
                 response.getWriter().println("<td class='fat'>" + food.getFat() + "</td>");
                 response.getWriter().println("</tr>");
+                */
             }
         } catch (Exception ex) {
-            response.getWriter().println("<h1>ERROR</h1>");
+            ex.printStackTrace();
+            System.out.println("Food controller error");
         }
+        response.getWriter().println("]");
 
     }
 

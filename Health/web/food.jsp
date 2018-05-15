@@ -56,18 +56,35 @@
                             food : $('#food2').val()
                     }, function(responseText) {
                             $('#foodList').html(responseText);
-                            
+                           
                     });
                 });
-                
-                $.get('FoodController', {
+                function getFoodLogs(){
+                    $.get('FoodController', {
                     userID : ${user.getID()}
-                }, function(responseText) {
-                    $('#foodLog tbody').html(responseText);
+                }, function(response) {
+                    
+                    var food = JSON.parse(response);
+                    
+                    var list = $('#foodLog tbody');
+                    list.html("");
+                    for(i = 0; i < food.length;i++){
+                        console.log(food[i].name);
+                        list.append("<tr id='" + food[i].id + "'>");
+                        list.append("<td>" + food[i].name + "</td>");
+                        list.append("<td class='protein'>" + food[i].protein + "</td>");
+                        list.append("<td class='carbs'>" + food[i].carbs + "</td>");
+                        list.append("<td class='fat'>" + food[i].fat + "</td>");
+                        list.append("</tr>");
+                    }
+                    
+
                     generatePie();
                 });
+                }
+                getFoodLogs();
                 
-                $('body').on('click','li',function(){
+                $('body').on('click','#addLog',function(){
                 
                     var id = $(this).attr('id');
                     $.post('FoodController', {
@@ -75,12 +92,7 @@
                         foodID : id,
                         meal: 'lunch'
                     }, function() {
-                        $.get('FoodController', {
-                            userID : ${user.getID()}
-                        }, function(response) {
-                            $('#foodLog tbody').html(response);
-                            generatePie();
-                        });
+                       getFoodLogs();
                     });
                     
                 });
@@ -111,12 +123,35 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="mealModal" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Add Food</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <label>Meal</label>
+                          <select class="form-control" >
+                              <option value="breakfast">Breakfast</option>
+                              <option value="lunch">Lunch</option>
+                              <option value="dinner">Dinner</option>
+                              <option value="snack">Snack</option>
+                          </select>
+                            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class=" col-lg-2 col-md-2 col-sm-1"></div>
-            <div class="col-lg-4 col-md-8 col-sm-10 main">
+            <div class="col-lg-3 col-md-8 col-sm-10 main">
                 <canvas width="400px" height="400px" id="myChart"></canvas>
             </div>
-            <div class="col-lg-4 col-md-8 col-sm-10 main">
+            <div class="col-lg-5 col-md-8 col-sm-10 main">
                 
             
                  
