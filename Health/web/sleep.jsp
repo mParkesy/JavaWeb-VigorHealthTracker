@@ -13,6 +13,19 @@
         <%@ include file="fragments/header.jspf" %> 
         <script>
             $(document).ready(function () {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+            dd = '0' + dd
+            }
+            if (mm < 10) {
+            mm = '0' + mm
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("datefield").setAttribute("max", today);
             var ctx = document.getElementById("sleepChart").getContext('2d');
             var myLineChart = new Chart(ctx, {
             type: 'line',
@@ -55,8 +68,6 @@
                                                             }
                                                     });
                                                     });
-
-
         </script>
     </head>
     <body>
@@ -73,7 +84,7 @@
                             <input type="hidden" name="userID" value="${user.getID()}">
                             <div class="form-group">
                                 <label for="bedtime">Bed Time:</label>
-                                <input type="date" class="form-control"  name="bedDate" required>
+                                <input type="date" id="datefield" max="" class="form-control"  name="bedDate" required>
                             </div>
                             <div class="form-group">
                                 <input type="time" class="form-control"  name="bedTime" required>

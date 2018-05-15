@@ -14,6 +14,21 @@
 
         <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
         <script type="text/javascript">
+            $(document).ready(function () {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+
+                today = yyyy + '-' + mm + '-' + dd;
+                document.getElementById("datefield").setAttribute("max", today);
+            });
 
         </script>
     </head>
@@ -31,7 +46,7 @@
                             <input type="hidden" name="userID" value="${user.getID()}">
                             <div class="form-group">
                                 <label for="date">Date:</label>
-                                <input type="date" class="form-control" name="date" >
+                                <input type="date" max="" id="datefield" class="form-control" name="date" >
                             </div>
                             <div class="form-group">
                                 <label for="activity">Activity:</label>

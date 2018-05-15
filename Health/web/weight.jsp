@@ -15,6 +15,20 @@
 
         <script>
             $(document).ready(function () {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+
+                today = yyyy + '-' + mm + '-' + dd;
+                document.getElementById("datefield").setAttribute("max", today);
+
                 var ctx = document.getElementById("weightChart").getContext('2d');
                 var myLineChart = new Chart(ctx, {
                     type: 'line',
@@ -26,7 +40,7 @@
                                 borderColor: "rgba(66, 224, 197, 30)",
                                 data: [
             <c:forEach items="<%=db.allWeight(currentUser.getID())%>" var="w">
-                                    {x: "${w.getDay()}/${w.getMonth()}/${w.getYear()}", y: ${w.getWeight()}},
+                                    {x: "${w.getDay()}/${w.getMonth()+1}/${w.getYear()}", y: ${w.getWeight()}},
             </c:forEach>
                                                             ]
                                                         }
@@ -40,7 +54,7 @@
                                                                 type: "time",
                                                                 time: {
                                                                     format: 'DD/MM/YYYY',
-                                                                    tooltipFormat: 'll'
+                                                                    unit: 'day'
                                                                 }
                                                             }]
                                                     }
@@ -70,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="date">Date:</label>
-                                <input type="date" class="form-control" name="date" required>
+                                <input id="datefield" max="" type="date" class="form-control" name="date" required>
                             </div>
                             <button type="submit" class="btn btn-info">Add Weight</button>
                         </form>    

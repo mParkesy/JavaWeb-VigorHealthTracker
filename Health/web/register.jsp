@@ -16,19 +16,31 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width = device-width, initial-scale=1">
         <link href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" rel="stylesheet">
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" ></script>
         <script src="https://unpkg.com/sweetalert2@7.18.0/dist/sweetalert2.all.js"></script>
-
-
-
         <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-
         <link rel="stylesheet" href="css/master.css">
-
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="css/styling.css">
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+                var yyyy = today.getFullYear() -12;
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+
+                today = yyyy + '-' + mm + '-' + dd;
+                document.getElementById("datefield").setAttribute("max", today);
+            });
+        </script>    
     </head>
     <body class="animated fadeIn">
         <div class="row" style="padding-top: 20px;">
@@ -67,7 +79,7 @@
                     </div>
                     <div class="form-group">
                         <label for="text">Date of birth:</label>
-                        <input type="date" class="form-control" name="dob" id="dob" min="1900-01-01" max="2006-01-01" required>
+                        <input type="date" max="" id="datefield" class="form-control" name="dob" id="dob"  required>
                     </div>
                     <div class="form-group">
                         <label for="text">Email:</label>
