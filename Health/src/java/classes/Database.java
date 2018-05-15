@@ -1088,8 +1088,13 @@ public class Database {
             st.setInt(1, userID);
             st.setString(2, text);
             st.executeUpdate();
-            //EmailSetup notif = new EmailSetup("danieljackson97123@gmail.com", "<b>New notification: </b>" + text,"New Notification");
-            //notif.sendEmail();
+            User user = getUser(userID);
+            EmailSetup notif = new EmailSetup(user.getEmail(), 
+                    "<b>New notification: </b>" + text,"New Notification", 
+                    "Vigor Notificaton", user.getFirstname(), 
+                    "New Notification");
+            notif.setUpEmail();
+            notif.sendEmail();
             
 
         } catch (Exception ex) {
