@@ -35,55 +35,68 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
 
         int userID = Integer.parseInt(request.getParameter("userID"));
-        //String function = request.getParameter("function").trim();
+        String function = request.getParameter("function");
         User user = (User) request.getSession(false).getAttribute("user");
+       
+                List<FoodLog> logs = new ArrayList<>();
+                try {
+                    if("today".equals(function)){
+                        logs = new Database().allFoodLogs(userID);
+                    }
+                    else if("old".equals(function)){
+                        logs = new Database().oldFoodLogs(userID);
+                    }
+                    
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
 
-        List<FoodLog> logs = new ArrayList<>();
-        try {
-            logs = new Database().allFoodLogs(userID);
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-
-        response.setContentType("text/plain");
-
-        try {
-            for (FoodLog f : logs) {
-                Food food = f.getFood();
-                response.getWriter().println("<tr>");
-                response.getWriter().println("<td>" + food.getName() + "</td>");
-                response.getWriter().println("<td class='protein'>" + food.getProtein() + "</td>");
-                response.getWriter().println("<td class='carbs'>" + food.getCarbs() + "</td>");
-                response.getWriter().println("<td class='fat'>" + food.getFat() + "</td>");
-                response.getWriter().println("</tr>");
-            }
-        } catch (Exception ex) {
-            response.getWriter().println("<h1>ERROR</h1>");
-        }
+                response.getWriter().println("[");
+                try {
+                    for (FoodLog f : logs) {
+                        response.getWriter().println(f.toJSON());
+                        if(f != logs.get(logs.size() - 1)){
+                            response.getWriter().println(",");
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.out.println("Food controller error");
+                }
+                response.getWriter().println("]");
+               
+        
 
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String meal = request.getParameter("meal").trim();
-        int userID = Integer.parseInt(request.getParameter("userID"));
-        int foodID = Integer.parseInt(request.getParameter("foodID"));
-
+        
         Date date = new Date();
-        /*
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("date"));
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
-         */
-        try {
-            FoodLog log = new Database().insertFoodLog(foodID, userID, meal, date);
-            request.getRequestDispatcher("food.jsp").include(request, response);
-        } catch (Exception ex) {
-            request.getRequestDispatcher("home.jsp").include(request, response);
-        }
+        String function = request.getParameter("function").trim();
+        
+         switch (function){
+            case "insert":
+                try {
+                    String meal = request.getParameter("meal").trim();
+                    int userID = Integer.parseInt(request.getParameter("userID"));
+                    int foodID = Integer.parseInt(request.getParameter("foodID"));
+                    
+                    FoodLog log = new Database().insertFoodLog(foodID, userID, meal, date);
+                   
+                } catch (Exception ex) {
+                    
+                }
+                break;
+            case "delete":
+                int foodLogID = Integer.parseInt(request.getParameter("foodLogID"));
+                new Database().deleteFoodLog(foodLogID);
+                break;
+                
+         }
+        
+        
 
     }
 

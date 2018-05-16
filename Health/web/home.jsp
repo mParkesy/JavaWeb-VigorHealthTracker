@@ -19,16 +19,11 @@
                     $(".row").append(
                             $(tile).append(icon)
                             .append(title)
-                            );
+                    );
                 }
-                $("img").click(function () {
-                    createTile();
-
-                });
-                $(".square").click(function () {
-                    //$(this).fadeOut();
-                });
-
+                
+                
+                
                 /*
                 function generatePie(){
                     var protein = 0;
@@ -59,22 +54,39 @@
                 generatePie();
                 */
                 
+                var nutrients = <%=db.getNutrients(currentUser.getID())%>;
+                var caloriesIn = nutrients.energy;
+                var caloriesOut = <%=db.getCaloriesBurnt(currentUser.getID())%>;
+                var caloriesSum = caloriesIn - caloriesOut;
+                var caloriesMax = <%=currentUser.getCalories()%>;
+                
+                $('#protein').html("<b>Protein: </b>" + nutrients.protein + "g");
+                $('#energy').html("<b>Energy: </b>" + nutrients.energy + "kcal");
+                $('#fat').html("<b>Fat: </b>" + nutrients.fat + "g");
+                $('#carbs').html("<b>Carbohydrates: </b>" + nutrients.carbs + "g");
+                
+                
                 var ctx = document.getElementById("myChart").getContext('2d');
                 var myChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: [
-                            'Calories'
+                            'Calories Consumed',
+                            'Calories Left'
                         ],
                         datasets: [{
-                            data: [1000,1500],
+                            data: [caloriesSum,caloriesMax-caloriesSum],
                             backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
-                            ]
+                                'rgba(153, 255, 230, 0.65)',
+                                'rgba(0,0,0, 0.1)'
+                            ],
+                            borderWidth:[0,0]
+                            
                         }]
                     },
-                    
+                    options: {
+                        cutoutPercentage: 80
+                    }
                 });
 
             });
@@ -85,14 +97,12 @@
         <%@ include file="fragments/navbar.jspf" %>
         
         <div class="container animated fadeIn">
-            <div class=" col-lg-3 col-md-4 col-6 page-header">
-                <img src="img/logo4.png">
-            </div>
-            <div  id="carouselExampleIndicators" class="carousel slide row" data-ride="carousel">
+            
+            <div  id="carouselExampleIndicators" class="carousel slide row border" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                   <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                  
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
@@ -106,10 +116,10 @@
                             </div>
                             <div class="content">
                                 <p>
-                                    Carbs: <br>
-                                    Fat: <br>
-                                    Protein: <br>
-                                    Calories: <br>
+                                    <span id="energy"></span><br>
+                                    <span id="fat"></span><br>
+                                    <span id="carbs"></span><br>
+                                    <span id="protein"></span><br>
                                 </p>
                             </div>
                           
@@ -127,9 +137,7 @@
                         <br>
                         <p><b>Keep going!</b> You are 25% of the way to your goal</p>
                   </div>
-                  <div class="carousel-item">
-                   
-                  </div>
+                  
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -178,6 +186,6 @@
 
             
         </div>
-
+    </div>
     </body>
 </html>

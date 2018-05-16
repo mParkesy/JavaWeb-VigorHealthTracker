@@ -17,6 +17,16 @@ public class Food {
     private double energy;
     private double sugar;
 
+    public Food() {
+        this.id = 0;
+        this.name = "";
+        this.protein = 0;
+        this.fat = 0;
+        this.carbs = 0;
+        this.energy = 0;
+        this.sugar = 0;
+    }    
+    
     public Food(int id, String name, double protein, double fat, double carbs, double energy, double sugar) {
         this.id = id;
         this.name = name;
@@ -147,8 +157,18 @@ public class Food {
         return this.name;
     }
 
-    public static void main(String[] args) throws Exception {
-
+    public String toJSON(){
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        str.append("\"id\": "  + this.id + ",");
+        str.append("\"name\": " + "\"" +  this.name + "\",");
+        str.append("\"carbs\": "  + this.carbs + ",");
+        str.append("\"protein\": "  + this.protein + ",");
+        str.append("\"sugar\": "  + this.sugar + ",");
+        str.append("\"fat\": "  + this.fat + ",");
+        str.append("\"energy\": "  + this.energy);
+        str.append("}");
+        return str.toString();
     }
 
 }
