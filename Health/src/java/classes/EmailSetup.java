@@ -38,7 +38,7 @@ public class EmailSetup {
         this.subject = subject;
     }
 
-    public void sendEmail() throws NoSuchProviderException {
+    public boolean sendEmail() throws NoSuchProviderException {
         Properties props = new Properties();
         props.setProperty("mail.host", "smtp-mail.outlook.com");
         props.setProperty("mail.smtp.auth", "true");
@@ -65,8 +65,10 @@ public class EmailSetup {
             transport.sendMessage(message,
                     message.getRecipients(javax.mail.Message.RecipientType.TO));
             transport.close();
+            return true;
         } catch (MessagingException e) {
             System.out.println("Failed to send verification email");
+            return false;
         }
     }
 
