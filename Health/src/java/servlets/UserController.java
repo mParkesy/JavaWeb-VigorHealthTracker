@@ -86,21 +86,30 @@ public class UserController extends HttpServlet {
             userID = Integer.parseInt(request.getParameter("userID"));
             double height = Double.parseDouble(request.getParameter("height"));
             String message = "";
-            try {
-                if (db.updateHeight(userID, height) == true) {
-                    message = Database.makeAlert("Height changed", "success");
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("settings.jsp")
-                            .include(request, response);
-                } else {
-                    message = Database.makeAlert("Height change failed, "
-                            + "please try again", "error");
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("settings.jsp")
-                            .include(request, response);
+            if (height < 50 && height > 250) {
+                message = Database.makeAlert("The height you entered was "
+                        + "either too small or too large, please "
+                        + "try again", "error");
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("settings.jsp")
+                        .include(request, response);
+            } else {
+                try {
+                    if (db.updateHeight(userID, height) == true) {
+                        message = Database.makeAlert("Height changed", "success");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("settings.jsp")
+                                .include(request, response);
+                    } else {
+                        message = Database.makeAlert("Height change failed, "
+                                + "please try again", "error");
+                        request.setAttribute("message", message);
+                        request.getRequestDispatcher("settings.jsp")
+                                .include(request, response);
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Failed to update users height");
                 }
-            } catch (Exception ex) {
-                System.out.println("Failed to update users height");
             }
         } else {
             String newpassword = request.getParameter("newpassword");

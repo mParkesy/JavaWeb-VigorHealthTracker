@@ -80,51 +80,60 @@ public class RegisterController extends HttpServlet {
         }
         String email = request.getParameter("email");
         double height = Double.parseDouble(request.getParameter("height"));
-        double weight = Double.parseDouble(request.getParameter("weight"));
-        double exercise
-                = Double.parseDouble(request.getParameter("exerciseLevel"));
+        if (height < 50 && height > 250) {
+            alertMessage = Database.makeAlert("The height you entered was "
+                    + "either too small or too large, please "
+                    + "try again", "error");
+            request.setAttribute("error", alertMessage);
+            request.getRequestDispatcher("register.jsp")
+                    .include(request, response);
+        } else {
+            double weight = Double.parseDouble(request.getParameter("weight"));
+            double exercise
+                    = Double.parseDouble(request.getParameter("exerciseLevel"));
 
-        try {
-            if (!password.equals(repassword)) {
-                alertMessage = Database.makeAlert("Entered passwords were not "
-                        + "the same.", "error");
-                request.setAttribute("error", alertMessage);
-                request.getRequestDispatcher("register.jsp")
-                        .include(request, response);
-            } else if (db.getUser(username) == null) {
-                InetAddress address = InetAddress.getLocalHost();
-                String stamp = String.valueOf(System.currentTimeMillis());
-                String link = address.getHostAddress() + 
-                        ":8080/Health/verify.jsp?verification=" + stamp;
-                String message = "Thank you for registering on Vigor Health."
-                        + "<br>If you did not register with us then please "
-                        + "ignore this email, otherwise please verify your "
-                        + "account by following the link below:";
-                EmailSetup verifyEmail = new EmailSetup(email, message, 
-                        "Vigor Account Activation", link, firstname, 
-                        "Registration Successful");
-                verifyEmail.setUpEmail();
-                verifyEmail.sendEmail();
+            try {
+                if (!password.equals(repassword)) {
+                    alertMessage = Database.makeAlert("Entered passwords were not "
+                            + "the same.", "error");
+                    request.setAttribute("error", alertMessage);
+                    request.getRequestDispatcher("register.jsp")
+                            .include(request, response);
+                } else if (db.getUser(username) == null) {
+                    InetAddress address = InetAddress.getLocalHost();
+                    String stamp = String.valueOf(System.currentTimeMillis());
+                    String link = address.getHostAddress()
+                            + ":8080/Health/verify.jsp?verification=" + stamp;
+                    String message = "Thank you for registering on Vigor Health."
+                            + "<br>If you did not register with us then please "
+                            + "ignore this email, otherwise please verify your "
+                            + "account by following the link below:";
+                    EmailSetup verifyEmail = new EmailSetup(email, message,
+                            "Vigor Account Activation", link, firstname,
+                            "Registration Successful");
+                    verifyEmail.setUpEmail();
+                    verifyEmail.sendEmail();
 
-                User registered = db.insertUser(username, password, firstname,
-                        lastname, gender, date, email,
-                        height, weight, exercise, stamp);
-                alertMessage = Database.makeAlert("Registration successful, "
-                        + "please check your emails to verify your account"
-                        , "success");
-                request.setAttribute("message", alertMessage);
-                request.getRequestDispatcher("login.jsp")
-                        .include(request, response);
-            } else {
-                alertMessage = Database.makeAlert("Username already exists, "
-                        + "please try again", "error");
-                request.setAttribute("error", alertMessage);
-                request.getRequestDispatcher("register.jsp")
-                        .include(request, response);
+                    User registered = db.insertUser(username, password, firstname,
+                            lastname, gender, date, email,
+                            height, weight, exercise, stamp);
+                    alertMessage = Database.makeAlert("Registration successful, "
+                            + "please check your emails to verify your account",
+                             "success");
+                    request.setAttribute("message", alertMessage);
+                    request.getRequestDispatcher("login.jsp")
+                            .include(request, response);
+                } else {
+                    alertMessage = Database.makeAlert("Username already exists, "
+                            + "please try again", "error");
+                    request.setAttribute("error", alertMessage);
+                    request.getRequestDispatcher("register.jsp")
+                            .include(request, response);
+                }
+            } catch (Exception ex) {
+                System.out.println("Failed to check if username "
+                        + "exists during registration");
             }
-        } catch (Exception ex) {
-            System.out.println("Failed to check if username "
-                    + "exists during registration");
         }
     }
 }
