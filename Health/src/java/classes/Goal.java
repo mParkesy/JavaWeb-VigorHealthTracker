@@ -82,24 +82,6 @@ public class Goal {
         this.user = user;
     }
 
-    public double getDifference() {
-        return this.start - this.getTarget();
-    }
-
-    public double left() {
-        double left = 0;
-        try {
-            left = getUser().getWeight() - this.getTarget();
-        } catch (Exception ex) {
-            Logger.getLogger(Goal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (left < 0) {
-            left = 0;
-
-        }
-
-        return left;
-    }
 
     public String toJSON() {
         StringBuilder str = new StringBuilder();
