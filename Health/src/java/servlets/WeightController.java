@@ -38,7 +38,13 @@ public class WeightController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        int weightID = Integer.parseInt(request.getParameter("weightID"));
+        Database db = new Database();
+        db.deleteWeight(weightID);
+        String message = Database.makeAlert("Weight removed", "success");
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("weight.jsp")
+                .include(request, response);
     }
 
     /**
@@ -63,24 +69,30 @@ public class WeightController extends HttpServlet {
             System.out.println("Failed to parse date when constructing weight");
             message = Database.makeAlert("Failed to add weight data,"
                     + "please try again", "error");
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("weight.jsp")
-                                .include(request, response);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("weight.jsp")
+                    .include(request, response);
         }
         Database db = new Database();
         try {
             db.insertWeight(userID, weight, date);
             message = Database.makeAlert("Weight added", "success");
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("weight.jsp")
-                                .include(request, response);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("weight.jsp")
+                    .include(request, response);
+            Goal g = db.getGoal(userID, "weight");
+            if (weight <= g.getTarget()) {
+                db.insertNotification(userID, "Weight Goal achieved!");
+                db.deleteGoal(g.getGoalID());
+            }
+
         } catch (Exception ex) {
             System.out.println("Failed to construct weight object");
             message = Database.makeAlert("Failed to add weight data,"
                     + "please try again", "error");
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("weight.jsp")
-                                .include(request, response);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("weight.jsp")
+                    .include(request, response);
         }
     }
 

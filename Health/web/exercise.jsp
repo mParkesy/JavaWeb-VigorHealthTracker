@@ -86,10 +86,11 @@
                             <th>Distance</th>
                             <th>Calories</th>
                             <th>Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach items="<%=db.allExercise(currentUser.getID(), "") %>" var="e">
+                        <c:forEach items="<%=db.allExercise(currentUser.getID(), "")%>" var="e">
                             <tr>
                                 <td>
                                     ${e.getActivity().getActivity()}
@@ -106,6 +107,14 @@
                                 <td>
                                     ${e.getDate()}
                                 </td>
+                                <td>
+                                    <form action="ExerciseController"  class="modal-form">
+                                        <input type="hidden" name="exerciseID" value="${e.getExerciseID()}">
+                                        <button type="submit" class="btn btn-danger add-small">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </form>
+                                </td>    
                             </tr>
                         </c:forEach>
                     </tbody>

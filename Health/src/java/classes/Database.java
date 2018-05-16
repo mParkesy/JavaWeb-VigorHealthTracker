@@ -727,6 +727,20 @@ public class Database {
         return sleep;
     }
 
+    public boolean deleteSleep(int sleepID){
+        try{
+            String sql = "DELETE FROM sleep WHERE sleepID =?";
+            PreparedStatement st = CON.prepareCall(sql);
+            st.setInt(1, sleepID);
+            st.executeUpdate();
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println("Failed to delete sleep");
+            return false;
+        }   
+    }
+    
     // ---------------------------------------------WEIGHT----------------------------------------------------------
     /**
      * Construct the most recent weight instance from the database
@@ -791,6 +805,20 @@ public class Database {
             System.out.println("Failed to insert weight log");
         }
         return log;
+    }
+    
+    public boolean deleteWeight(int weightID){
+        try{
+            String sql = "DELETE FROM weight WHERE weightID =?";
+            PreparedStatement st = CON.prepareCall(sql);
+            st.setInt(1, weightID);
+            st.executeUpdate();
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println("Failed to delete weight");
+            return false;
+        }   
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
@@ -1228,7 +1256,9 @@ public class Database {
     public Exercise getMaxExercise(int userID) {
         Exercise exercise = null;
         try {
-            String sql = "SELECT * FROM exercise WHERE userID = ? AND distance = (SELECT MAX(distance) FROM exercise WHERE userID = ?)";
+            String sql = "SELECT * FROM exercise WHERE userID = ? "
+                    + "AND distance = (SELECT MAX(distance) "
+                    + "FROM exercise WHERE userID = ?)";
 
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
@@ -1236,14 +1266,31 @@ public class Database {
             ResultSet result = st.executeQuery();
 
             while (result.next()) {
-                exercise = new Exercise(result.getInt("exerciseID"), userID, getActivity(result.getInt("activityID")), result.getDate("date"), result.getInt("minutes"), result.getDouble("distance"));
+                exercise = new Exercise(result.getInt("exerciseID"), 
+                        userID, getActivity(result.getInt("activityID")), 
+                        result.getDate("date"), result.getInt("minutes"), 
+                        result.getDouble("distance"));
             }
         } catch (Exception ex) {
             System.out.println("Failed to get exercise by userID");
         }
-        return exercise;
+        return exercise;   
     }
 
+    public boolean deleteExercise(int exerciseID){
+        try{
+            String sql = "DELETE FROM exercise WHERE exerciseID =?";
+            PreparedStatement st = CON.prepareCall(sql);
+            st.setInt(1, exerciseID);
+            st.executeUpdate();
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println("Failed to delete exercise");
+            return false;
+        }   
+    }
+        
     // ---------------------------------------------FOOD----------------------------------------------------------
     public ArrayList<Food> allFood() throws Exception {
         ArrayList<Food> foodList = new ArrayList<>();
@@ -1351,9 +1398,8 @@ public class Database {
             st.executeUpdate();
             User user = getUser(userID);
             EmailSetup notif = new EmailSetup(user.getEmail(), 
-                    "<b>New notification: </b>" + text,"New Notification", 
-                    "Vigor Notificaton", user.getFirstname(), 
-                    "New Notification");
+                    "<b>New notification: </b><br>" + text,"New Notification",
+                    user.getFirstname(), "New Notification");
             notif.setUpEmail();
             notif.sendEmail();
         } catch (Exception ex) {
@@ -1375,8 +1421,6 @@ public class Database {
     }
 
     public void deleteNotification(int id) {
-
-        Notification n = null;
         try {
             String sql = "DELETE FROM notification WHERE id = ?";
             PreparedStatement st = this.CON.prepareStatement(sql);
@@ -1386,13 +1430,25 @@ public class Database {
         } catch (SQLException ex) {
             System.out.println("ERROR DELETING NOTIF");
         }
-
     }
 
     // ---------------------------------------------GOAL----------------------------------------------------------
-    public Goal insertGoal() {
-
-        return null;
+    public boolean insertGoal(int userID, double start, double target, String type) {
+        try {
+            String sql = "INSERT INTO goal (userID, start, target, type) "
+                    + "VALUES (?,?,?,?)";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            st.setDouble(2, start);
+            st.setDouble(3, target);
+            st.setString(4, type);
+            st.executeUpdate();
+            return true;
+        }catch(Exception ex){
+            System.out.println("Failed to insert goal");
+            ex.printStackTrace();
+            return false;
+        }       
     }
 
     public Goal getGoal(int userID, String type) throws SQLException, Exception {
@@ -1404,14 +1460,29 @@ public class Database {
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
-                return new Goal(rs.getDouble("start"), rs.getDouble("target"), rs.getInt("userID"), rs.getString("type"));
+                return new Goal(rs.getDouble("start"), rs.getDouble("target"),
+                        rs.getInt("userID"), rs.getString("type"));
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return new Goal(userID, type);
 
+    }
+    
+    public boolean deleteGoal(int goalID){
+        try{
+            String sql = "DELETE FROM goal WHERE goalID =?";
+            PreparedStatement st = CON.prepareCall(sql);
+            st.setInt(1, goalID);
+            st.executeUpdate();
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println("Failed to delete goal");
+            return false;
+        }   
     }
 
     // ---------------------------------------------MESSAGE----------------------------------------------------------
