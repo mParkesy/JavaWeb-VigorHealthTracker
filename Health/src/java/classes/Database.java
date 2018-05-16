@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import org.joda.time.DateTime;
 
@@ -80,6 +77,7 @@ public class Database {
      * sweet alert pop up needs to be generated for an error message to the user
      *
      * @param message The message required in the alert
+     * @param type The type of sweet alert to create
      * @return The message surround by the sweet alert body
      */
     public static String makeAlert(String message, String type) {
@@ -138,7 +136,6 @@ public class Database {
     /**
      * A method that returns a User object from the database based on the
      * username passed to it
-     *
      * @param username The username of the User that needs to be constructed
      * @return The User object
      * @throws SQLException If the SQL statement fails to execute
@@ -185,6 +182,8 @@ public class Database {
      * the link emailed to them, it sets their verification string to 1
      *
      * @param ver The verification string from the URL sent by email
+     * @param userID The user ID for the verification change
+     * @return The constructed user, used for a password change
      * @throws Exception If the SQL statement fails to execute
      */
     public User updateVerification(String ver, int userID) throws Exception {
@@ -486,6 +485,7 @@ public class Database {
      *
      * @param userID The userID of the User whose exercise data is being placed
      * into a list
+     * @param inputDate The date to get all exercise from, usually blank
      * @return An ArrayList of Exercise objects
      * @throws Exception If the Select SQL fails to execute
      */
@@ -520,6 +520,11 @@ public class Database {
         return exerciseList;
     }
 
+    /**
+     * A method that inserts a login log to the database
+     * @param userID The userID of the user logging in
+     * @throws SQLException If the SQL statement fails to insert
+     */
     public void loginLog(int userID) throws SQLException {
         try {
             String sql = "INSERT INTO log (userID, login) "
@@ -532,6 +537,10 @@ public class Database {
         }
     }
 
+    /**
+     * A method that updates the log to include a logout timestamp
+     * @param userID The userID of the user logging out
+     */
     public void logoutLog(int userID) {
         try {
             String sql = "UPDATE log SET logout = CURRENT_TIMESTAMP "
@@ -543,7 +552,11 @@ public class Database {
             System.out.println("Failed to update log with logout time");
         }
     }
-
+    /**
+     * A method that can check to see if a user has logged out or not
+     * @param userID The userID of the user being checked
+     * @return True if logged in, false if not
+     */
     public boolean isLoggedIn(int userID) {
         try {
             String sql = "SELECT logout FROM log WHERE userID = ? "
@@ -601,7 +614,6 @@ public class Database {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             System.out.println("Failed to insert sleep data");
         }
         return sleep;
@@ -638,8 +650,11 @@ public class Database {
     /**
      * Construct a weight instance and add it to the database
      *
-     * @param userID
-     * @throws Exception
+     * @param userID The userID of the user who is entering a weight
+     * @param weight The weight as a double
+     * @param date The date for the weight entry
+     * @return The weight object entered
+     * @throws Exception If the SQL insert fails
      */
     public Weight insertWeight(int userID, double weight, Date date)
             throws Exception {
@@ -671,6 +686,18 @@ public class Database {
     }
 
     // ---------------------------------------------GROUP----------------------------------------------------------
+    
+    /**
+     * A method that takes group details and inserts it into the database
+     * @param userID The userID of the user making a group
+     * @param name The group name
+     * @param description The description
+     * @param image The image
+     * @param distanceGoal The distance goal for the group
+     * @return The group object inserted
+     * @throws SQLException If the SQL Fails
+     * @throws Exception  If fails to get ID generated
+     */
     public Group insertGroup(int userID, String name, String description, 
             String image, String distanceGoal)
             throws SQLException, Exception {
@@ -704,6 +731,11 @@ public class Database {
         return group;
     }
 
+    /**
+     * Gets a group object from the database
+     * @param groupID The groupID of the needed object
+     * @return The group object required
+     */
     public Group getGroup(int groupID) {
         Group group = null;
         try {
@@ -727,7 +759,13 @@ public class Database {
         }
         return group;
     }
-
+    
+    /**
+     * A method to insert an invited but not joined user to a group
+     * @param groupID The group that the user has been invited to
+     * @param userID The users ID who is being invited
+     * @return True if successfully added, false if not
+     */
     public boolean insertMember(int groupID, int userID) {
         try {
             String sql = "INSERT INTO groupmembers (userID, groupID, joined)"
@@ -743,6 +781,12 @@ public class Database {
         }
     }
 
+    /**
+     * Checks to see if the user is an admin for the group
+     * @param userID The user ID of the potential admijn
+     * @param groupID The group ID to be checked
+     * @return True if they are admin, false if not
+     */
     public boolean isAdmin(int userID, int groupID) {
         try {
             String sql = "SELECT * FROM ugroup WHERE userID = ? "
@@ -795,6 +839,11 @@ public class Database {
         return memberOf;
     }
 
+    /**
+     * Accept an invite for a user 
+     * @param groupID The group that the invite is being accepted for
+     * @param userID The userId of the invited user
+     */
     public void acceptInvite(int groupID, int userID) {
         try {
             String sql = "UPDATE groupmembers SET joined = 1 WHERE userID = ? "
@@ -808,6 +857,12 @@ public class Database {
         }
     }
 
+    /**
+     * A method that sends an invite by inserting into database with joined as 0
+     * @param groupID The groupID
+     * @param userID The userID for the invite
+     * @return True if sent, false if not
+     */
     public boolean sendInvite(int groupID, int userID) {
         try {
             String sql = "INSERT INTO groupmembers (userID, groupID, joined) "
@@ -823,6 +878,12 @@ public class Database {
         }
     }
 
+    /**
+     * Gets the group distance forever or since a passed date
+     * @param groupID The groupID to get their distance
+     * @param date The date to be passed into the query
+     * @return 
+     */
     public double getGroupDistance(int groupID, String date) {
         double totalDistance = 0;
         try {
@@ -846,6 +907,13 @@ public class Database {
         return totalDistance;
     }
 
+    /**
+     * A method that creates a distance leaderboard and passes it into 
+     * a treemap
+     * @param groupID The groupID that the leaderboard is needed for
+     * @return The leaderboard as a treemap
+     * @throws SQLException If the SQl fails
+     */
     public TreeMap getGroupDistanceLeaderboard(int groupID) throws SQLException {
         TreeMap<Integer, Double> t = new TreeMap(Collections.reverseOrder());
         String date = getLastSunday();
@@ -864,6 +932,13 @@ public class Database {
         return t;
     }
 
+    /**
+     * A method that creates a calorie leaderboard and passes it into 
+     * a treemap
+     * @param groupID The groupID that the leaderboard is needed for
+     * @return The leaderboard as a treemap
+     * @throws SQLException If the SQl fails
+     */
     public TreeMap getGroupCalorieLeaderboard(int groupID)
             throws SQLException, Exception {
         TreeMap<Integer, Integer> t = new TreeMap();
@@ -883,6 +958,11 @@ public class Database {
         return t;
     }
 
+    /**
+     * Gets a list of User objects who are a part of a group
+     * @param groupID The group ID to get list of members
+     * @return The list of users
+     */
     public ArrayList<User> getMembers(int groupID) {
         ArrayList<User> list = new ArrayList<>();
         try {
@@ -902,7 +982,15 @@ public class Database {
         return list;
     }
 
-    
+    /**
+     * An update method to update a row in the database with new group info
+     * @param groupID The groupID of the group for the update to occur on
+     * @param name The new name of the group
+     * @param description The new description
+     * @param image The new image path
+     * @param distanceGoal The new distance goal
+     * @return True if update successful, false if not
+     */
     public boolean updateGroup(int groupID, String name, String description, 
             String image, String distanceGoal){
         try {
@@ -926,6 +1014,13 @@ public class Database {
     }
 
     // ---------------------------------------------ACTIVITY----------------------------------------------------------
+    
+    /**
+     * A method to get an activity object from the database by activityID
+     * @param activityID The acitivtyID of the activity needed
+     * @return The activity as an object
+     * @throws Exception If the SQL fails 
+     */
     public Activity getActivity(int activityID) throws Exception {
         Activity activity = null;
         try {
