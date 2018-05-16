@@ -103,4 +103,17 @@ public class FoodLog {
         this.date = date;
     }
 
+     public String toJSON(){
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        str.append("\"id\": "  + this.id + ",");
+        str.append("\"name\": " + "\"" +  this.food.getName() + "\",");
+        str.append("\"carbs\": "  + this.food.getCarbs() + ",");
+        str.append("\"protein\": "  + this.food.getProtein() + ",");
+        str.append("\"sugar\": "  + this.food.getSugar() + ",");
+        str.append("\"fat\": "  + this.food.getFat()+ ",");
+        str.append("\"energy\": "  + this.food.getEnergy());
+        str.append("}");
+        return str.toString();
+    }
 }

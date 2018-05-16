@@ -445,6 +445,21 @@ public class Database {
 
     }
     
+    public void deleteFoodLog(int id) {
+
+        Notification n = null;
+        try {
+            String sql = "DELETE FROM foodlog WHERE foodLogID = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println("ERROR DELETING foodlog");
+        }
+
+    }
+    
     //returns daily nutrients fir a user as a json string
     public String getNutrients(int userID){
         Food sum = new Food();

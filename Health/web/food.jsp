@@ -20,6 +20,8 @@
                 var protein = 0;
                 var fat = 0;
                 var carbs = 0;
+                var id = 0;
+                var name = "";
                 $(".protein").each(function(){
                   protein += parseFloat($(this).text());
                 });
@@ -67,15 +69,23 @@
                     var food = JSON.parse(response);
                     
                     var list = $('#foodLog tbody');
+                    
                     list.html("");
                     for(i = 0; i < food.length;i++){
+                        var html = "";
                         console.log(food[i].name);
-                        list.append("<tr id='" + food[i].id + "'>");
-                        list.append("<td>" + food[i].name + "</td>");
-                        list.append("<td class='protein'>" + food[i].protein + "</td>");
-                        list.append("<td class='carbs'>" + food[i].carbs + "</td>");
-                        list.append("<td class='fat'>" + food[i].fat + "</td>");
-                        list.append("</tr>");
+                        html+="<tr id='" + food[i].id + "'>";
+                        html+="<td>" + food[i].name + "</td>";
+                        html+="<td class='protein'>" + food[i].protein + "</td>";
+                        html+="<td class='carbs'>" + food[i].carbs + "</td>";
+                        html+="<td class='fat'>" + food[i].fat + "</td>";
+                        html+="<td> \
+                                    <button type='button' class='btn btn-danger add-small'> \
+                                     <i class='fas fa-minus'></i></button></td>";
+         
+                        html+="</tr>";
+                        list.append(html);
+                        
                     }
                     
 
@@ -84,13 +94,32 @@
                 }
                 getFoodLogs();
                 
-                $('body').on('click','#addLog',function(){
+                $('body').on('click','.add-small',function(){
+                    id = $(this).attr('id');
+                    name = $(this).parent().text();
+                    $('#mealModal h4').text("Add - " + name);
+                })
                 
-                    var id = $(this).attr('id');
+                $('body').on('click','#submitLog',function(){
+                
+                    
                     $.post('FoodController', {
                         userID : ${user.getID()},
                         foodID : id,
-                        meal: 'lunch'
+                        meal: $('#meal').val(),
+                        function: "insert"
+                    }, function() {
+                       getFoodLogs();
+                    });
+                    
+                });
+                
+                 $('body').on('click','.btn-danger',function(){
+                
+                    
+                    $.post('FoodController', {
+                        foodLogID : $(this).parent().parent().attr('id'),
+                        function: "delete"
                     }, function() {
                        getFoodLogs();
                     });
@@ -132,7 +161,7 @@
                     </div>
                     <div class="modal-body">
                         <label>Meal</label>
-                          <select class="form-control" >
+                          <select class="form-control" id="meal" >
                               <option value="breakfast">Breakfast</option>
                               <option value="lunch">Lunch</option>
                               <option value="dinner">Dinner</option>
@@ -141,7 +170,7 @@
                             
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" data-dismiss="modal" id="submitLog" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>
