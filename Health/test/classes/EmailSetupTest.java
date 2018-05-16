@@ -17,9 +17,10 @@ import static org.junit.Assert.*;
  * @author 100116544
  */
 public class EmailSetupTest {
-    EmailSetup instance;
+        EmailSetup instance;
     public EmailSetupTest() {
-        
+        instance = new EmailSetup("matt.parkes@outlook.com", 
+                "Test message", "Test", "Matt", "Test");
     }
     
     @BeforeClass
@@ -44,12 +45,9 @@ public class EmailSetupTest {
     @Test
     public void testSendEmail() throws Exception {
         System.out.println("sendEmail");
-        EmailSetup instance = ;
-        boolean expResult = false;
+        boolean expResult = true;
         boolean result = instance.sendEmail();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -58,12 +56,9 @@ public class EmailSetupTest {
     @Test
     public void testGetToAddress() {
         System.out.println("getToAddress");
-        EmailSetup instance = null;
-        String expResult = "";
+        String expResult = "matt.parkes@outlook.com";
         String result = instance.getToAddress();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -72,12 +67,9 @@ public class EmailSetupTest {
     @Test
     public void testGetFromAddress() {
         System.out.println("getFromAddress");
-        EmailSetup instance = null;
-        String expResult = "";
+        String expResult = "vigorhealthtracker@outlook.com";
         String result = instance.getFromAddress();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -86,12 +78,9 @@ public class EmailSetupTest {
     @Test
     public void testGetPassword() {
         System.out.println("getPassword");
-        EmailSetup instance = null;
-        String expResult = "";
+        String expResult = "Vigor123";
         String result = instance.getPassword();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -100,12 +89,9 @@ public class EmailSetupTest {
     @Test
     public void testGetMessage() {
         System.out.println("getMessage");
-        EmailSetup instance = null;
-        String expResult = "";
+        String expResult = "Test message";
         String result = instance.getMessage();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -114,12 +100,9 @@ public class EmailSetupTest {
     @Test
     public void testGetSubject() {
         System.out.println("getSubject");
-        EmailSetup instance = null;
-        String expResult = "";
+        String expResult = "Test";
         String result = instance.getSubject();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -128,11 +111,9 @@ public class EmailSetupTest {
     @Test
     public void testSetToAddress() {
         System.out.println("setToAddress");
-        String toAddress = "";
-        EmailSetup instance = null;
+        String toAddress = "m.parkes@uea.ac.uk";
         instance.setToAddress(toAddress);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(toAddress, instance.getToAddress());
     }
 
     /**
@@ -141,11 +122,9 @@ public class EmailSetupTest {
     @Test
     public void testSetMessage() {
         System.out.println("setMessage");
-        String message = "";
-        EmailSetup instance = null;
+        String message = "Hello";
         instance.setMessage(message);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(message, instance.getMessage());
     }
 
     /**
@@ -154,27 +133,8 @@ public class EmailSetupTest {
     @Test
     public void testSetSubject() {
         System.out.println("setSubject");
-        String subject = "";
-        EmailSetup instance = null;
+        String subject = "Hello";
         instance.setSubject(subject);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(subject, instance.getSubject());
     }
-
-    /**
-     * Test of setUpVerifyEmail method, of class EmailSetup.
-     */
-    @Test
-    public void testSetUpVerifyEmail() {
-        System.out.println("setUpVerifyEmail");
-        String link = "";
-        String first = "";
-        EmailSetup instance = null;
-        String expResult = "";
-        String result = instance.setUpVerifyEmail(link, first);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    
 }

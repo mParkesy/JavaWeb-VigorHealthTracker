@@ -82,109 +82,6 @@ public class DatabaseIT {
         assertEquals(expResult, result);
     }
 
-    @Test
-    public void testPasswordDigestToHash() throws Exception {
-        System.out.println("passwordDigest");
-        String p = "81dc9bdb52d04dc20036dbd8313ed055";
-        String expResult = "1234";
-        String result = Database.passwordDigest(p);
-        assertEquals(expResult, result);
-    }    
-    
-    /**
-     * Test of makeAlert method, of class Database.
-     */
-    @Test
-    public void testMakeAlert() {
-        System.out.println("makeAlert");
-        String message = "test";
-        String expResult = "<script>"
-                + "swal({type : 'error',"
-                + "title: 'Error',"
-                + "text: '" + message + "',"
-                + "showConfirmButton: false,"
-                + "timer: 3000"
-                + "})</script>";
-        String result = Database.makeAlert(message);
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of getUser method, of class Database.
-     */
-    @Test
-    public void testGetUser_int() throws Exception {
-        System.out.println("getUser");
-        int userID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        Date date = createDate("1996-10-10");
-        User expResult = new User(1, "parkesy", "Matt", "Parkes", "m", 
-                "NR59NZ", "belarusian", "matt.parkes@outlook.com", 186.5, 
-                date, 1.375);
-        User result = instance.getUser(userID);
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of getUser method, of class Database.
-     */
-    @Test
-    public void testGetUser_String() throws Exception {
-        System.out.println("getUser");
-        String username = "parkesy";
-        Database instance = new Database();
-        Database.getConnection();
-        Date date = createDate("1996-10-10");
-        User expResult = new User(1, "parkesy", "Matt", "Parkes", "m", 
-                "NR59NZ", "belarusian", "matt.parkes@outlook.com",
-                186.5, date, 1.375);
-        User result = instance.getUser(username);
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of getVerification method, of class Database.
-     */
-    @Test
-    public void testGetVerification() throws Exception {
-        System.out.println("getVerification");
-        int userID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        String expResult = "1";
-        String result = instance.getVerification(userID);
-        assertEquals(expResult, result);
-    }
-
-    /**
-     * Test of updateVerification method, of class Database.
-     */
-    @Test
-    public void testUpdateVerification() throws Exception {
-        System.out.println("updateVerification");
-        String ver = "1";
-        Database instance = new Database();
-        Database.getConnection();
-        instance.updateVerification(ver);
-        String test = instance.getVerification(1);
-        assertEquals(ver, test);        
-    }
-    
-    /**
-     * Test of getPassword method, of class Database.
-     */
-    @Test
-    public void testGetPassword() throws Exception {
-        System.out.println("getPassword");
-        int userID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        String expResult = "81dc9bdb52d04dc20036dbd8313ed055";
-        String result = instance.getPassword(userID);
-        assertEquals(expResult, result);
-    }
-
     /**
      * Test of updatePassword method, of class Database.
      */
@@ -229,21 +126,6 @@ public class DatabaseIT {
 //        fail("The test case is a prototype.");
 //    }
 
-    /**
-     * Test of allWeight method, of class Database.
-     */
-    @Test
-    public void testAllWeight() throws Exception {
-        System.out.println("allWeight");
-        int userID = 0;
-        Database instance = new Database();
-        ArrayList<Weight> expResult = null;
-        Date date = createDate("2018-03-16");
-        Weight w = new Weight(2, 1, 75, date);
-        expResult.add(w);
-        ArrayList<Weight> result = instance.allWeight(userID);
-        assertEquals(expResult, result);
-    }
 
     /**
      * Test of allFoodLogs method, of class Database.
@@ -308,20 +190,7 @@ public class DatabaseIT {
 //        fail("The test case is a prototype.");
 //    }
 
-    /**
-     * Test of currentWeight method, of class Database.
-     */
-    @Test
-    public void testCurrentWeight() throws Exception {
-        System.out.println("currentWeight");
-        int userID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        Date date = createDate("2018-03-16");
-        Weight expResult = new Weight(2,1,75,date);
-        Weight result = instance.currentWeight(userID);
-        assertEquals(expResult, result);
-    }
+
 
     /**
      * Test of insertWeight method, of class Database.
@@ -358,19 +227,7 @@ public class DatabaseIT {
 //        fail("The test case is a prototype.");
 //    }
 
-    /**
-     * Test of getGroup method, of class Database.
-     */
-    @Test
-    public void testGetGroup() {
-        System.out.println("getGroup");
-        int groupID = 9;
-        Database instance = new Database();
-        Group expResult = new Group(9, "BSCC", 1, "test description",
-                "img/urban.jpg");
-        Group result = instance.getGroup(groupID);
-        assertEquals(expResult, result);
-    }
+
 
     /**
      * Test of insertMember method, of class Database.
@@ -398,7 +255,7 @@ public class DatabaseIT {
         int groupID = 9;
         Database instance = new Database();
         Database.getConnection();
-        boolean expResult = true;
+        boolean expResult = false;
         boolean result = instance.isAdmin(userID, groupID);
         assertEquals(expResult, result);
     }
@@ -449,20 +306,7 @@ public class DatabaseIT {
 //        fail("The test case is a prototype.");
 //    }
 
-    /**
-     * Test of getGroupDistance method, of class Database.
-     */
-    @Test
-    public void testGetGroupDistance() throws Exception {
-        System.out.println("getGroupDistance");
-        int groupID = 1;
-        String date = "";
-        Database instance = new Database();
-        Database.getConnection();
-        double expResult = 7.5;
-        double result = instance.getGroupDistance(groupID, date);
-        assertEquals(expResult, result, 0.0);
-    }
+
 
     /**
      * Test of getGroupDistanceLeaderboard method, of class Database.
@@ -490,19 +334,6 @@ public class DatabaseIT {
 //        assertEquals(expResult, result);
 //    }
 
-    /**
-     * Test of getActivity method, of class Database.
-     */
-    @Test
-    public void testGetActivity() throws Exception {
-        System.out.println("getActivity");
-        int activityID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        Activity expResult = new Activity(1, "Running" , 12.9);
-        Activity result = instance.getActivity(activityID);
-        assertEquals(expResult, result);
-    }
 
     /**
      * Test of allActivity method, of class Database.
@@ -537,23 +368,7 @@ public class DatabaseIT {
 //        fail("The test case is a prototype.");
 //    }
 
-    /**
-     * Test of getExercise method, of class Database.
-     */
-    @Test
-    public void testGetExercise() throws Exception {
-        System.out.println("getExercise");
-        int exerciseID = 1;
-        Database instance = new Database();
-        Database.getConnection();
-        Date date = createDate("2018-04-05");
-        Exercise expResult = new Exercise(1, 1, 
-                new Activity(1, "Running" , 12.9), date, 60, 7.5);
-        Exercise result = instance.getExercise(exerciseID);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+
 
     /**
      * Test of getMaxExercise method, of class Database.
