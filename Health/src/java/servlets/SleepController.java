@@ -36,6 +36,14 @@ public class SleepController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int sleepID = Integer.parseInt(request.getParameter("sleepID"));
+        Database db = new Database();
+        db.deleteSleep(sleepID);
+        String message = Database.makeAlert("Sleep removed", "success");
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("sleep.jsp")
+                .include(request, response);
+
     }
 
     /**

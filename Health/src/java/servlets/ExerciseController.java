@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ExerciseController", urlPatterns = {"/ExerciseController"})
 public class ExerciseController extends HttpServlet {
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -32,9 +33,15 @@ public class ExerciseController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, 
+    protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        
+        int exerciseID = Integer.parseInt(request.getParameter("exerciseID"));
+        Database db = new Database();
+        db.deleteExercise(exerciseID);
+        String message = Database.makeAlert("Exercise removed", "success");
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("exercise.jsp")
+                .include(request, response);
     }
 
     /**
@@ -46,11 +53,12 @@ public class ExerciseController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, 
+    protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         // get user ID and date from form
         int userID = Integer.parseInt(request.getParameter("userID"));
         Date date = new Date();
+        Database db = new Database();
         try {
             // parse date to SQL format
             date = new SimpleDateFormat("yyyy-MM-dd")
@@ -65,20 +73,26 @@ public class ExerciseController extends HttpServlet {
         String message;
         try {
             // construct exercise object
-            Exercise exercise  = new Database().insertExercise(userID, 
+            Exercise exercise = db.insertExercise(userID,
                     activityID, date, minutes, distance);
             // create user alert
             message = Database.makeAlert("Exercise added", "success");
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("exercise.jsp")
-                                .include(request, response);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("exercise.jsp")
+                    .include(request, response);
+            Goal g = db.getGoal(userID, "distance");
+            if (distance >= g.getTarget()) {
+                db.insertNotification(userID, "Distance Goal achieved!");
+                db.deleteGoal(g.getGoalID());
+            }
+
         } catch (Exception ex) {
             System.out.println("Failed to construct exercise object");
             message = Database.makeAlert("Failed to add exercise,"
                     + "please try again", "error");
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("exercise.jsp")
-                                .include(request, response);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("exercise.jsp")
+                    .include(request, response);
         }
     }
 

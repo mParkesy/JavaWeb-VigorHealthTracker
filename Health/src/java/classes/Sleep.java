@@ -6,6 +6,7 @@
 package classes;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -51,9 +52,12 @@ public class Sleep {
     public double getTotalSleep(){
         Minutes mins = Minutes.minutesBetween(this.bedTime, this.wakeTime);
         //Hours hours = Hours.hoursBetween(this.bedTime, this.wakeTime);
-        //int numHours = hours.getHours();
+        
+        DecimalFormat df = new DecimalFormat("#.#");
+
         int numMins = mins.getMinutes();
-        return (double) numMins /60;
+        double numHours = numMins / 60;
+        return Double.valueOf(df.format(numHours));
     }
     
     /**

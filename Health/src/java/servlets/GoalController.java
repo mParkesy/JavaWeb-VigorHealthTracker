@@ -24,23 +24,31 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "GoalController", urlPatterns = {"/GoalController"})
 public class GoalController extends HttpServlet {
 
-
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
+        Database db = new Database();
+        String message;
+        String function = request.getParameter("function");
         String type = request.getParameter("type");
         int userID = Integer.parseInt(request.getParameter("userID"));
-        Database db = new Database();
-        
-        try {
+        if ("get".equals(function)){
+            try {
             response.getWriter().println(db.getGoal(userID, type).toJSON());
-        } catch (Exception ex) {
-            Logger.getLogger(GoalController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                System.out.println("Failed to get goal for JSON");
+            }
         }
-        
+        else if (function.equals("delete")){
+            try {
+                db.deleteGoal(db.getGoal(userID, type).getGoalID());
+                
+            } catch (Exception ex) {
+                Logger.getLogger(GoalController.class.getName()).log(Level.SEVERE, null, ex);
+                
+            }
+            
+        }
         
     }
 
@@ -55,7 +63,33 @@ public class GoalController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    }
+        Database db = new Database();
+        String message;
+        String type = request.getParameter("type");
+        int userID = Integer.parseInt(request.getParameter("userID"));
+        String distance = request.getParameter("distance");
+        String weight = request.getParameter("weight");
+        double target = 0;
+        double start = 0;
+        //weight clause
+        if (distance.equals("")) {
+            target = Double.parseDouble(weight);
+            try {
+                start = db.currentWeight(userID).getWeight();
+                message = Database.makeAlert("Goal inserted", "success");
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("goal.jsp")
+                    .include(request, response);
+            } catch (Exception ex) {
+                System.out.println("Failed to construct weight "
+                        + "object for goal insertion");
+            }
+        //distance clause
+        } else {
+            target = Double.parseDouble(distance);
+            start = db.getMaxExercise(userID).getDistance();
+        }
+        db.insertGoal(userID, start, target, type);
 
-    
+    }
 }

@@ -34,14 +34,20 @@
                 })
                 window.location.replace("login.jsp");
             }
-        </script>    
+        </script>  
+        <style>
+            
+            .row{
+                margin-top:20px;
+            }
+        </style>
     </head>
     <body class="animated fadeIn">
         <%@ include file="fragments/navbar.jspf" %>
         <div class="container">
-            <div class=" col-lg-3 col-md-4 col-6 page-header">
-                <img style="width:200px" src="img/logo4.png">
-            </div>
+           
+                
+            
             ${message}
             <div class="row">
                 <div class=" col-lg-3 col-md-2 col-sm-0"></div>

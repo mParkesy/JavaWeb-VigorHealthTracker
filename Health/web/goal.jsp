@@ -16,15 +16,24 @@
              body{
                  background:linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),url('img/runner.jpg') no-repeat fixed center;
              }
+             h3{
+                 display:inline;
+             }
+             .add{
+                 width:40px;
+                 
+             }
          </style>
          
          <script>
              $(document).ready(function(){
                  $.get('GoalController', {
                         type: "weight",
+                        function: "get",
                         userID: ${user.getID()}
                     }, function (response) {
-                        var current = ${user.getWeight()}
+                       
+                        var current = ${user.getWeight()};
                         var obj = JSON.parse(response);
                         if(obj.target > 0){
                             $('.weight').show();
@@ -32,7 +41,7 @@
                         }
                         var diff = obj.start - obj.target;
                         var percent = Math.round((obj.start-current)/diff*100);
-
+                        
                         if(percent >= 100){
                             percent = 100;
                             $('#weight-text').html('<b>Congratulations!</b> You have reached your goal of ' + obj.target + 'kg');
@@ -48,9 +57,12 @@
                     
                     $.get('GoalController', {
                         type: "distance",
+                        function: "get",
                         userID: ${user.getID()}
                     }, function (response) {
+                        
                         var current = ${user.getExercise()}
+                        
                         var obj = JSON.parse(response);
                         if(obj.target > 0){
                             $('.distance').show();
@@ -82,11 +94,32 @@
                             $('#distance').show();
                         }   
                     })
+                    
+                    $('#deleteDistance').click(function(){
+                        $.get('GoalController', {
+                            type: "distance",
+                            function : "delete",
+                            userID: ${user.getID()}
+                        }, function (response) {
+                            window.location.replace("goal.jsp");
+                        })
+                    })
+                    
+                    $('#deleteWeight').click(function(){
+                        $.get('GoalController', {
+                            type: "weight",
+                            function : "delete",
+                            userID: ${user.getID()}
+                        }, function (response) {
+                            window.location.replace("goal.jsp");
+                        })
+                    })
              })
         </script>
       
     </head>
     <body >
+        ${message}
          <%@ include file="fragments/navbar.jspf" %>
         <div class="modal fade" id="addGoal" role="dialog">
           <div class="modal-dialog modal-md">
@@ -98,7 +131,6 @@
               <div class="modal-body modal-form">
                   
                 <form class="modal-form" method ="post" action="GoalController">
-                    
                     <input type="hidden" name="userID" value="${user.getID()}">
                         <div class="form-group">
                             <label for="date">Type</label>
@@ -115,8 +147,7 @@
                         <div id="distance" class="form-group">
                             <label for="distance">Goal Distance</label>
                             <input type="number" class="form-control" step="0.1" name="distance">
-                        </div>
-                        
+                        </div>        
                         <button type="submit" class="btn btn-default">Add Goal</button>
                 </form>    
               </div>
@@ -130,7 +161,10 @@
                 <h1>Goals  <a data-toggle="modal" data-target="#addGoal" href="#"><i class="fas fa-plus-circle"></i></a></h1>
                 <br>
                 <div class="card card-body goal weight animated fadeIn" style='display:none'>
-                    <h3 class="card-title">Weight Goal</h3>
+                    <h3  class="card-title">Weight Goal <button type="button" id="deleteWeight" class="btn btn-danger add">
+                        <i class="fas fa-minus"></i>
+                    </button></h3> 
+                    
                     
                     <p>Your last recorded weight was <b>${user.getWeight()}kg</b></p>
                     <div class="progress">
@@ -145,7 +179,12 @@
                 <div class="card card-body goal distance animated fadeIn" style='display:none'>
                      
                      
-                    <h3 class="card-title">Distance Goal</h3>
+                    <h3 class="card-title">Distance Goal
+                        <button type="button" id="deleteDistance" class="btn btn-danger add">
+                        <i class="fas fa-minus"></i>
+                    </button></h3>
+                    
+                    
                     <p>Your highest recorded distance doing excercises was <b>${user.getExercise()}km</b></p>
                     <div class="progress">
                         <div id="distance-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ></div>

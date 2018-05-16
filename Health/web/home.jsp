@@ -11,49 +11,8 @@
         <%@ include file="fragments/header.jspf" %>
         <script type="text/javascript">
             $(document).ready(function () {
-                var tile = "<div class='border col-lg-3 col-md-4col-6 square animated fadeInRight'></div>";
-                var icon = "<i class='far fa-question-circle'></i>";
-                var title = "<h2>Empty</h2>";
-
-                function createTile() {
-                    $(".row").append(
-                            $(tile).append(icon)
-                            .append(title)
-                    );
-                }
                 
-                
-                
-                /*
-                function generatePie(){
-                    var protein = 0;
-                    var fat = 0;
-                    var carbs = 0;
-                    
-                    var ctx = document.getElementById("dailyCals").getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Burnt','Left'],
-                            datasets: [{
-                                data: [2000, 1000],
-                                
-                                borderWidth: 1,
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.75)',
-                                    'rgba(0, 0, 0, 0.1)'
-                                ]     
-                            }]
-                        },
-                        options:  {
-                            cutoutPercentage : 90
-                        }
-                        })
-                    };
-                
-                generatePie();
-                */
-                
+                //creates food summary
                 var nutrients = <%=db.getNutrients(currentUser.getID())%>;
                 var caloriesIn = nutrients.energy;
                 var caloriesOut = <%=db.getCaloriesBurnt(currentUser.getID())%>;
@@ -88,6 +47,36 @@
                         cutoutPercentage: 80
                     }
                 });
+                
+                
+                //creates weight goal summary
+                
+                $.get('GoalController', {
+                        type: "weight",
+                        function: "get",
+                        userID: ${user.getID()}
+                    }, function (response) {
+                       
+                        var current = ${user.getWeight()};
+                        var obj = JSON.parse(response);
+                        if(obj.target > 0){
+                            $('.weight').show();
+                            $('#weight-select').attr('disabled',true);
+                        }
+                        var diff = obj.start - obj.target;
+                        var percent = Math.round((obj.start-current)/diff*100);
+                        
+                        if(percent >= 100){
+                            percent = 100;
+                            $('#weight-text').html('<b>Congratulations!</b> You have reached your goal of ' + obj.target + 'kg');
+
+                        }
+                        else{
+                            $('#weight-percent').html(percent);
+                        }
+
+                        $('#weight-bar').css('width', percent + '%');
+                    })
 
             });
         </script>
@@ -129,13 +118,15 @@
                   </div>
                   <div class="carousel-item ">
                         <h1>Weight</h1>
-                        <h3>Current Weight - </h3>
+                        <h3>Current Weight - <b>${user.getWeight()}kg</b></h3>
                         <br>
                         <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="weight-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"  ></div>
                         </div>
                         <br>
-                        <p><b>Keep going!</b> You are 25% of the way to your goal</p>
+                        <p id="weight-text"><b>Keep going!</b> You are <span id="weight-percent"></span>% of the way to your goal of
+                                       <%=db.getGoal(currentUser.getID(),"weight").getTarget()%>
+                                       kg</p>
                   </div>
                   
                 </div>

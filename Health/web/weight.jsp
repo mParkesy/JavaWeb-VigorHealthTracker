@@ -104,6 +104,7 @@
                         <tr>
                             <th>Weight(kg)</th>
                             <th>Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,6 +116,14 @@
                                 <td>
                                     ${w.getDate()}
                                 </td>
+                                <td>
+                                    <form action="WeightController"  class="modal-form">
+                                        <input type="hidden" name="weightID" value="${w.getWeightID()}">
+                                        <button type="submit" class="btn btn-danger add-small">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </form>
+                                </td>    
                             </tr>
                         </c:forEach>
                     </tbody>

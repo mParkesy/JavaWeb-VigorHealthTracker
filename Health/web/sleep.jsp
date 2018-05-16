@@ -116,6 +116,7 @@
                             <th>Amount of sleep</th>
                             <th>Sleep Grade</th>
                             <th>Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,7 +130,15 @@
                                 </td>
                                 <td>
                                     ${s.getDateOfSleep()}
-                                </td>  
+                                </td> 
+                                <td>
+                                    <form action="SleepController"  class="modal-form">
+                                        <input type="hidden" name="sleepID" value="${s.getSleepID()}">
+                                        <button type="submit" class="btn btn-danger add-small">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>
