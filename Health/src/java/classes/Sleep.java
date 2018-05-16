@@ -7,10 +7,7 @@ package classes;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import org.joda.time.DateTime;
-import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -20,7 +17,6 @@ import org.joda.time.format.DateTimeFormatter;
  * @author xze15agu
  */
 public class Sleep {
-    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private int sleepID;
     private User user;
     private DateTime bedTime;

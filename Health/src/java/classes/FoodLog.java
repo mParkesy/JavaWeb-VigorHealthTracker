@@ -55,7 +55,7 @@ public class FoodLog {
     }
 
     /**
-     * @param foodID the foodID to set
+     * @param food
      */
     public void setFoodID(Food food) {
         this.food = food;
@@ -69,7 +69,7 @@ public class FoodLog {
     }
 
     /**
-     * @param userID the userID to set
+     * @param user
      */
     public void setUser(User user) {
         this.user = user;

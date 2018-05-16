@@ -13,8 +13,13 @@ public class Message {
     private String message;
     private User sender;
     private User recipent;
-    //private DateTime
 
+    /**
+     * Message constructor that passes all possible parameters
+     * @param message
+     * @param sender
+     * @param recipent 
+     */
     public Message( String message, User sender, User recipent) {
         this.message = message;
         this.sender = sender;
@@ -43,7 +48,7 @@ public class Message {
     }
 
     /**
-     * @param senderID the senderID to set
+     * @param sender as user object
      */
     public void setSender(User sender) {
         this.sender = sender;
@@ -60,6 +65,6 @@ public class Message {
      * @param recipentID the recipentID to set
      */
     public void setRecipent(User recipentID) {
-        this.recipent = recipent;
+        this.recipent = recipentID;
     }
 }

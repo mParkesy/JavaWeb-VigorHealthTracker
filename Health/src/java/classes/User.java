@@ -25,6 +25,18 @@ public class User {
     private Date dob;   
     private double exerciseLevel;
 
+    /**
+     * User constructor
+     * @param id
+     * @param username
+     * @param firstname
+     * @param lastname
+     * @param gender
+     * @param email
+     * @param height
+     * @param dob
+     * @param exerciseLevel 
+     */
     public User(int id, String username, String firstname, String lastname, String gender, String email, double height, Date dob, double exerciseLevel) {
         this.id = id;
         this.username = username;
@@ -38,7 +50,10 @@ public class User {
     }
     
     
-    
+    /**
+     * Calculates age from DOB
+     * @return Age as int
+     */
     public int getAge(){ 
         LocalDate date = Instant.ofEpochMilli(this.dob.getTime())
                 .atZone(ZoneId.systemDefault()).toLocalDate();
@@ -46,15 +61,30 @@ public class User {
                 LocalDate.now()).getYears();
     }
     
+    /**
+     * Calculates BMI
+     * @return BMI as double
+     * @throws Exception 
+     */
     public double getBMI() throws Exception{
         DecimalFormat df = new DecimalFormat("#.##");
         return Double.valueOf(df.format(this.getWeight()/Math.pow((this.height/100), 2)));
     }
     
+    /**
+     * Multiples BMI by activity level
+     * @return Calories as int
+     * @throws Exception 
+     */
     public int getCalories() throws Exception{
         return (int) Math.rint(this.getBMR() * this.exerciseLevel);
     }
 
+    /**
+     * Calculates BMR
+     * @return BMR as int
+     * @throws Exception 
+     */
     public int getBMR() throws Exception{
         double result = 10 * this.getWeight() + 6.25 * this.height - 5 
                 * this.getAge();
@@ -83,6 +113,10 @@ public class User {
         return lastname;
     }
 
+    /**
+     * Makes sure gender outputs correctly
+     * @return 
+     */
     public String getGender() {
         if(gender.equals("m")){
             return "Male";
@@ -103,7 +137,12 @@ public class User {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         return df.format(this.dob);
     }
-
+    
+    /**
+     * Gets the most recent weight for a user
+     * @return The weight as a double
+     * @throws Exception 
+     */
     public Double getWeight() throws Exception{
         return new Database().currentWeight(id).getWeight();
     }
@@ -132,6 +171,12 @@ public class User {
         str.append("}");
         return str.toString();
     }
+    
+    /**
+     * Get most recent exercise
+     * @return
+     * @throws Exception 
+     */
     public Double getExercise() throws Exception{
         return new Database().getMaxExercise(id).getDistance();
 

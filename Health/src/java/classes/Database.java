@@ -1272,6 +1272,12 @@ public class Database {
     }
 
     // ---------------------------------------------FOOD----------------------------------------------------------
+    
+    /**
+     * Get a list of all possible food in database
+     * @return List of food
+     * @throws Exception If SQL fails
+     */
     public ArrayList<Food> allFood() throws Exception {
         ArrayList<Food> foodList = new ArrayList<>();
         try {
@@ -1301,6 +1307,12 @@ public class Database {
         return foodList;
     }
 
+    /**
+     * Gets a specific food object from database
+     * @param id The foodID
+     * @return The food object
+     * @throws Exception If the SQL fails
+     */
     public Food getFood(int id) throws Exception {
         Food food = null;
         try {
@@ -1325,11 +1337,12 @@ public class Database {
     /**
      * Construct a FoodLog instance and add it to the database
      *
-     * @param foodID
-     * @param userID
-     * @param meal
-     * @param date
-     * @throws Exception
+     * @param foodID The foodID
+     * @param userID The userID of user logged n
+     * @param meal meal type
+     * @param date date of food
+     * @return The FoodLog object
+     * @throws Exception If SQL fails
      */
     public FoodLog insertFoodLog(int foodID, int userID, String meal, Date date)
             throws Exception {
@@ -1364,6 +1377,13 @@ public class Database {
     }
 
     //----------------------------NOTIFICATIONS--------------------------------------
+    
+    /**
+     * Insert a notification into the database
+     * @param userID The userID attached to the notification
+     * @param text The text attached to the notification
+     * @throws Exception If the SQL fails
+     */
     public void insertNotification(int userID, String text)
             throws Exception {
 
@@ -1389,11 +1409,18 @@ public class Database {
 
     }
 
-    public ArrayList<Notification> getNotifications(int id) throws SQLException, Exception {
+    /**
+     * Gets a list of notifications from the database
+     * @param userID The userID of the who needs all notifications 
+     * @return A list of Notification objects
+     * @throws SQLException If the SQL fails
+     */
+    public ArrayList<Notification> getNotifications(int userID) 
+            throws SQLException {
         ArrayList<Notification> list = new ArrayList<>();
         String sql = "SELECT * FROM notification WHERE userID =?";
         PreparedStatement st = this.CON.prepareStatement(sql);
-        st.setInt(1, id);
+        st.setInt(1, userID);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
             list.add(new Notification(rs.getInt("id"), rs.getString("Text")));
@@ -1401,19 +1428,20 @@ public class Database {
         return list;
     }
 
-    public void deleteNotification(int id) {
-
-        Notification n = null;
+    /**
+     * Deletes a specific notification from the database
+     * @param notificationID The ID
+     */
+    public void deleteNotification(int notificationID) {
         try {
             String sql = "DELETE FROM notification WHERE id = ?";
             PreparedStatement st = this.CON.prepareStatement(sql);
-            st.setInt(1, id);
+            st.setInt(1, notificationID);
             st.executeUpdate();
 
         } catch (SQLException ex) {
             System.out.println("ERROR DELETING NOTIF");
         }
-
     }
 
     // ---------------------------------------------GOAL----------------------------------------------------------
@@ -1443,7 +1471,15 @@ public class Database {
 
     // ---------------------------------------------MESSAGE----------------------------------------------------------
     //gets conversation between two users
-    public ArrayList<Message> getMessages(int senderID, int recipientID) throws SQLException, Exception {
+    /**
+     * Gets messages between to users
+     * @param senderID The userID of the sender
+     * @param recipientID The userID of the receiver
+     * @return A list of messages
+     * @throws SQLException If the SQL fails
+     */
+    public ArrayList<Message> getMessages(int senderID, int recipientID) 
+            throws SQLException {
         ArrayList<Message> list = new ArrayList<>();
         String sql = "SELECT * FROM `message` "
                 + "WHERE (recipientID = ? AND senderID = ?) "
@@ -1464,6 +1500,13 @@ public class Database {
         return list;
     }
 
+    /**
+     * Gets a list of senderIDs to check unread messages for a user
+     * @param userID The user to check for unread
+     * @return The list of senderIDs
+     * @throws SQLException
+     * @throws Exception 
+     */
     public ArrayList<Integer> getUnread(int userID) throws SQLException, Exception {
         ArrayList<Integer> list = new ArrayList<>();
         String sql = "SELECT senderID ,MIN(time) "
@@ -1479,7 +1522,13 @@ public class Database {
         return list;
     }
 
-    //Send message
+    /**
+     * Sends a message by inserting into database
+     * @param message The message as text
+     * @param senderID The senderID
+     * @param recipientID The receiverID
+     * @throws SQLException If the SQL fails
+     */
     public void sendMessage(String message, int senderID, int recipientID) throws SQLException {
         try {
             String sql = "INSERT INTO `message` "
@@ -1497,7 +1546,12 @@ public class Database {
         }
     }
 
-    //Set message as seen
+    /**
+     * Sets a message to seen in the database
+     * @param userID The userID of the user logged in
+     * @param senderID The senderID of the message
+     * @throws SQLException If the SQL fails
+     */
     public void setSeen(int userID, int senderID) throws SQLException {
         try {
             String sql = "UPDATE message SET seen = 1 WHERE senderID = ? AND recipientID = ?";
@@ -1508,7 +1562,7 @@ public class Database {
             st.executeUpdate();
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("Failed to check if message has been seen");
         }
     }
 }

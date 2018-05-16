@@ -29,6 +29,15 @@ public class EmailSetup {
     private String firstname;
     private String title;
 
+    /**
+     * Constructor with a link
+     * @param toAddress to address
+     * @param message contents
+     * @param subject subject line
+     * @param link the link
+     * @param firstname firstname of user
+     * @param title email title
+     */
     public EmailSetup(String toAddress, String message, String subject, String link, String firstname, String title) {
         this.toAddress = toAddress;
         this.message = message;
@@ -38,6 +47,14 @@ public class EmailSetup {
         this.title = title;
     }
 
+    /**
+     * Constructor for email
+     * @param toAddress to address
+     * @param message contents
+     * @param subject subject line
+     * @param firstname firstname of user
+     * @param title email title
+     */
     public EmailSetup(String toAddress, String message, String subject, String firstname, String title) {
         this.toAddress = toAddress;
         this.message = message;
@@ -47,6 +64,10 @@ public class EmailSetup {
         this.link = "";
     }
 
+    /**
+     * Sends an email
+     * @throws NoSuchProviderException If sender address fails to connect
+     */
     public void sendEmail() throws NoSuchProviderException {
         Properties props = new Properties();
         props.setProperty("mail.host", "smtp-mail.outlook.com");
@@ -111,6 +132,9 @@ public class EmailSetup {
         this.subject = subject;
     }
 
+    /**
+     * Sets up an email before sending
+     */
     public void setUpEmail() {
         this.message = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
                 + "<html style=\"width:100%;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0;\">\n"

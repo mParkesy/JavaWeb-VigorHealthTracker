@@ -1,6 +1,4 @@
 package classes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Group {
 
@@ -11,6 +9,15 @@ public class Group {
     private String imagePath;
     private String distanceGoal;
 
+    /**
+     * A group constructor passing all possible parameters
+     * @param groupID
+     * @param groupName
+     * @param userID
+     * @param description
+     * @param imagePath
+     * @param distanceGoal 
+     */
     public Group(int groupID, String groupName, int userID, 
             String description, String imagePath, String distanceGoal) {
         try {
