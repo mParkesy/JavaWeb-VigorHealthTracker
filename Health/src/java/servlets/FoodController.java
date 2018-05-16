@@ -35,12 +35,18 @@ public class FoodController extends HttpServlet {
             throws ServletException, IOException {
 
         int userID = Integer.parseInt(request.getParameter("userID"));
-        
+        String function = request.getParameter("function");
         User user = (User) request.getSession(false).getAttribute("user");
        
                 List<FoodLog> logs = new ArrayList<>();
                 try {
-                    logs = new Database().allFoodLogs(userID);
+                    if("today".equals(function)){
+                        logs = new Database().allFoodLogs(userID);
+                    }
+                    else if("old".equals(function)){
+                        logs = new Database().oldFoodLogs(userID);
+                    }
+                    
                 } catch (Exception ex) {
                     System.out.println(ex);
                 }

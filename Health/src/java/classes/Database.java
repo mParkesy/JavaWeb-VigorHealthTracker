@@ -425,7 +425,39 @@ public class Database {
 
         ArrayList<FoodLog> logs = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM foodLog where userID = ? AND date > 2018-05-16";
+            String sql = "SELECT * FROM foodLog where userID = ? AND date = CURRENT_DATE";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                int id = result.getInt("foodLogID");
+                Food food = getFood(result.getInt("foodID"));
+                String meal = result.getString("meal");
+                Date date = result.getDate("date");
+
+                logs.add(new FoodLog(id, food, userID, meal, date));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Failed to get a user's food logs");
+        }
+        return logs;
+
+    }
+    
+    /**
+     * A method that collects old food log data for a specific User
+     *
+     * @param userID The userID of the User whose food log data is being placed
+     * into a list
+     * @return An ArrayList of food log objects
+     * @throws Exception If the Select SQL fails to execute
+     */
+    public ArrayList<FoodLog> oldFoodLogs(int userID) throws Exception {
+
+        ArrayList<FoodLog> logs = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM foodLog where userID = ? AND date != CURRENT_DATE";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             ResultSet result = st.executeQuery();

@@ -107,6 +107,7 @@ public class FoodLog {
         StringBuilder str = new StringBuilder();
         str.append("{");
         str.append("\"id\": "  + this.id + ",");
+        str.append("\"meal\": " + "\"" +  this.meal+ "\",");
         str.append("\"name\": " + "\"" +  this.food.getName() + "\",");
         str.append("\"carbs\": "  + this.food.getCarbs() + ",");
         str.append("\"protein\": "  + this.food.getProtein() + ",");

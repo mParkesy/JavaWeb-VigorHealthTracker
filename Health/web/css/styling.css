@@ -247,3 +247,6 @@ ul .list-group-item:nth-of-type(3) .medal{
 .distance{
     float:right;
 }
+.list-group-item h3{
+    cursor:pointer;
+}
