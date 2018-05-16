@@ -1148,6 +1148,11 @@ public class Database {
         return activity;
     }
 
+    /**
+     * Get a list of all activities in the database
+     * @return A list of possible activities
+     * @throws Exception 
+     */
     public ArrayList<Activity> allActivity() throws Exception {
         ArrayList<Activity> activityList = new ArrayList<>();
 
@@ -1173,6 +1178,17 @@ public class Database {
     }
 
     // ---------------------------------------------EXERCISE----------------------------------------------------------
+    
+    /**
+     * Insert an exercise into the database
+     * @param userID The userID of the user who has carried out the exercise
+     * @param activityID The activityID
+     * @param date The date of the exercise
+     * @param minutes The duration
+     * @param distance The distance
+     * @return The exercise object
+     * @throws Exception If the SQL insert fails
+     */
     public Exercise insertExercise(int userID, int activityID, Date date,
             int minutes, double distance) throws Exception {
         Exercise exercise = null;
@@ -1207,6 +1223,12 @@ public class Database {
         return exercise;
     }
 
+    /**
+     * Get an exercise object from the database
+     * @param exerciseID The exerciseID in the database
+     * @return The exercise object
+     * @throws Exception If the SQL fails
+     */
     public Exercise getExercise(int exerciseID) throws Exception {
         Exercise exercise = null;
         try {
@@ -1225,6 +1247,11 @@ public class Database {
         return exercise;
     }
 
+    /**
+     * Gets the most recent exercise in the database
+     * @param userID The userID of the user needing the most recent exercise
+     * @return The object exercise
+     */
     public Exercise getMaxExercise(int userID) {
         Exercise exercise = null;
         try {
