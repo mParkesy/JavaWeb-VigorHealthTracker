@@ -425,7 +425,7 @@ public class Database {
 
         ArrayList<FoodLog> logs = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM foodLog where userID = ?";
+            String sql = "SELECT * FROM foodLog where userID = ? AND date = CURRENT_DATE";
             PreparedStatement st = CON.prepareStatement(sql);
             st.setInt(1, userID);
             ResultSet result = st.executeQuery();
@@ -443,6 +443,114 @@ public class Database {
         }
         return logs;
 
+    }
+    
+    /**
+     * A method that collects old food log data for a specific User
+     *
+     * @param userID The userID of the User whose food log data is being placed
+     * into a list
+     * @return An ArrayList of food log objects
+     * @throws Exception If the Select SQL fails to execute
+     */
+    public ArrayList<FoodLog> oldFoodLogs(int userID) throws Exception {
+
+        ArrayList<FoodLog> logs = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM foodLog where userID = ? AND date != CURRENT_DATE";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet result = st.executeQuery();
+
+            while (result.next()) {
+                int id = result.getInt("foodLogID");
+                Food food = getFood(result.getInt("foodID"));
+                String meal = result.getString("meal");
+                Date date = result.getDate("date");
+
+                logs.add(new FoodLog(id, food, userID, meal, date));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Failed to get a user's food logs");
+        }
+        return logs;
+
+    }
+    
+    public void deleteFoodLog(int id) {
+
+        Notification n = null;
+        try {
+            String sql = "DELETE FROM foodlog WHERE foodLogID = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
+            st.setInt(1, id);
+            st.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println("ERROR DELETING foodlog");
+        }
+
+    }
+    
+    //returns daily nutrients fir a user as a json string
+    public String getNutrients(int userID){
+        Food sum = new Food();
+        try {
+            String sql = "SELECT SUM(food.Protein) as protein,"
+                    + "sum(food.Fat) as fat, "
+                    + "sum(food.Carbs) as carbs, "
+                    + "sum(food.Energy) as energy, "
+                    + "sum(food.Sugar) as sugar "
+                    + "FROM foodlog "
+                    + "INNER JOIN food ON foodlog.foodID = food.id "
+                    + "WHERE foodlog.date = CURRENT_DATE "
+                    + "AND foodLog.userID = ?";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet result = st.executeQuery();
+            
+            while (result.next()) {
+                sum.setCarbs(result.getDouble("carbs"));
+                sum.setSugar(result.getDouble("sugar"));
+                sum.setProtein(result.getDouble("protein"));
+                sum.setEnergy(result.getDouble("energy"));
+                sum.setFat(result.getDouble("fat"));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Failed to get a user's nutrients");
+        }
+        return sum.toJSON();
+        
+    }
+    
+    public int getCaloriesBurnt(int userID){
+        int sum = 0;
+        Exercise e =null;
+        try{
+            String sql = "SELECT * FROM exercise WHERE userID = ? "
+                    + "AND date = CURRENT_DATE";
+            PreparedStatement st = CON.prepareStatement(sql);
+            st.setInt(1, userID);
+            ResultSet rs = st.executeQuery();
+            
+            while(rs.next()){
+                
+                int exerciseID = rs.getInt("exerciseID");
+                Date date = rs.getDate("date");
+                int minutes = rs.getInt("minutes");
+                double distance = rs.getDouble("distance");
+                Activity activity = getActivity(
+                        rs.getInt("activityID"));
+
+                e= new Exercise(exerciseID, userID, activity , date, minutes, distance);
+                System.out.println(e.getCaloriesBurnt());
+                sum += e.getCaloriesBurnt();
+            }
+        }catch(Exception ex){
+            System.out.println("Failed to sum calories from today");
+            ex.printStackTrace();
+        }
+        return sum;
     }
 
     /**
