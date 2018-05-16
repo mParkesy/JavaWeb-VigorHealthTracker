@@ -244,9 +244,10 @@ ul .list-group-item:nth-of-type(2) .medal{
 ul .list-group-item:nth-of-type(3) .medal{
     background-image: url(../img/bronze.svg);
 }
-.distance{
-    float:right;
-}
+
 .list-group-item h3{
     cursor:pointer;
+}
+td .modal-form{
+    padding:0;
 }

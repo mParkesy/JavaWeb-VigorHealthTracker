@@ -1460,7 +1460,7 @@ public class Database {
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {
-                return new Goal(rs.getDouble("start"), rs.getDouble("target"),
+                return new Goal(rs.getInt("goalID"),rs.getDouble("start"), rs.getDouble("target"),
                         rs.getInt("userID"), rs.getString("type"));
             }
 
@@ -1472,17 +1472,17 @@ public class Database {
     }
     
     public boolean deleteGoal(int goalID){
-        try{
-            String sql = "DELETE FROM goal WHERE goalID =?";
-            PreparedStatement st = CON.prepareCall(sql);
+        try {
+            String sql = "DELETE FROM goal WHERE goalID = ?";
+            PreparedStatement st = this.CON.prepareStatement(sql);
             st.setInt(1, goalID);
             st.executeUpdate();
-            return true;
-        }catch (Exception ex){
-            ex.printStackTrace();
-            System.out.println("Failed to delete goal");
-            return false;
-        }   
+            System.out.println("GOAL ID: " +  goalID);
+
+        } catch (SQLException ex) {
+            System.out.println("ERROR DELETING goal");
+        }
+        return true;
     }
 
     // ---------------------------------------------MESSAGE----------------------------------------------------------

@@ -30,8 +30,18 @@ public class Goal {
         this.start = 0;
         this.target = 0;
         this.type = type;
-
+        
     }
+    
+    public Goal(int goalID, int userID, String type) throws Exception {
+        this.user = new Database().getUser(userID);
+        this.start = 0;
+        this.target = 0;
+        this.type = type;
+        this.goalID = goalID;
+        
+    }
+    
 
     public Goal(double start, double target, int userID, String type) throws Exception {
         this.target = target;
@@ -44,6 +54,17 @@ public class Goal {
         this.start = start;
     }
 
+    public Goal(int goalID,double start, double target, int userID, String type) throws Exception {
+        this.target = target;
+        try {
+            this.user = new Database().getUser(userID);
+        } catch (Exception ex) {
+            System.out.println("Failed to construct user in goal construction");
+        }
+        this.type = type;
+        this.start = start;
+        this.goalID = goalID;
+    }
     /*
     public String getGoalName() {
         return goalName;

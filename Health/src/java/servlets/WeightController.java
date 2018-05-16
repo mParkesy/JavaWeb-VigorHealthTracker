@@ -83,7 +83,7 @@ public class WeightController extends HttpServlet {
             Goal g = db.getGoal(userID, "weight");
             if (weight <= g.getTarget()) {
                 db.insertNotification(userID, "Weight Goal achieved!");
-                db.deleteGoal(g.getGoalID());
+                //db.deleteGoal(g.getGoalID());
             }
 
         } catch (Exception ex) {
