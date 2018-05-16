@@ -6,10 +6,9 @@
 package classes;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.joda.time.DateTime;
-import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,7 +18,6 @@ import org.joda.time.format.DateTimeFormatter;
  * @author xze15agu
  */
 public class Sleep {
-    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private int sleepID;
     private User user;
     private DateTime bedTime;
@@ -53,10 +51,13 @@ public class Sleep {
      */
     public double getTotalSleep(){
         Minutes mins = Minutes.minutesBetween(this.bedTime, this.wakeTime);
-        Hours hours = Hours.hoursBetween(this.bedTime, this.wakeTime);
-        int numHours = hours.getHours();
+        //Hours hours = Hours.hoursBetween(this.bedTime, this.wakeTime);
+        
+        DecimalFormat df = new DecimalFormat("#.#");
+
         int numMins = mins.getMinutes();
-        return (double) numMins /60;
+        double numHours = numMins / 60;
+        return Double.valueOf(df.format(numHours));
     }
     
     /**
@@ -90,5 +91,16 @@ public class Sleep {
         return user;
     }
     
+    public int getDay() {
+        return this.bedTime.getDayOfMonth();
+    }
+
+    public int getMonth() {
+        return this.bedTime.getMonthOfYear();
+    }
+
+    public int getYear() {
+        return this.bedTime.getYear();
+    }
     
 }

@@ -19,7 +19,7 @@
 		}
 		div h2{
 			font-size:20px;
-			color:grey;
+			color:rgba(0,0,0,0.5);
                         
 		}
 		.square:hover *{

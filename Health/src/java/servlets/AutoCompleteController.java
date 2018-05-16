@@ -39,8 +39,11 @@ private static final long serialVersionUID = 1L;
         
         try {
             for(Food f : Food.filterFood(str)){
-                response.getWriter().println("<li class=\"list-group-item\" "
-                        + "id='" + f.getID() + "'>" + f.getName() + "</li>" );
+                response.getWriter().println("<li class=\"list-group-item\">"
+                        +  f.getName() + "<button type=\"button\" class=\"btn btn-primary add-small\"\n" +
+"                    data-dismiss=\"modal\" data-toggle=\"modal\" id='" + f.getID() + "' data-target=\"#mealModal\">\n" +
+"                <i class=\"fas fa-plus\"></i>\n" +
+"            </button></li>" );
             }
         } catch (Exception ex) {
             Logger.getLogger(FoodController.class.getName()).log(Level.SEVERE, null, ex);

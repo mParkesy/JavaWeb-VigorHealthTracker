@@ -11,65 +11,72 @@
         <%@ include file="fragments/header.jspf" %>
         <script type="text/javascript">
             $(document).ready(function () {
-                var tile = "<div class='border col-lg-3 col-md-4col-6 square animated fadeInRight'></div>";
-                var icon = "<i class='far fa-question-circle'></i>";
-                var title = "<h2>Empty</h2>";
-
-                function createTile() {
-                    $(".row").append(
-                            $(tile).append(icon)
-                            .append(title)
-                            );
-                }
                 
-
-                /*
-                function generatePie(){
-                    var protein = 0;
-                    var fat = 0;
-                    var carbs = 0;
-                    
-                    var ctx = document.getElementById("dailyCals").getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Burnt','Left'],
-                            datasets: [{
-                                data: [2000, 1000],
-                                
-                                borderWidth: 1,
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.75)',
-                                    'rgba(0, 0, 0, 0.1)'
-                                ]     
-                            }]
-                        },
-                        options:  {
-                            cutoutPercentage : 90
-                        }
-                        })
-                    };
+                //creates food summary
+                var nutrients = <%=db.getNutrients(currentUser.getID())%>;
+                var caloriesIn = nutrients.energy;
+                var caloriesOut = <%=db.getCaloriesBurnt(currentUser.getID())%>;
+                var caloriesSum = caloriesIn - caloriesOut;
+                var caloriesMax = <%=currentUser.getCalories()%>;
                 
-                generatePie();
-                */
+                $('#protein').html("<b>Protein: </b>" + nutrients.protein + "g");
+                $('#energy').html("<b>Energy: </b>" + nutrients.energy + "kcal");
+                $('#fat').html("<b>Fat: </b>" + nutrients.fat + "g");
+                $('#carbs').html("<b>Carbohydrates: </b>" + nutrients.carbs + "g");
+                
                 
                 var ctx = document.getElementById("myChart").getContext('2d');
                 var myChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: [
-                            'Calories'
+                            'Calories Consumed',
+                            'Calories Left'
                         ],
                         datasets: [{
-                            data: [1000,1500],
+                            data: [caloriesSum,caloriesMax-caloriesSum],
                             backgroundColor: [
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)'
-                            ]
+                                'rgba(153, 255, 230, 0.65)',
+                                'rgba(0,0,0, 0.1)'
+                            ],
+                            borderWidth:[0,0]
+                            
                         }]
                     },
-                    
+                    options: {
+                        cutoutPercentage: 80
+                    }
                 });
+                
+                
+                //creates weight goal summary
+                
+                $.get('GoalController', {
+                        type: "weight",
+                        function: "get",
+                        userID: ${user.getID()}
+                    }, function (response) {
+                       
+                        var current = ${user.getWeight()};
+                        var obj = JSON.parse(response);
+                        if(obj.target > 0){
+                            $('.weight').show();
+                            $('#weight-select').attr('disabled',true);
+                        }
+                        var diff = obj.start - obj.target;
+                        var percent = Math.round((obj.start-current)/diff*100);
+                        
+                        if(percent >= 100){
+                            percent = 100;
+                            $('#weight-text').html('<b>Congratulations!</b> You have reached your goal of ' + obj.target + 'kg');
+
+                        }
+                        else{
+                            $('#weight-percent').html(percent);
+                        }
+
+                        $('#weight-bar').css('width', percent + '%');
+                    })
 
             });
         </script>
@@ -80,11 +87,11 @@
         
         <div class="container animated fadeIn">
             
-            <div  id="carouselExampleIndicators" class="carousel slide row" data-ride="carousel">
+            <div  id="carouselExampleIndicators" class="carousel slide row border" data-ride="carousel">
                 <ol class="carousel-indicators">
                   <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                   <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                  
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
@@ -98,10 +105,10 @@
                             </div>
                             <div class="content">
                                 <p>
-                                    Carbs: <br>
-                                    Fat: <br>
-                                    Protein: <br>
-                                    Calories: <br>
+                                    <span id="energy"></span><br>
+                                    <span id="fat"></span><br>
+                                    <span id="carbs"></span><br>
+                                    <span id="protein"></span><br>
                                 </p>
                             </div>
                           
@@ -111,17 +118,17 @@
                   </div>
                   <div class="carousel-item ">
                         <h1>Weight</h1>
-                        <h3>Current Weight - </h3>
+                        <h3>Current Weight - <b>${user.getWeight()}kg</b></h3>
                         <br>
                         <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="weight-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"  ></div>
                         </div>
                         <br>
-                        <p><b>Keep going!</b> You are 25% of the way to your goal</p>
+                        <p id="weight-text"><b>Keep going!</b> You are <span id="weight-percent"></span>% of the way to your goal of
+                                       <%=db.getGoal(currentUser.getID(),"weight").getTarget()%>
+                                       kg</p>
                   </div>
-                  <div class="carousel-item">
-                   
-                  </div>
+                  
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>

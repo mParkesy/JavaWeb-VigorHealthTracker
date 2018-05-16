@@ -8,11 +8,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%
-            if (session.getAttribute("user") != null) {
-                session.invalidate();
-            }
-        %>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/animate.css">
         <link rel="stylesheet" href="css/master.css">
@@ -28,14 +24,30 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+        <script type="text/javascript">
+            function sweet(){
+                swal({type : 'success',
+                    title: 'Success',
+                    text: 'Please follow the link in your emails',"
+                    showConfirmButton: false,"
+                    timer: 3000"
+                })
+                window.location.replace("login.jsp");
+            }
+        </script>  
+        <style>
+            
+            .row{
+                margin-top:20px;
+            }
+        </style>
     </head>
     <body class="animated fadeIn">
         <%@ include file="fragments/navbar.jspf" %>
         <div class="container">
-            <div class=" col-lg-3 col-md-4 col-6 page-header">
-                <img style="width:200px" src="img/logo4.png">
-            </div>
+           
+                
+            
             ${message}
             <div class="row">
                 <div class=" col-lg-3 col-md-2 col-sm-0"></div>
@@ -44,17 +56,44 @@
                     <form action="LoginController" method="post">
                         <div class="form-group">
                             <label for="text">Username:</label>
-                            <input type="text" class="form-control"  name="username" id="username">
+                            <input type="text" class="form-control"  name="username" id="username" required>
                         </div>
                         <div class="form-group">
                             <label for="pwd">Password:</label>
-                            <input type="password" class="form-control" name="password" id="password">
+                            <input type="password" class="form-control" name="password" id="password" required>
+                            <a href ="#" data-toggle="modal" 
+                               data-target="#modal1">
+                                Forgotten password
+                            </a>    
                         </div>
                         <button type="submit" class="btn btn-default">Login</button>
                     </form>
                 </div>
             </div>
         </div>
-
+        <div class="modal fade" id="modal1" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Forgotten password</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body modal-form">
+                        <form class="modal-form" action="LoginController">
+                            
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Username:</label>
+                                <input type="text" class="form-control" name="username" required>
+                            </div>
+                            <button onclick="sweet();" type="submit" class="btn btn-default">Submit</button>
+                        </form>  
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
