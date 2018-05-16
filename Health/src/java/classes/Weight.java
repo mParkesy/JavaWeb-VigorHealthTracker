@@ -22,7 +22,8 @@ public class Weight {
             this.weight = weight;
             this.date = date;
         } catch (Exception ex) {
-            Logger.getLogger(Weight.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Failed to construct user when constructing "
+                    + "weight object");
         }
     }
 
@@ -59,4 +60,14 @@ public class Weight {
         return cal.get(Calendar.YEAR);
     }
 
+    public int getWeightID() {
+        return weightID;
+    }
+
+    public void setWeightID(int weightID) {
+        this.weightID = weightID;
+    }
+
+    
+    
 }

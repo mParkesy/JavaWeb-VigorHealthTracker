@@ -27,7 +27,14 @@ public class GoalController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        Database db = new Database();
+        try {
+            int userID = Integer.parseInt(request.getParameter("userID"));
+            String type = request.getParameter("type");
+            response.getWriter().println(db.getGoal(userID, type).toJSON());
+        } catch (Exception ex) {
+            System.out.println("Failed to get goal for JSON");
+        }
     }
 
     /**
@@ -48,6 +55,7 @@ public class GoalController extends HttpServlet {
         String weight = request.getParameter("weight");
         double target = 0;
         double start = 0;
+        //weight clause
         if (distance.equals("")) {
             target = Double.parseDouble(weight);
             try {
@@ -56,16 +64,12 @@ public class GoalController extends HttpServlet {
                 System.out.println("Failed to construct weight "
                         + "object for goal insertion");
             }
-
+        //distance clause
         } else {
             target = Double.parseDouble(distance);
             start = db.getMaxExercise(userID).getDistance();
         }
         db.insertGoal(userID, start, target, type);
-        try {
-            response.getWriter().println(db.getGoal(userID, type).toJSON());
-        } catch (Exception ex) {
-            System.out.println("Failed to get goal for JSON");
-        }
+
     }
 }
